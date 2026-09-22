@@ -1974,10 +1974,6 @@ class Sound {
     this.eg = ctx.createGain(); this.eg.gain.value = 0;
     this.eo1.connect(this.ef); this.eo2.connect(this.ef); this.ef.connect(this.eg); this.eg.connect(this.sfx);
     this.eo1.start(); this.eo2.start();
-    const w = ctx.createBufferSource(); w.buffer = this.noise; w.loop = true;
-    this.wf = ctx.createBiquadFilter(); this.wf.type = 'bandpass'; this.wf.frequency.value = 600; this.wf.Q.value = 0.7;
-    this.wg = ctx.createGain(); this.wg.gain.value = 0;
-    w.connect(this.wf); this.wf.connect(this.wg); this.wg.connect(this.sfx); w.start();
   }
   engine(on, speed, boost){
     if (!this.ok) return;
@@ -1986,8 +1982,6 @@ class Sound {
     this.eo2.frequency.setTargetAtTime(84 + k * 140 + (boost ? 50 : 0), t, 0.12);
     this.ef.frequency.setTargetAtTime(220 + k * 900 + (boost ? 1400 : 0), t, 0.12);
     this.eg.gain.setTargetAtTime(on ? 0.04 : 0, t, 0.2);
-    this.wf.frequency.setTargetAtTime(400 + k * 1600, t, 0.2);
-    this.wg.gain.setTargetAtTime(on ? 0.02 + k * 0.06 : 0, t, 0.2);
   }
   env(node, t, a, peak, d){ node.gain.setValueAtTime(0.0001, t); node.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), t + a); node.gain.exponentialRampToValueAtTime(0.0001, t + a + d); }
   out(node, pan, dest){ if (pan){ const p = this.ctx.createStereoPanner(); p.pan.value = clamp(pan, -1, 1); node.connect(p); p.connect(dest); } else node.connect(dest); }

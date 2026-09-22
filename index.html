@@ -31,6 +31,11 @@ html,body{height:100%;}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;background:var(--bg);}
 .layer{position:fixed;inset:0;pointer-events:none;}
+#app{position:fixed;inset:0;overflow:hidden;}
+#vp{position:fixed;inset:0;visibility:hidden;pointer-events:none;}
+body.rot #app{inset:auto;top:0;left:0;width:var(--rw);height:var(--rh);transform-origin:0 0;}
+body.r1 #app{transform:translateX(var(--vw)) rotate(90deg);}
+body.r2 #app{transform:translateY(var(--vh)) rotate(-90deg);}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;}
 button:focus-visible{outline:1px solid var(--nifo);outline-offset:4px;}
 body.playing,body.playing *{cursor:none;}
@@ -219,17 +224,37 @@ body.playing,body.playing *{cursor:none;}
 .tb.pause{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));width:40px;height:40px;font-size:12px;pointer-events:auto;}
 body.touch .br{bottom:calc(206px + env(safe-area-inset-bottom,0px));}
 body.touch .mi{padding:11px 0;}
+body.touch .tr{top:calc(60px + env(safe-area-inset-top,0px));}
 body.touch .tb{width:70px;height:70px;}
 body.touch .tb.fire{width:94px;height:94px;}
 body.touch .tb.pause{width:42px;height:42px;}
 body.touch .bc{top:calc(122px + env(safe-area-inset-top,0px));bottom:auto;}
 @media (max-width:760px){ .tl .me .lbl{display:none;} .tl .me{letter-spacing:.2em;gap:10px;} }
+body.short #menu{background:linear-gradient(90deg,rgba(3,5,10,0) 18%,rgba(3,5,10,.62) 58%,rgba(3,5,10,.88));}
+body.short .panel{left:auto;right:clamp(16px,5vw,64px);width:min(470px,calc(100% - 32px));top:50%;bottom:auto;transform:translateY(-50%);justify-items:end;text-align:right;gap:8px;}
+body.short #menu.center .panel{left:auto;right:50%;top:50%;bottom:auto;transform:translate(50%,-50%);justify-items:center;text-align:center;}
+body.short .title{font-size:44px;}
+body.short .title.sm{font-size:34px;}
+body.short .tagline,body.short .record,body.short .hintp{display:none;}
+body.short .mlist{margin-top:4px;justify-items:end;gap:0;}
+body.short #menu.center .mlist{justify-items:center;}
+body.short .mi{padding:6px 0;font-size:14px;}
+body.short .mi.sel,body.short .mi:hover{transform:translateX(-6px);}
+body.short #menu.center .mi.sel,body.short #menu.center .mi:hover{transform:none;}
+body.short .rows{gap:5px;}
+body.short .krow{font-size:10px;gap:10px;}
+body.short .res th{padding:3px 10px;}
+body.short .res td{padding:4px 10px;}
+body.short .stats{line-height:1.5;font-size:10px;}
+body.short .foot{bottom:8px;}
 @media (prefers-reduced-motion:reduce){ .pop,#item.pulse,.ld-bar i{animation:none;} }
 </style>
 
 </head>
 <body>
 <noscript><p style="color:#e9f3ff;font:16px system-ui;padding:24px">Active JavaScript pour jouer à Sentinelle.</p></noscript>
+<div id="vp" aria-hidden="true"></div>
+<div id="app">
 <canvas id="gl" aria-label="Scène du jeu Sentinelle"></canvas>
 
 <div id="hud" class="layer" hidden>
@@ -325,6 +350,7 @@ body.touch .bc{top:calc(122px + env(safe-area-inset-top,0px));bottom:auto;}
     <button class="in-go" id="introGo" hidden>TOUCHE POUR ENTRER</button>
   </div>
 </div>
+</div>
 
 <script>
 setTimeout(function(){
@@ -363,7 +389,7 @@ const pick = (arr, r = R) => arr[Math.floor(r() * arr.length) % arr.length];
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FORCE_MOBILE = false;
 const isTouch = FORCE_MOBILE || matchMedia('(pointer: coarse)').matches;
-const buzz = (p) => { if (!isTouch) return; try { if (navigator.vibrate) navigator.vibrate(p); } catch (e){} };
+const buzz = (p) => { if (!isTouch) return; try { if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return; if (navigator.vibrate) navigator.vibrate(p); } catch (e){} };
 const T1 = new V3(), T2 = new V3(), T3 = new V3(), T4 = new V3(), T5 = new V3();
 const M4 = new THREE.Matrix4(), Q1 = new THREE.Quaternion(), ZAX = new V3(0, 0, 1), S1 = new V3(1, 1, 1);
 
@@ -379,6 +405,7 @@ const settings = {
   difficulty: store.get('difficulty', 'normal'),
   sensitivity: store.get('sensitivity', 1),
   invertY: store.get('invertY', false),
+  screen: store.get('screen', 'landscape'),
 };
 let best = store.get('best', 0);
 
@@ -397,6 +424,7 @@ const SETS = {
   difficulty: { label: 'DIFFICULTÉ', values: ['normal', 'hard'], names: ['NORMALE', 'EXPERTE'] },
   sensitivity: { label: 'SENSIBILITÉ', values: [0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6], names: (v) => Math.round(v * 100) + ' %' },
   invertY: { label: 'AXE VERTICAL', values: [false, true], names: ['NORMAL', 'INVERSÉ'] },
+  screen: { label: 'ÉCRAN', values: ['landscape', 'landscape2', 'free'], names: ['PAYSAGE', 'PAYSAGE INVERSÉ', 'LIBRE'] },
 };
 
 /* ============ constantes du monde ============ */
@@ -507,7 +535,7 @@ function buildComposer(){
   fxPass = new ShaderPass(FinalShader);
   composer.addPass(fxPass);
   composer.setPixelRatio(renderer.getPixelRatio());
-  composer.setSize(innerWidth, innerHeight);
+  composer.setSize(VIEW.w, VIEW.h);
 }
 
 function computeBaseFov(aspect){
@@ -517,8 +545,32 @@ function computeBaseFov(aspect){
   return clamp(Math.max(vMin, v), vMin, 98);
 }
 
+const VIEW = { W: innerWidth, H: innerHeight, w: innerWidth, h: innerHeight, rot: 0, key: '' };
+function computeView(){
+  let w = innerWidth, h = innerHeight;
+  const vp = document.getElementById('vp');
+  if (vp){ const r = vp.getBoundingClientRect(); if (r.width > 0 && r.height > 0){ w = r.width; h = r.height; } }
+  w = Math.round(w); h = Math.round(h);
+  const mode = settings.screen;
+  const rot = isTouch && mode !== 'free' && h > w ? (mode === 'landscape2' ? -1 : 1) : 0;
+  const b = document.body;
+  b.classList.toggle('rot', rot !== 0); b.classList.toggle('r1', rot === 1); b.classList.toggle('r2', rot === -1);
+  const st = document.documentElement.style;
+  st.setProperty('--vw', w + 'px'); st.setProperty('--vh', h + 'px'); st.setProperty('--rw', h + 'px'); st.setProperty('--rh', w + 'px');
+  VIEW.W = w; VIEW.H = h; VIEW.rot = rot;
+  VIEW.w = rot ? h : w; VIEW.h = rot ? w : h;
+  b.classList.toggle('short', VIEW.h < 520);
+  const key = w + 'x' + h + 'r' + rot;
+  const changed = key !== VIEW.key;
+  VIEW.key = key;
+  return changed;
+}
+function layout(force){ if ((computeView() || force) && renderer) resize(); }
+let layoutTimers = [];
+function scheduleLayout(){ layoutTimers.forEach(clearTimeout); layoutTimers = [0, 150, 450, 1000].map((d) => setTimeout(() => layout(false), d)); }
+function toGame(cx, cy){ if (VIEW.rot === 1) return [cy, VIEW.W - cx]; if (VIEW.rot === -1) return [VIEW.H - cy, cx]; return [cx, cy]; }
 function resize(){
-  const w = Math.max(1, innerWidth), h = Math.max(1, innerHeight);
+  const w = Math.max(1, VIEW.w), h = Math.max(1, VIEW.h);
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   baseFov = computeBaseFov(camera.aspect);
@@ -531,7 +583,7 @@ function resize(){
     road.reflector.getRenderTarget().setSize(Math.max(64, Math.round(w * pr * (q.reflect || 0.3))), Math.max(64, Math.round(h * pr * (q.reflect || 0.3))));
   }
   sizeRadar();
-  $('rotHint').hidden = !(isTouch && h > w);
+  $('rotHint').hidden = !(isTouch && !VIEW.rot && h > w);
 }
 
 /* ============ textures ============ */
@@ -967,7 +1019,7 @@ function setupReflector(){
   if (q.reflect > 0 && !road.reflector){
     const shader = { name: 'RouteMouillee', uniforms: roadUniforms(), vertexShader: ROAD_VS, fragmentShader: ROAD_FS };
     const pr = renderer.getPixelRatio();
-    road.reflector = new Reflector(new THREE.PlaneGeometry(FRONT * 2, 1900), { textureWidth: Math.round(innerWidth * pr * q.reflect), textureHeight: Math.round(innerHeight * pr * q.reflect), clipBias: 0.003, multisample: 0, shader });
+    road.reflector = new Reflector(new THREE.PlaneGeometry(FRONT * 2, 1900), { textureWidth: Math.round(VIEW.w * pr * q.reflect), textureHeight: Math.round(VIEW.h * pr * q.reflect), clipBias: 0.003, multisample: 0, shader });
     road.reflector.material.fog = true;
     road.reflector.material.uniforms.uRoad.value = A.roadTex;
     road.reflector.rotation.x = -Math.PI / 2;
@@ -2052,7 +2104,7 @@ function playerInput(){
 const H = {};
 function cacheHud(){ ['hitsMe', 'board', 'timer', 'item', 'itemIcon', 'itemName', 'feed', 'markers', 'cross', 'lock', 'steer', 'big', 'sub', 'radar', 'heat', 'heatFill', 'heatLbl', 'hint', 'speed', 'alt', 'offline', 'offT', 'pops'].forEach((id) => { H[id] = $(id); }); H.rc = H.radar.getContext('2d'); }
 let radarPx = 132, radarPr = 1;
-function sizeRadar(){ if (!H.radar) return; radarPx = innerWidth < 760 ? 96 : 132; radarPr = Math.min(2, window.devicePixelRatio || 1); H.radar.width = H.radar.height = Math.round(radarPx * radarPr); }
+function sizeRadar(){ if (!H.radar) return; radarPx = (isTouch || VIEW.w < 760) ? 96 : 132; radarPr = Math.min(2, window.devicePixelRatio || 1); H.radar.width = H.radar.height = Math.round(radarPx * radarPr); }
 function flash(big, sub = '', dur = 1.4){ if (!H.big) return; H.big.textContent = big; H.sub.textContent = sub; H.big.classList.add('show'); H.sub.classList.toggle('show', !!sub); game.msgT = dur; }
 function popup(txt, color){
   const d = document.createElement('div'); d.className = 'pop'; d.textContent = txt; if (color) d.style.color = color;
@@ -2095,7 +2147,7 @@ function buildMarkers(){
 }
 let lastTimer = '', lastSpd = -1, lastAlt = -1;
 function hudFrame(dt){
-  const p = game.player, W = innerWidth, Hh = innerHeight;
+  const p = game.player, W = VIEW.w, Hh = VIEW.h;
   const tt = Math.max(0, Math.ceil(game.time));
   const ts = Math.floor(tt / 60) + ':' + String(tt % 60).padStart(2, '0');
   if (ts !== lastTimer){ H.timer.textContent = ts; lastTimer = ts; H.timer.classList.toggle('low', tt <= 10); }
@@ -2198,7 +2250,7 @@ function back(){
   else if (game.state === 'paused') resume();
 }
 function renderSettings(){
-  const keysS = Object.keys(SETS);
+  const keysS = Object.keys(SETS).filter((k) => k !== 'screen' || isTouch);
   $('setRows').innerHTML = keysS.map((k, n) => {
     const d = SETS[k], v = settings[k], i = Math.max(0, d.values.indexOf(v));
     const name = typeof d.names === 'function' ? d.names(v) : d.names[i];
@@ -2233,6 +2285,7 @@ function changeSetting(key, dir){
   i = (i + dir + d.values.length) % d.values.length;
   settings[key] = d.values[i]; store.set(key, settings[key]);
   if (key === 'quality') applyQuality();
+  if (key === 'screen') layout(true);
   if (key === 'sound' || key === 'music') audio.apply();
   renderSettings();
 }
@@ -2493,7 +2546,11 @@ function render(){ composer.render(); }
 
 /* ============ évènements ============ */
 function bindEvents(){
-  addEventListener('resize', resize);
+  addEventListener('resize', scheduleLayout);
+  addEventListener('orientationchange', scheduleLayout);
+  try { if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', scheduleLayout); } catch (e){}
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleLayout);
+  try { new ResizeObserver(() => scheduleLayout()).observe($('vp')); } catch (e){}
   document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
   addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.down = false; });
   addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; mouse.x = e.clientX; mouse.y = e.clientY; mouse.seen = true; });
@@ -2538,14 +2595,16 @@ function bindEvents(){
   zone.addEventListener('pointerdown', (e) => {
     audio.init();
     if (touch.id !== null) return;
-    touch.id = e.pointerId; touch.ox = e.clientX; touch.oy = e.clientY; touch.x = 0; touch.y = 0;
+    const g0 = toGame(e.clientX, e.clientY);
+    touch.id = e.pointerId; touch.ox = g0[0]; touch.oy = g0[1]; touch.x = 0; touch.y = 0;
     try { zone.setPointerCapture(e.pointerId); } catch (er){}
     stick.style.left = touch.ox + 'px'; stick.style.top = touch.oy + 'px'; stick.classList.add('on');
     knob.style.transform = 'translate(0px, 0px)';
   });
   zone.addEventListener('pointermove', (e) => {
     if (e.pointerId !== touch.id) return;
-    const dx = e.clientX - touch.ox, dy = e.clientY - touch.oy, Rr = 56, l = Math.hypot(dx, dy), k = l > Rr ? Rr / l : 1;
+    const g = toGame(e.clientX, e.clientY);
+    const dx = g[0] - touch.ox, dy = g[1] - touch.oy, Rr = 56, l = Math.hypot(dx, dy), k = l > Rr ? Rr / l : 1;
     knob.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
     touch.x = clamp(dx / Rr, -1, 1); touch.y = clamp(dy / Rr, -1, 1);
   });
@@ -2573,6 +2632,7 @@ async function boot(data){
       new Promise((r) => setTimeout(r, 2500)),
     ]);
     if (isTouch) document.body.classList.add('touch');
+    computeView();
     initRenderer();
     buildMaterials();
     scene.environment = buildEnvironment();
@@ -2592,7 +2652,7 @@ async function boot(data){
     UI.panels = { main: $('pMain'), controls: $('pControls'), settings: $('pSettings'), pause: $('pPause'), results: $('pResults') };
     buildMarkers();
     buildComposer();
-    resize();
+    layout(true);
     world.update(0, true);
     pickups.reset(0);
     bindEvents();

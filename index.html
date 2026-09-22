@@ -102,6 +102,29 @@ body.playing,body.playing *{cursor:none;}
 .mi.set .v em{font-style:normal;color:var(--ink);min-width:11ch;text-align:center;}
 .mi.set .dec,.mi.set .inc{color:var(--faint);padding:2px 6px;}
 .mi.set.sel .dec,.mi.set.sel .inc{color:var(--nifo);}
+.mi.back{margin-top:12px;padding:11px 20px;border:1px solid rgba(39,228,255,.65);border-radius:6px;background:rgba(39,228,255,.12);color:var(--ink);font-size:14px;letter-spacing:.22em;box-shadow:0 0 18px rgba(39,228,255,.2);}
+.mi.back:hover,.mi.back.sel{background:rgba(39,228,255,.26);color:#fff;}
+.mi.backTop{position:absolute;z-index:3;left:calc(16px + env(safe-area-inset-left,0px));top:calc(14px + env(safe-area-inset-top,0px));padding:9px 16px;border:1px solid rgba(39,228,255,.65);border-radius:6px;background:rgba(6,14,28,.8);color:var(--ink);font-size:13px;letter-spacing:.22em;box-shadow:0 0 18px rgba(39,228,255,.2);}
+.mi.backTop:hover{background:rgba(39,228,255,.26);}
+.mi .bk{font-size:20px;line-height:1;color:var(--nifo);}
+.mi.set,.mi.back,.mi.backTop{transform:none!important;}
+.mi.set::before,.mi.back::before,.mi.backTop::before{display:none!important;}
+.mlist.wide{gap:6px;}
+#setRows,#ctlRows{touch-action:pan-y;overscroll-behavior:contain;}
+.mi.set{padding:9px 12px;border-radius:6px;border:1px solid rgba(140,190,255,.14);background:rgba(6,12,24,.55);color:var(--ink);}
+.mi.set.sel,.mi.set:hover{background:rgba(39,228,255,.13);border-color:rgba(39,228,255,.6);}
+.mi.set .v em{border:1px solid rgba(39,228,255,.55);border-radius:4px;padding:4px 10px;background:rgba(39,228,255,.1);}
+.mi.set .dec,.mi.set .inc{color:var(--nifo);font-size:19px;padding:2px 8px;}
+body.touch .mi.set,body.short .mi.set{padding:8px 12px;}
+body.touch .mi.back,body.short .mi.back{padding:11px 20px;}
+body.touch .mi.backTop,body.short .mi.backTop{padding:9px 16px;}
+.mlist.wide{width:100%;max-width:470px;}
+.mi.set{min-width:0;}
+.mi.set .k{min-width:0;}
+@media (max-width:760px){ .mi.set b{display:none;} .mi.set{letter-spacing:.12em;font-size:14px;gap:8px;} .mi.set .v{gap:4px;} .mi.set .v em{min-width:8ch;} .mi.set .dec,.mi.set .inc{padding:2px 5px;} }
+body.short #setRows{max-height:calc(var(--lh,375px) - 96px);overflow-y:auto;}
+body.short #ctlRows{max-height:calc(var(--lh,375px) - 170px);overflow-y:auto;}
+body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 .record{margin:6px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--faint);}
 .record b{color:var(--trojan);font-weight:500;}
 .rows{display:grid;gap:10px;margin-top:8px;width:100%;}
@@ -292,6 +315,7 @@ body.short .foot{bottom:8px;}
 </div>
 
 <div id="menu" class="layer" hidden>
+  <button class="mi backTop" id="backTop" data-act="back" hidden><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
   <section class="panel" id="pMain" aria-label="Menu principal">
     <p class="eyebrow"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 42 13.5v21L24 45 6 34.5v-21z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M17 32V16l14 16V16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linejoin="round"/></svg>NIFO WEB <span>//</span> DÉFENSE DU RÉSEAU</p>
     <h1 class="title"><span class="t1">SENTI</span><span class="t2">NELLE</span></h1>
@@ -309,7 +333,7 @@ body.short .foot{bottom:8px;}
     <p class="eyebrow">MANUEL DE VOL</p>
     <h2 class="title sm"><span class="t1">COMMAN</span><span class="t2">DES</span></h2>
     <div class="rows" id="ctlRows"></div>
-    <nav class="mlist"><button class="mi" data-act="back"><b>[01]</b>RETOUR</button></nav>
+    <nav class="mlist"><button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button></nav>
   </section>
   <section class="panel" id="pSettings" hidden aria-label="Réglages">
     <p class="eyebrow">SYSTÈMES</p>
@@ -565,7 +589,7 @@ function computeView(){
   const b = document.body;
   b.classList.toggle('rot', rot !== 0); b.classList.toggle('r1', rot === 1); b.classList.toggle('r2', rot === -1);
   const st = document.documentElement.style;
-  st.setProperty('--vw', w + 'px'); st.setProperty('--vh', h + 'px'); st.setProperty('--rw', h + 'px'); st.setProperty('--rh', w + 'px');
+  st.setProperty('--vw', w + 'px'); st.setProperty('--vh', h + 'px'); st.setProperty('--rw', h + 'px'); st.setProperty('--rh', w + 'px'); st.setProperty('--lh', (rot ? w : h) + 'px');
   VIEW.W = w; VIEW.H = h; VIEW.rot = rot;
   VIEW.w = rot ? h : w; VIEW.h = rot ? w : h;
   b.classList.toggle('short', VIEW.h < 520);
@@ -1921,7 +1945,7 @@ class Sound {
       const fb = ctx.createGain(); fb.gain.value = 0.32; const dl = ctx.createGain(); dl.gain.value = 0.28;
       this.delay.connect(fb); fb.connect(this.delay); this.delay.connect(dl); dl.connect(this.mbus);
       this.noise = this.noiseBuf(2);
-      this.startRain(); this.startEngine();
+      this.startEngine();
       this.ok = true; this.apply(); this.musicMode(this.mode);
       this.step = 0; this.nextT = ctx.currentTime + 0.2;
       this.timer = setInterval(() => this.sched(), 30);
@@ -2296,6 +2320,7 @@ function openPanel(name, push = true){
   UI.cur = name; UI.sel = 0;
   const m = $('menu'); m.hidden = false;
   m.classList.toggle('center', game.state === 'paused' || game.state === 'results');
+  $('backTop').hidden = !(name === 'controls' || name === 'settings');
   if (name === 'settings') renderSettings();
   if (name === 'controls') renderControls();
   if (name === 'main') $('fsItem').hidden = !(isTouch && document.fullscreenEnabled);
@@ -2313,7 +2338,7 @@ function renderSettings(){
     const d = SETS[k], v = settings[k], i = Math.max(0, d.values.indexOf(v));
     const name = typeof d.names === 'function' ? d.names(v) : d.names[i];
     return `<button class="mi set" id="set-${k}" data-set="${k}"><b>[${String(n + 1).padStart(2, '0')}]</b><span class="k">${d.label}</span><span class="v"><span class="dec">‹</span><em>${name}</em><span class="inc">›</span></span></button>`;
-  }).join('') + `<button class="mi" data-act="back"><b>[${String(keysS.length + 1).padStart(2, '0')}]</b>RETOUR</button>`;
+  }).join('') + '<button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>';
   $('setNote').hidden = !(isTouch && settings.pilot === 'tilt' && !sensor.ok);
   highlight();
 }
@@ -2572,7 +2597,7 @@ function update(dt){
   for (const c of world.chunks.values()) for (const b of c.beams){ b.rotation.y = b.userData.ph + t * b.userData.sp; b.rotation.x = b.userData.tilt; }
   // éclairs
   lightning.t -= dt;
-  if (lightning.t <= 0){ lightning.t = rr(18, 40); const b = t; lightning.pulses = [b, b + 0.11, b + 0.29]; audio.thunder(rr(0.8, 2.4)); }
+  if (lightning.t <= 0){ lightning.t = rr(18, 40); const b = t; lightning.pulses = [b, b + 0.11, b + 0.29]; }
   let fl = 0; for (const pt of lightning.pulses){ const d = t - pt; if (d >= 0 && d < 1) fl += Math.exp(-d * 13); }
   fl = Math.min(1.4, fl);
   sky.material.uniforms.uFlash.value = fl;

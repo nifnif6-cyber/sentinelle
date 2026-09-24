@@ -4,6 +4,6 @@ Un jeu Nifo Web. Pluie sur le canyon néon, trois intrus sur le réseau : le plu
 
 Jouer : https://nifnif6-cyber.github.io/sentinelle/
 
-Sur ordinateur, à la souris. Sur téléphone, au doigt.
+Sur ordinateur, à la souris. Sur téléphone, au doigt. Sur iPhone, Partager puis « Sur l'écran d'accueil » pour jouer en plein écran.
 
 Nifo Web · Cybersécurité · Sites web · Applications

@@ -14,6 +14,12 @@
 <meta property="og:url" content="https://nifnif6-cyber.github.io/sentinelle/">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='10' fill='%2303050a'/%3E%3Cpath d='M24 5 40 14.5v19L24 43 8 33.5v-19z' fill='none' stroke='%2327e4ff' stroke-width='3'/%3E%3Cpath d='M18 31V17l12 14V17' fill='none' stroke='%2327e4ff' stroke-width='3.4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sentinelle">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,8 +33,9 @@
   --mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
   --g:16px;
 }
-html,body{height:100%;}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
+/* page figée plein cadre : pas de rebond élastique, pas de sélection, pas de loupe ni de menu d'appui long (iOS) */
+html,body{position:fixed;inset:0;width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;text-size-adjust:100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;background:var(--bg);}
 .layer{position:fixed;inset:0;pointer-events:none;}
 #app{position:fixed;inset:0;overflow:hidden;}
@@ -36,6 +43,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);o
 body.rot #app{inset:auto;top:0;left:0;width:var(--rw);height:var(--rh);transform-origin:0 0;}
 body.r1 #app{transform:translateX(var(--vw)) rotate(90deg);}
 body.r2 #app{transform:translateY(var(--vh)) rotate(-90deg);}
+/* marges sûres vues depuis le cadre du jeu : quand #app est tourné, l'encoche et la barre d'accueil changent de côté */
+:root{--env-t:env(safe-area-inset-top,0px);--env-r:env(safe-area-inset-right,0px);--env-b:env(safe-area-inset-bottom,0px);--env-l:env(safe-area-inset-left,0px);}
+:root.simsafe{--env-t:47px;--env-r:0px;--env-b:34px;--env-l:0px;}
+body{--sa-t:var(--env-t);--sa-r:var(--env-r);--sa-b:var(--env-b);--sa-l:var(--env-l);}
+body.r1{--sa-t:var(--env-r);--sa-r:var(--env-b);--sa-b:var(--env-l);--sa-l:var(--env-t);}
+body.r2{--sa-t:var(--env-l);--sa-r:var(--env-t);--sa-b:var(--env-r);--sa-l:var(--env-b);}
+#saProbe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:var(--env-t) var(--env-r) var(--env-b) var(--env-l);}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;}
 button:focus-visible{outline:1px solid var(--nifo);outline-offset:4px;}
 body.playing,body.playing *{cursor:none;}
@@ -76,7 +90,7 @@ body.playing,body.playing *{cursor:none;}
 /* menus */
 #menu{z-index:20;pointer-events:auto;background:linear-gradient(90deg,rgba(3,5,10,0) 28%,rgba(3,5,10,.5) 66%,rgba(3,5,10,.78));}
 #menu.center{background:radial-gradient(ellipse at center,rgba(3,6,14,.72),rgba(3,5,10,.9));}
-.panel{position:absolute;right:clamp(16px,6vw,104px);top:50%;transform:translateY(-50%);width:min(560px,calc(100% - 32px));display:grid;justify-items:end;text-align:right;gap:14px;}
+.panel{position:absolute;right:calc(clamp(16px,6vw,104px) + var(--sa-r));top:50%;transform:translateY(-50%);width:min(560px,calc(100% - 32px));display:grid;justify-items:end;text-align:right;gap:14px;}
 #menu.center .panel{right:50%;transform:translate(50%,-50%);justify-items:center;text-align:center;}
 .eyebrow{margin:0;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--rootkit);}
 .eyebrow span{color:var(--faint);}
@@ -104,13 +118,13 @@ body.playing,body.playing *{cursor:none;}
 .mi.set.sel .dec,.mi.set.sel .inc{color:var(--nifo);}
 .mi.back{margin-top:12px;padding:11px 20px;border:1px solid rgba(39,228,255,.65);border-radius:6px;background:rgba(39,228,255,.12);color:var(--ink);font-size:14px;letter-spacing:.22em;box-shadow:0 0 18px rgba(39,228,255,.2);}
 .mi.back:hover,.mi.back.sel{background:rgba(39,228,255,.26);color:#fff;}
-.mi.backTop{position:absolute;z-index:3;left:calc(16px + env(safe-area-inset-left,0px));top:calc(14px + env(safe-area-inset-top,0px));padding:9px 16px;border:1px solid rgba(39,228,255,.65);border-radius:6px;background:rgba(6,14,28,.8);color:var(--ink);font-size:13px;letter-spacing:.22em;box-shadow:0 0 18px rgba(39,228,255,.2);}
+.mi.backTop{position:absolute;z-index:3;left:calc(16px + var(--sa-l));top:calc(14px + var(--sa-t));padding:9px 16px;border:1px solid rgba(39,228,255,.65);border-radius:6px;background:rgba(6,14,28,.8);color:var(--ink);font-size:13px;letter-spacing:.22em;box-shadow:0 0 18px rgba(39,228,255,.2);}
 .mi.backTop:hover{background:rgba(39,228,255,.26);}
 .mi .bk{font-size:20px;line-height:1;color:var(--nifo);}
 .mi.set,.mi.back,.mi.backTop{transform:none!important;}
 .mi.set::before,.mi.back::before,.mi.backTop::before{display:none!important;}
 .mlist.wide{gap:6px;}
-#setRows,#ctlRows{touch-action:pan-y;overscroll-behavior:contain;}
+#setRows,#ctlRows{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .mi.set{padding:9px 12px;border-radius:6px;border:1px solid rgba(140,190,255,.14);background:rgba(6,12,24,.55);color:var(--ink);}
 .mi.set.sel,.mi.set:hover{background:rgba(39,228,255,.13);border-color:rgba(39,228,255,.6);}
 .mi.set .v em{border:1px solid rgba(39,228,255,.55);border-radius:4px;padding:4px 10px;background:rgba(39,228,255,.1);}
@@ -131,7 +145,7 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 .krow{display:grid;grid-template-columns:minmax(0,11.5em) minmax(0,1fr);gap:18px;align-items:baseline;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-align:left;}
 .krow kbd{font-family:var(--mono);font-weight:700;color:var(--ink);justify-self:end;text-align:right;}
 .krow span{color:var(--dim);line-height:1.5;}
-.foot{position:absolute;left:var(--g);right:var(--g);bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:10px 24px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--faint);}
+.foot{position:absolute;left:calc(var(--g) + var(--sa-l));right:calc(var(--g) + var(--sa-r));bottom:calc(14px + var(--sa-b));display:flex;justify-content:space-between;gap:10px 24px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--faint);}
 .foot .brand{color:var(--dim);}
 .res{border-collapse:collapse;font-family:var(--mono);font-size:12px;letter-spacing:.14em;margin-top:6px;min-width:min(440px,100%);}
 .res th{font-weight:400;color:var(--faint);font-size:10px;letter-spacing:.24em;padding:6px 10px;text-align:right;}
@@ -144,8 +158,8 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 .hintp{margin:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--trojan);}
 @media (max-width:760px){
   #menu{background:linear-gradient(180deg,rgba(3,5,10,0) 18%,rgba(3,5,10,.62) 52%,rgba(3,5,10,.9));}
-  .panel{left:var(--g);right:var(--g);width:auto;justify-items:start;text-align:left;top:auto;bottom:calc(64px + env(safe-area-inset-bottom,0px));transform:none;}
-  #menu.center .panel{left:var(--g);right:var(--g);top:50%;bottom:auto;transform:translateY(-50%);}
+  .panel{left:calc(var(--g) + var(--sa-l));right:calc(var(--g) + var(--sa-r));width:auto;justify-items:start;text-align:left;top:auto;bottom:calc(64px + var(--sa-b));transform:none;}
+  #menu.center .panel{left:calc(var(--g) + var(--sa-l));right:calc(var(--g) + var(--sa-r));top:50%;bottom:auto;transform:translateY(-50%);}
   .mlist{justify-items:start;margin-top:8px;}
   .mi.sel,.mi:hover{transform:translateX(6px);}
   .foot{font-size:9px;letter-spacing:.14em;}
@@ -155,7 +169,7 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 
 /* interface de vol */
 #hud{z-index:10;font-family:var(--mono);}
-.tl{position:absolute;left:var(--g);top:calc(14px + env(safe-area-inset-top,0px));display:grid;gap:10px;}
+.tl{position:absolute;left:calc(var(--g) + var(--sa-l));top:calc(14px + var(--sa-t));display:grid;gap:10px;}
 .tl .me{display:flex;gap:14px;align-items:baseline;font-size:12px;letter-spacing:.28em;}
 .tl .me .tag{color:var(--nifo);}
 .tl .me .lbl{color:var(--dim);}
@@ -166,7 +180,7 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 #board i{width:7px;height:7px;border-radius:1px;display:inline-block;}
 #board span{min-width:8ch;}
 #board b{color:var(--ink);font-weight:500;min-width:2ch;text-align:right;font-variant-numeric:tabular-nums;}
-.tc{position:absolute;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:grid;justify-items:center;gap:8px;}
+.tc{position:absolute;left:50%;top:calc(10px + var(--sa-t));transform:translateX(-50%);display:grid;justify-items:center;gap:8px;}
 #timer{font-family:var(--display);font-size:clamp(22px,3vw,30px);letter-spacing:.1em;font-weight:300;color:var(--ink);font-variant-numeric:tabular-nums;}
 #timer.low{color:var(--warn);text-shadow:0 0 12px rgba(255,77,109,.6);}
 #item{position:relative;width:56px;height:56px;border-radius:12px;background:rgba(8,14,26,.74);border:1px solid var(--line);display:grid;place-items:center;color:var(--ink);transition:opacity .2s,border-color .2s;}
@@ -177,7 +191,7 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 #item.pulse{animation:pulse .5s ease-out;}
 @keyframes pulse{0%{transform:scale(1.25)}100%{transform:scale(1)}}
 #itemName{font-size:9.5px;letter-spacing:.26em;color:var(--dim);}
-.tr{position:absolute;right:var(--g);top:calc(14px + env(safe-area-inset-top,0px));}
+.tr{position:absolute;right:calc(var(--g) + var(--sa-r));top:calc(14px + var(--sa-t));}
 #feed{list-style:none;margin:0;padding:0;display:grid;gap:5px;justify-items:end;font-size:10.5px;letter-spacing:.2em;}
 #feed li{transition:opacity .6s;}
 #feed li.fade{opacity:0;}
@@ -207,16 +221,16 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 #pops{position:absolute;inset:0;}
 .pop{position:absolute;font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.12em;color:var(--nifo);text-shadow:0 0 12px rgba(39,228,255,.7);animation:pop .9s ease-out forwards;}
 @keyframes pop{0%{opacity:0;transform:translate(-50%,0) scale(.7)}15%{opacity:1;transform:translate(-50%,-10px) scale(1.1)}100%{opacity:0;transform:translate(-50%,-46px) scale(1)}}
-.bl{position:absolute;left:var(--g);bottom:calc(14px + env(safe-area-inset-bottom,0px));}
+.bl{position:absolute;left:calc(var(--g) + var(--sa-l));bottom:calc(14px + var(--sa-b));}
 #radar{width:132px;height:132px;display:block;}
-.bc{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:grid;justify-items:center;gap:6px;width:min(380px,46vw);}
+.bc{position:absolute;left:50%;bottom:calc(16px + var(--sa-b));transform:translateX(-50%);display:grid;justify-items:center;gap:6px;width:min(380px,46vw);}
 #heat{width:100%;height:3px;background:rgba(120,160,220,.18);overflow:hidden;border-radius:2px;}
 #heatFill{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--nifo),#a5f7ff);box-shadow:0 0 10px var(--nifo);}
 #heat.hot #heatFill{background:linear-gradient(90deg,var(--trojan),var(--warn));box-shadow:0 0 10px var(--warn);}
 #heatLbl{font-size:9.5px;letter-spacing:.3em;color:var(--dim);}
 #heatLbl.hot{color:var(--warn);}
 #hint{font-size:9.5px;letter-spacing:.2em;color:var(--faint);text-align:center;line-height:1.8;transition:opacity 1.2s;}
-.br{position:absolute;right:var(--g);bottom:calc(14px + env(safe-area-inset-bottom,0px));text-align:right;display:grid;gap:4px;}
+.br{position:absolute;right:calc(var(--g) + var(--sa-r));bottom:calc(14px + var(--sa-b));text-align:right;display:grid;gap:4px;}
 #speed{font-family:var(--display);font-size:clamp(22px,3vw,32px);font-weight:300;letter-spacing:.08em;font-variant-numeric:tabular-nums;}
 #speed small{font-family:var(--mono);font-size:.42em;letter-spacing:.3em;color:var(--dim);margin-left:.4em;}
 #alt{font-size:9.5px;letter-spacing:.3em;color:var(--dim);}
@@ -228,9 +242,9 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 @media (max-width:760px){
   #board{display:none;}
   #radar{width:96px;height:96px;}
-  .bc{width:min(240px,50vw);bottom:calc(10px + env(safe-area-inset-bottom,0px));}
+  .bc{width:min(240px,50vw);bottom:calc(10px + var(--sa-b));}
   #hint{display:none;}
-  .tr{top:calc(56px + env(safe-area-inset-top,0px));}
+  .tr{top:calc(56px + var(--sa-t));}
   #feed{font-size:9px;}
 }
 
@@ -240,21 +254,71 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 #stick{position:absolute;left:0;top:0;width:118px;height:118px;margin:-59px 0 0 -59px;border-radius:50%;border:1px solid rgba(160,220,255,.35);background:radial-gradient(circle,rgba(39,228,255,.08),rgba(39,228,255,0) 70%);opacity:0;transition:opacity .15s;}
 #stick.on{opacity:1;}
 #knob{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(39,228,255,.28);border:1px solid rgba(170,235,255,.8);box-shadow:0 0 14px rgba(39,228,255,.5);}
-.tbtns{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(2,auto);gap:12px;align-items:end;pointer-events:auto;}
+.tbtns{position:absolute;right:calc(14px + var(--sa-r));bottom:calc(18px + var(--sa-b));display:grid;grid-template-columns:repeat(2,auto);gap:12px;align-items:end;pointer-events:auto;}
 .tb{width:64px;height:64px;border-radius:50%;border:1px solid rgba(160,220,255,.4);background:rgba(6,14,28,.5);font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink);display:grid;place-items:center;touch-action:none;}
 .tb.fire{width:86px;height:86px;border-color:rgba(255,45,149,.7);box-shadow:0 0 16px rgba(255,45,149,.35);font-size:12px;}
 .tb.down{background:rgba(39,228,255,.25);}
-.tb.pause{position:absolute;right:calc(14px + env(safe-area-inset-right,0px));top:calc(10px + env(safe-area-inset-top,0px));width:40px;height:40px;font-size:12px;pointer-events:auto;}
-body.touch .br{bottom:calc(206px + env(safe-area-inset-bottom,0px));}
+.tb.pause{position:absolute;right:calc(14px + var(--sa-r));top:calc(10px + var(--sa-t));width:40px;height:40px;font-size:12px;pointer-events:auto;}
+body.touch{--tb:70px;--tbf:94px;}
+@media (min-width:700px) and (min-height:700px){ body.touch{--tb:84px;--tbf:112px;} }
+body.touch .br{bottom:calc(30px + var(--tb) + 12px + var(--tbf) + var(--sa-b));}
 body.touch .mi{padding:11px 0;}
-body.touch .tr{top:calc(60px + env(safe-area-inset-top,0px));}
-body.touch .tb{width:70px;height:70px;}
-body.touch .tb.fire{width:94px;height:94px;}
+body.touch .tr{top:calc(60px + var(--sa-t));}
+body.touch .tb{width:var(--tb);height:var(--tb);}
+body.touch .tb.fire{width:var(--tbf);height:var(--tbf);}
 body.touch .tb.pause{width:42px;height:42px;}
-body.touch .bc{top:calc(122px + env(safe-area-inset-top,0px));bottom:auto;}
+body.touch .bc{top:calc(122px + var(--sa-t));bottom:auto;}
+/* manoeuvres : FREIN maintenu, DEMI TOUR, balayage d'esquive */
+#touch .tb,#swipeZone,#stickZone{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
+#swipeZone{position:absolute;left:52%;top:0;right:0;bottom:0;pointer-events:auto;}
+.tbtns2{position:absolute;right:calc(40px + var(--tb,70px) + var(--tbf,94px) + var(--sa-r));bottom:calc(18px + var(--sa-b));display:grid;gap:12px;pointer-events:auto;}
+body.tall .tbtns2{right:calc(14px + var(--sa-r));bottom:calc(44px + var(--tb,70px) + var(--tbf,94px) + var(--sa-b));grid-auto-flow:column;}
+body.touch.tall .br{bottom:calc(58px + var(--tb) + var(--tb) + var(--tbf) + var(--sa-b));}
+.tb.mv2{text-align:center;line-height:1.3;font-size:9.5px;letter-spacing:.12em;}
+.tb.brake{border-color:rgba(255,181,46,.7);box-shadow:0 0 12px rgba(255,181,46,.22);}
+.tb.brake.down{background:rgba(255,181,46,.32);}
+.tb.turn{background:radial-gradient(circle closest-side,rgba(6,14,28,.8) 0 83%,transparent 85%),conic-gradient(rgba(39,228,255,.85) calc(var(--p,1) * 1turn),rgba(120,160,220,.16) 0);}
+.tb.turn.down{background:radial-gradient(circle closest-side,rgba(39,228,255,.3) 0 83%,transparent 85%),conic-gradient(rgba(39,228,255,.85) calc(var(--p,1) * 1turn),rgba(120,160,220,.16) 0);}
+.tb.turn.wait{color:var(--dim);}
+#mnv{display:flex;gap:16px;justify-content:center;font-size:9px;letter-spacing:.24em;color:var(--dim);}
+.mv{display:flex;align-items:center;gap:7px;transition:color .2s;}
+.mv i{position:relative;width:24px;height:3px;border-radius:2px;background:rgba(120,160,220,.18);overflow:hidden;}
+.mv b{position:absolute;inset:0;background:var(--nifo);transform-origin:0 50%;}
+.mv.ready{color:var(--ink);}
+.mv.ready b{box-shadow:0 0 8px var(--nifo);}
+body.touch #mvTurn{display:none;}
+#gear{font-size:9.5px;letter-spacing:.3em;color:var(--trojan);}
+#gear:empty{display:none;}
+/* alerte mur proche : le bord de l'écran rougit du côté du mur */
+#wall{position:absolute;inset:0;overflow:hidden;}
+#wall i{position:absolute;opacity:0;will-change:opacity;}
+#wall .wl{left:0;top:0;bottom:0;width:14%;background:linear-gradient(90deg,rgba(255,77,109,.62),rgba(255,77,109,0));}
+#wall .wr{right:0;top:0;bottom:0;width:14%;background:linear-gradient(270deg,rgba(255,77,109,.62),rgba(255,77,109,0));}
+#wall .wt{left:0;right:0;top:0;height:16%;background:linear-gradient(180deg,rgba(255,77,109,.55),rgba(255,77,109,0));}
+#wall .wb{left:0;right:0;bottom:0;height:16%;background:linear-gradient(0deg,rgba(255,77,109,.55),rgba(255,77,109,0));}
+#wallTag{position:absolute;left:50%;top:74%;transform:translateX(-50%);font-size:12px;font-weight:500;letter-spacing:.3em;margin-right:-.3em;color:#ffb3c1;text-shadow:0 0 10px rgba(255,77,109,.85);white-space:nowrap;opacity:0;transition:opacity .15s;}
+#wallTag.on{opacity:1;}
+/* fenêtres : guide d'installation, diagnostic, incidents */
+.modal{z-index:60;display:grid;place-items:center;pointer-events:auto;background:rgba(3,5,10,.84);padding:calc(16px + var(--sa-t)) calc(16px + var(--sa-r)) calc(16px + var(--sa-b)) calc(16px + var(--sa-l));}
+.mbox{width:min(540px,100%);max-height:100%;overflow:auto;display:grid;gap:14px;padding:22px;border:1px solid rgba(39,228,255,.45);border-radius:10px;background:rgba(6,12,24,.94);box-shadow:0 0 30px rgba(39,228,255,.18);text-align:left;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.mbox h2{margin:0;font-weight:600;font-size:22px;letter-spacing:.14em;color:var(--ink);}
+.mbox p,.mbox li{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--dim);}
+.mbox b{color:var(--ink);font-weight:500;}
+.mbox ol{margin:0;padding-left:22px;display:grid;gap:8px;}
+.mbtns{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;}
+.mbtn{font-family:var(--display);font-weight:500;font-size:14px;letter-spacing:.2em;padding:11px 18px;border:1px solid rgba(39,228,255,.65);border-radius:6px;background:rgba(39,228,255,.12);color:var(--ink);}
+.mbtn.alt{border-color:rgba(140,190,255,.3);background:transparent;color:var(--dim);}
+.mbtn:hover{background:rgba(39,228,255,.26);color:#fff;}
+#diag{z-index:61;}
+#diag .mbox{grid-template-rows:auto auto minmax(0,1fr) auto;overflow:hidden;}
+#diagTxt{min-height:0;overflow:auto;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+#diagTxt{margin:0;font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-word;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default;}
+.share{display:inline-block;width:17px;height:17px;vertical-align:-3px;color:var(--nifo);}
+.ver{font:inherit;color:var(--faint);letter-spacing:inherit;padding:6px 8px;margin:-6px -8px;}
+.eyebrow svg{cursor:pointer;}
 @media (max-width:760px){ .tl .me .lbl{display:none;} .tl .me{letter-spacing:.2em;gap:10px;} }
 body.short #menu{background:linear-gradient(90deg,rgba(3,5,10,0) 18%,rgba(3,5,10,.62) 58%,rgba(3,5,10,.88));}
-body.short .panel{left:auto;right:clamp(16px,5vw,64px);width:min(470px,calc(100% - 32px));top:50%;bottom:auto;transform:translateY(-50%);justify-items:end;text-align:right;gap:8px;}
+body.short .panel{left:auto;right:calc(clamp(16px,5vw,64px) + var(--sa-r));width:min(470px,calc(100% - 32px));top:50%;bottom:auto;transform:translateY(-50%);justify-items:end;text-align:right;gap:8px;}
 body.short #menu.center .panel{left:auto;right:50%;top:50%;bottom:auto;transform:translate(50%,-50%);justify-items:center;text-align:center;}
 body.short .title{font-size:44px;}
 body.short .title.sm{font-size:34px;}
@@ -281,6 +345,7 @@ body.short .foot{bottom:8px;}
 <canvas id="gl" aria-label="Scène du jeu Sentinelle"></canvas>
 
 <div id="hud" class="layer" hidden>
+  <div id="wall" aria-hidden="true"><i class="wl"></i><i class="wr"></i><i class="wt"></i><i class="wb"></i></div>
   <div class="tl">
     <div class="me"><span class="tag">NIFO</span><span class="lbl">TOUCHES</span><span class="num" id="hitsMe">0</span></div>
     <ol id="board"></ol>
@@ -299,17 +364,23 @@ body.short .foot{bottom:8px;}
   <div id="msg"><div id="big"></div><div id="sub"></div></div>
   <div id="offline"><div>SYSTÈMES HORS LIGNE<small id="offT">2,0 S</small></div></div>
   <div class="bl"><canvas id="radar" width="264" height="264"></canvas></div>
-  <div class="bc"><div id="heat"><i id="heatFill"></i></div><div id="heatLbl">BOOST</div><div id="hint"></div></div>
-  <div class="br"><div id="speed">0<small>KM/H</small></div><div id="alt">ALT 0 M</div></div>
+  <div class="bc"><div id="heat"><i id="heatFill"></i></div><div id="heatLbl">BOOST</div><div id="mnv"><span class="mv ready" id="mvDodge"><i><b></b></i>ESQUIVE</span><span class="mv ready" id="mvTurn"><i><b></b></i>DEMI TOUR</span></div><div id="hint"></div></div>
+  <div class="br"><div id="speed">0<small>KM/H</small></div><div id="alt">ALT 0 M</div><div id="gear"></div></div>
+  <div id="wallTag" aria-live="polite"></div>
 </div>
 
 <div id="touch" class="layer" hidden>
   <div id="stickZone"><div id="stick"><div id="knob"></div></div></div>
+  <div id="swipeZone"></div>
   <div class="tbtns">
     <button class="tb" data-t="use">OBJET</button>
     <button class="tb" data-t="burn">SAUT</button>
     <button class="tb" data-t="boost">BOOST</button>
     <button class="tb fire" data-t="fire">TIR</button>
+  </div>
+  <div class="tbtns2">
+    <button class="tb mv2 turn" data-t="uturn" id="tbTurn" aria-label="Demi tour">DEMI<br>TOUR</button>
+    <button class="tb mv2 brake" data-t="brake" aria-label="Frein">FREIN</button>
   </div>
   <button class="tb pause" data-t="pause" aria-label="Pause">II</button>
 </div>
@@ -362,7 +433,7 @@ body.short .foot{bottom:8px;}
       <button class="mi" data-act="menu"><b>[02]</b>MENU</button>
     </nav>
   </section>
-  <footer class="foot"><span id="footKeys">↑↓ CHOISIR · ENTRÉE VALIDER · ÉCHAP RETOUR</span><span class="brand">UN JEU NIFO WEB · CYBERSÉCURITÉ · SITES WEB · APPLICATIONS</span></footer>
+  <footer class="foot"><span id="footKeys">↑↓ CHOISIR · ENTRÉE VALIDER · ÉCHAP RETOUR</span><span class="brand">UN JEU NIFO WEB · CYBERSÉCURITÉ · SITES WEB · APPLICATIONS · <button class="ver" id="ver" aria-label="Version du jeu">V2.0</button></span></footer>
 </div>
 
 <div id="loader" class="layer">
@@ -375,21 +446,72 @@ body.short .foot{bottom:8px;}
     <button class="in-go" id="introGo" hidden>TOUCHE POUR ENTRER</button>
   </div>
 </div>
+
+<div id="guide" class="layer modal" hidden role="dialog" aria-modal="true" aria-labelledby="guideT">
+  <div class="mbox">
+    <p class="eyebrow">SUR IPHONE ET IPAD</p>
+    <h2 id="guideT">JOUER EN PLEIN ÉCRAN</h2>
+    <p>Safari garde ses barres autour du jeu. Ajoute Sentinelle à l'écran d'accueil : il s'ouvrira en plein écran, comme une application.</p>
+    <ol>
+      <li>Touche le bouton <b>Partager</b> <svg class="share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M8 10H6v11h12V10h-2"/></svg> de Safari. S'il n'apparaît pas, touche d'abord <b>« ··· »</b>.</li>
+      <li>Choisis <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>
+      <li>Lance Sentinelle depuis sa nouvelle icône.</li>
+    </ol>
+    <div class="mbtns"><button class="mbtn" id="guideOk">J'AI COMPRIS</button></div>
+  </div>
 </div>
 
+<div id="diag" class="layer modal" hidden role="dialog" aria-modal="true" aria-labelledby="diagT">
+  <div class="mbox">
+    <p class="eyebrow">POUR LES TESTEURS</p>
+    <h2 id="diagT">DIAGNOSTIC</h2>
+    <pre id="diagTxt"></pre>
+    <div class="mbtns"><button class="mbtn alt" id="diagClose">FERMER</button><button class="mbtn" id="diagCopy">COPIER LE RAPPORT</button></div>
+  </div>
+</div>
+
+<div id="fatal" class="layer modal" hidden role="alertdialog" aria-modal="true" aria-labelledby="fatalT">
+  <div class="mbox">
+    <p class="eyebrow">INCIDENT</p>
+    <h2 id="fatalT">AFFICHAGE INTERROMPU</h2>
+    <p id="fatalMsg"></p>
+    <div class="mbtns"><button class="mbtn alt" id="fatalDiag">DIAGNOSTIC</button><button class="mbtn alt" id="fatalResume" hidden>REPRENDRE</button><button class="mbtn" id="fatalReload">RELANCER</button></div>
+  </div>
+</div>
+</div>
+<div id="saProbe" aria-hidden="true"></div>
+
 <script>
-setTimeout(function(){
-  if (window.__nifoStarted) return;
-  var s = document.getElementById('ldSub');
-  if (s && !s.classList.contains('err')){ s.textContent = "Le moteur 3D ne s'est pas chargé. Vérifie la connexion, puis recharge la page."; s.className = 'ld-sub err'; }
-}, 20000);
+/* avant le moteur : erreurs gardées pour le diagnostic, message clair si le jeu ne démarre pas, choix du moteur 3D */
+(function(){
+  var errs = window.nifoErrs = [];
+  var shown = false, later = null;
+  function note(m){ errs.push({ t: Date.now(), m: String(m).slice(0, 300) }); if (errs.length > 20) errs.shift(); }
+  function fail(txt){
+    if (window.__nifoStarted || window.__nifoBooting || shown) return;
+    var s = document.getElementById('ldSub'); if (!s) return;
+    shown = true; s.hidden = false; s.textContent = txt; s.className = 'ld-sub err';
+  }
+  window.addEventListener('error', function(e){
+    note((e && e.message ? e.message : 'erreur') + (e && e.filename ? ' @ ' + String(e.filename).split('/').pop() + ':' + e.lineno : ''));
+    // un module qui échoue peut encore être relancé par le polyfill : on laisse un délai avant de conclure
+    if (!later) later = setTimeout(function(){ fail("Le jeu n'a pas pu démarrer sur ce navigateur. Mets à jour ton appareil (iOS 15 au minimum) ou essaie un navigateur récent."); }, 12000);
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){ var r = e && e.reason; note('promesse : ' + (r && r.message ? r.message : r)); });
+  setTimeout(function(){ fail("Le moteur 3D ne s'est pas chargé. Vérifie la connexion, puis recharge la page."); }, 20000);
+  // three.js 0.186 s'écrit avec des blocs static de classe, lus par Safari seulement depuis 16.4, la version qui
+  // apporte aussi les cartes d'import : sans elles, on charge la 0.183 (la plus récente sans ces blocs) par le polyfill
+  var native = !!(window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports('importmap'));
+  if (/[?&]simios=old(&|$)/.test(location.search)) native = false;
+  var v = window.nifoThree = native ? '0.186.0' : '0.183.0', base = 'https://cdn.jsdelivr.net/npm/three@' + v + '/';
+  var map = document.createElement('script');
+  map.type = 'importmap';
+  map.textContent = JSON.stringify({ imports: { three: base + 'build/three.module.js', 'three/addons/': base + 'examples/jsm/' } });
+  var me = document.currentScript;
+  if (me && me.parentNode) me.parentNode.insertBefore(map, me.nextSibling); else document.head.appendChild(map);
+})();
 </script>
-<script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.0/examples/jsm/"
-} }
-</script>
+<script async src="https://cdn.jsdelivr.net/npm/es-module-shims@2.8.4/dist/es-module-shims.js"></script>
 <script type="module">
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -413,14 +535,33 @@ const rr = (a, b, r = R) => a + (b - a) * r();
 const pick = (arr, r = R) => arr[Math.floor(r() * arr.length) % arr.length];
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FORCE_MOBILE = false;
-const isTouch = FORCE_MOBILE || matchMedia('(pointer: coarse)').matches;
-const buzz = (p) => { if (!isTouch) return; try { if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return; if (navigator.vibrate) navigator.vibrate(p); } catch (e){} };
+// plateforme : iPhone, iPad (qui se présente comme un Mac tactile), Android. Drapeaux de test dans Chromium :
+// ?simios (iPhone Safari), ?simios=standalone (app installée), ?simios=ipad, ?simios=old (moteur 0.183),
+// &simaudio (son interrompu), &simlost=5 (perte du contexte 3D après 5 s), &simrestore, &simnogl2, &simnofloat, &simsafe
+const QS = new URLSearchParams(location.search);
+const SIM = { ios: QS.has('simios'), mode: QS.get('simios') || '', audio: QS.has('simaudio'), lost: +(QS.get('simlost') || 0), restore: QS.has('simrestore'), nogl2: QS.has('simnogl2'), nofloat: QS.has('simnofloat'), safe: QS.has('simsafe') };
+const UA = navigator.userAgent || '';
+const PLAT = (() => {
+  const iPad = SIM.ios ? SIM.mode === 'ipad' : (/iPad/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1));
+  const iPhone = SIM.ios ? SIM.mode !== 'ipad' : /iPhone|iPod/.test(UA);
+  const os = /OS (\d+)[_.](\d+)(?:[_.](\d+))?/.exec(UA), sv = /Version\/(\d+)\.(\d+)/.exec(UA);
+  const mm = (q) => { try { return matchMedia(q).matches; } catch (e){ return false; } };
+  const standalone = SIM.ios ? SIM.mode === 'standalone' : (navigator.standalone === true || mm('(display-mode: standalone)') || mm('(display-mode: fullscreen)'));
+  return { iPad, iPhone, iOS: iPad || iPhone, android: /Android/.test(UA), standalone, ver: !(iPad || iPhone) ? '' : SIM.ios ? 'simulé' : os ? os[1] + '.' + os[2] + (os[3] ? '.' + os[3] : '') : sv ? sv[1] + '.' + sv[2] : '?' };
+})();
+if (SIM.safe) document.documentElement.classList.add('simsafe');
+const isTouch = FORCE_MOBILE || PLAT.iOS || matchMedia('(pointer: coarse)').matches;
+// vibration : absente sur iOS, et seulement après un premier geste
+const buzz = (p) => { if (!isTouch || SIM.ios || typeof navigator.vibrate !== 'function') return; try { if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return; navigator.vibrate(p); } catch (e){} };
 const T1 = new V3(), T2 = new V3(), T3 = new V3(), T4 = new V3(), T5 = new V3();
 const M4 = new THREE.Matrix4(), Q1 = new THREE.Quaternion(), ZAX = new V3(0, 0, 1), S1 = new V3(1, 1, 1);
 
+// stockage : localStorage peut manquer ou refuser d'écrire (navigation privée, quota) ; la mémoire prend le relais
+const memStore = {};
 const store = {
-  get(k, d){ try { const v = localStorage.getItem('nifoweb.sentinelle.' + k); return v === null ? d : JSON.parse(v); } catch (e){ return d; } },
-  set(k, v){ try { localStorage.setItem('nifoweb.sentinelle.' + k, JSON.stringify(v)); } catch (e){} },
+  ok: (() => { try { const k = 'nifoweb.sentinelle.__t'; localStorage.setItem(k, '1'); localStorage.removeItem(k); return true; } catch (e){ return false; } })(),
+  get(k, d){ try { const v = localStorage.getItem('nifoweb.sentinelle.' + k); if (v !== null) return JSON.parse(v); } catch (e){} return Object.prototype.hasOwnProperty.call(memStore, k) ? memStore[k] : d; },
+  set(k, v){ memStore[k] = v; try { localStorage.setItem('nifoweb.sentinelle.' + k, JSON.stringify(v)); } catch (e){} },
 };
 const settings = {
   quality: store.get('quality', isTouch ? 'mobile' : 'balanced'),
@@ -434,6 +575,8 @@ const settings = {
   pilot: store.get('pilot', 'stick'),
 };
 let best = store.get('best', 0);
+// relance après un incident : le record voyage aussi dans l'adresse, au cas où le stockage manque
+try { const hb = /[#&]best=(\d+)/.exec(location.hash); if (hb){ best = Math.max(best, +hb[1]); store.set('best', best); history.replaceState(null, '', location.pathname + location.search); } } catch (e){}
 
 const QUALITY = {
   low:      { pr: 0.85, maxPr: 1.25, samples: 0, bloom: false, reflect: 0,    rain: 1400, chunks: 5, fly: 50,  ground: 36, peds: 0,   fog: 0.0038 },
@@ -460,6 +603,14 @@ const CH = 120, ROAD = 20, FRONT = 26, CEIL = 150;
 const SPEED_MIN = 28, SPEED_MAX = 62, SPEED_DEF = 42;
 const BOLT_SPEED = 260, MATCH_TIME = 180, OFFLINE_T = 2.0;
 const HIT_R = 2.6, BODY_R = 1.5;
+// ville ouverte : une allée de service longe le canyon derrière les façades, un mur de tours la ferme
+const LANE_IN = 56, LANE_OUT = 84;
+// manoeuvres (toutes en secondes et mètres, indépendantes de la cadence d'images)
+const BRAKE_DEC = 50, REV_MAX = 11, REV_ACC = 9, REV_WAIT = 0.3;
+const TURN_T = 0.95, TURN_CD = 4;
+const DODGE_T = 0.34, DODGE_D = 7.5, DODGE_CD = 2.5, DODGE_INV = 0.38;
+const WALL_R = 6, WALL_TTC = 0.9, WALL_GAP = 2.2;
+const DUCTS = [1.95, 1.25, -1.95, 1.25, 2.1, -1.35, -2.1, -1.35];
 const DISPLAY_FONT = '"Chakra Petch", "Bahnschrift", "Arial Narrow", Arial, sans-serif';
 const SIGN_FONT = '"Chakra Petch", "Yu Gothic", "Hiragino Sans", "Noto Sans JP", "Meiryo", "Microsoft YaHei", sans-serif';
 const MONO_FONT = '"JetBrains Mono", Consolas, monospace';
@@ -470,7 +621,7 @@ const PILOTS = [
   { id: 'trojan', name: 'TROJAN', hex: '#ffb52e' },
   { id: 'botnet', name: 'BOTNET', hex: '#a77bff' },
 ];
-PILOTS.forEach((p) => { p.color = new THREE.Color(p.hex); p.rgb = [p.color.r, p.color.g, p.color.b]; });
+PILOTS.forEach((p) => { p.color = new THREE.Color(p.hex); p.rgb = [p.color.r, p.color.g, p.color.b]; p.ghost = [p.color.r * 2.2, p.color.g * 2.2, p.color.b * 2.2]; });
 
 const NEON = [[0.1, 0.85, 1.0], [1.0, 0.12, 0.55], [1.0, 0.62, 0.12], [0.6, 0.42, 1.0], [0.3, 1.0, 0.6], [1.0, 0.3, 0.2], [0.85, 0.92, 1.0]];
 const neon = (r, k) => { const c = pick(NEON, r); return [c[0] * k, c[1] * k, c[2] * k]; };
@@ -503,7 +654,36 @@ function initRenderer(){
   const moon = new THREE.DirectionalLight(0x9db8ff, 0.35);
   moon.position.set(-0.4, 1, 0.25);
   scene.add(moon);
+  // rendu flottant indispensable au bloom et au reflet ; sans lui, préréglage PERFORMANCE (voir boot)
+  GPU.float = !SIM.nofloat && (renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float'));
+  try { const gl = renderer.getContext(), di = gl.getExtension('WEBGL_debug_renderer_info'); GPU.name = String(di ? gl.getParameter(di.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)); } catch (e){}
+  // perte du contexte 3D (mémoire saturée sur téléphone) : pause, message, relance
+  const cv = renderer.domElement;
+  cv.addEventListener('webglcontextlost', onGlLost, false);
+  cv.addEventListener('webglcontextrestored', onGlRestored, false);
   applyPixelRatio(false);
+}
+const GPU = { float: true, name: '', lost: false, loseExt: null };
+// WebGL 2 est indispensable (three.js ne gère plus WebGL 1) : test sur un canevas jetable
+function webgl2Ok(){
+  if (SIM.nogl2 || !window.WebGL2RenderingContext) return false;
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) return false;
+    const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext();
+    return true;
+  } catch (e){ return false; }
+}
+function onGlLost(){
+  GPU.lost = true;
+  if (game.state === 'playing' || game.state === 'countdown') pauseGame();
+  showIncident('lost');
+  if (SIM.restore) setTimeout(() => { try { if (GPU.loseExt) GPU.loseExt.restoreContext(); } catch (e){} }, 2500);
+}
+function onGlRestored(){
+  GPU.lost = false;
+  try { scene.environment = buildEnvironment(); } catch (e){ diagError(e); }
+  showIncident('restored');
 }
 function pixelRatio(){ const q = QUALITY[settings.quality]; return Math.min(window.devicePixelRatio || 1, q.maxPr) * q.pr * perfScale; }
 function applyPixelRatio(doResize = true){ renderer.setPixelRatio(pixelRatio()); if (doResize) resize(); }
@@ -553,11 +733,11 @@ function buildComposer(){
   const q = QUALITY[settings.quality];
   if (composer){ try { composer.dispose(); } catch (e){} }
   const size = renderer.getDrawingBufferSize(new THREE.Vector2());
-  const rt = new THREE.WebGLRenderTarget(Math.max(2, size.x), Math.max(2, size.y), { type: THREE.HalfFloatType, samples: q.samples });
+  const rt = new THREE.WebGLRenderTarget(Math.max(2, size.x), Math.max(2, size.y), { type: GPU.float ? THREE.HalfFloatType : THREE.UnsignedByteType, samples: GPU.float ? q.samples : 0 });
   composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
   bloomPass = new UnrealBloomPass(new THREE.Vector2(size.x, size.y), 0.72, 0.5, 0.9);
-  bloomPass.enabled = q.bloom;
+  bloomPass.enabled = q.bloom && GPU.float;
   composer.addPass(bloomPass);
   composer.addPass(new OutputPass());
   fxPass = new ShaderPass(FinalShader);
@@ -593,6 +773,7 @@ function computeView(){
   VIEW.W = w; VIEW.H = h; VIEW.rot = rot;
   VIEW.w = rot ? h : w; VIEW.h = rot ? w : h;
   b.classList.toggle('short', VIEW.h < 520);
+  b.classList.toggle('tall', VIEW.h > VIEW.w);
   const key = w + 'x' + h + 'r' + rot;
   const changed = key !== VIEW.key;
   VIEW.key = key;
@@ -650,6 +831,11 @@ function startSensor(gesture){
   } else attach();
 }
 function toGame(cx, cy){ if (VIEW.rot === 1) return [cy, VIEW.W - cx]; if (VIEW.rot === -1) return [VIEW.H - cy, cx]; return [cx, cy]; }
+// bords gauche et droit de l'écran réel : Safari y place ses gestes page précédente et suivante. clientX reste
+// dans le repère de l'écran quelle que soit la rotation de #app (en tourné, ces bords sont le haut et le bas du jeu) :
+// le jeu ignore tout toucher qui y commence (manette, balayage d'esquive, coup de doigt sur TIR)
+const EDGE_PX = 24;
+function nearEdge(cx){ const w = VIEW.W || innerWidth; return cx < EDGE_PX || cx > w - EDGE_PX; }
 function resize(){
   const w = Math.max(1, VIEW.w), h = Math.max(1, VIEW.h);
   renderer.setSize(w, h, false);
@@ -688,13 +874,13 @@ const STYLES = [
 ];
 function makeFacade(st, seed){
   const r = rng(seed);
-  const W = FAC.cols * FAC.px, H = FAC.rows * FAC.px;
+  const W = FAC.cols * FAC.px, H = FAC.rows * FAC.px, k = FAC.px / 32;   // k : textures deux fois plus fines sur téléphone
   const ca = makeCanvas(W, H), ce = makeCanvas(W, H), cr = makeCanvas(W, H);
   const a = ca.getContext('2d'), e = ce.getContext('2d'), g = cr.getContext('2d');
   a.fillStyle = st.frame; a.fillRect(0, 0, W, H);
   e.fillStyle = '#000'; e.fillRect(0, 0, W, H);
   g.fillStyle = `rgb(${st.rf},${st.rf},${st.rf})`; g.fillRect(0, 0, W, H);
-  for (let i = 0; i < 2600; i++){ const v = 90 + ((r() * 90) | 0); a.fillStyle = `rgba(${v},${v + 10},${v + 30},0.05)`; a.fillRect((r() * W) | 0, (r() * H) | 0, 1 + ((r() * 2) | 0), 1); }
+  for (let i = 0, n = Math.round(2600 * k * k); i < n; i++){ const v = 90 + ((r() * 90) | 0); a.fillStyle = `rgba(${v},${v + 10},${v + 30},0.05)`; a.fillRect((r() * W) | 0, (r() * H) | 0, 1 + ((r() * 2) | 0), 1); }
   const WARM = ['#ffd8a6', '#ffc68a', '#ffe7c7', '#ffb877', '#fff0d8'];
   const COOL = ['#cfe7ff', '#a9d6ff', '#e9f3ff', '#8ff1ff', '#ff9bd6', '#b9a8ff'];
   const boost = []; for (let j = 0; j < FAC.rows; j++) boost.push(r() < 0.12 ? 0.5 : r() < 0.25 ? -0.18 : 0);
@@ -703,7 +889,7 @@ function makeFacade(st, seed){
     for (let i = 0; i < FAC.cols; i++){
       const x0 = i * FAC.px, y0 = j * FAC.px;
       if (band){ a.fillStyle = st.base; a.fillRect(x0, y0 + FAC.px * 0.3, FAC.px, FAC.px * 0.4); continue; }
-      const wx = x0 + st.ix, wy = y0 + st.iy, ww = FAC.px - st.ix * 2, wh = FAC.px - st.iy * 2;
+      const wx = x0 + st.ix * k, wy = y0 + st.iy * k, ww = FAC.px - st.ix * 2 * k, wh = FAC.px - st.iy * 2 * k;
       a.fillStyle = st.glass; a.fillRect(wx, wy, ww, wh);
       const gr = a.createLinearGradient(wx, wy, wx + ww, wy + wh); gr.addColorStop(0, 'rgba(130,170,230,0.13)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
       a.fillStyle = gr; a.fillRect(wx, wy, ww, wh);
@@ -716,7 +902,7 @@ function makeFacade(st, seed){
         const lg = e.createLinearGradient(0, wy, 0, wy + wh); lg.addColorStop(0, 'rgba(0,0,0,0.35)'); lg.addColorStop(1, 'rgba(0,0,0,0)');
         e.fillStyle = lg; e.fillRect(wx, wy, ww, wh);
         if (r() < 0.3){ e.fillStyle = '#000'; e.fillRect(wx, wy, ww, wh * (0.25 + r() * 0.5)); }
-        if (r() < 0.14){ e.fillStyle = 'rgba(0,0,0,0.85)'; e.fillRect(wx + ww * (0.15 + r() * 0.6), wy + wh * 0.3, Math.max(2, ww * 0.14), wh * 0.7); }
+        if (r() < 0.14){ e.fillStyle = 'rgba(0,0,0,0.85)'; e.fillRect(wx + ww * (0.15 + r() * 0.6), wy + wh * 0.3, Math.max(2 * k, ww * 0.14), wh * 0.7); }
         a.globalAlpha = 0.18; a.fillStyle = col; a.fillRect(wx, wy, ww, wh); a.globalAlpha = 1;
       }
     }
@@ -845,6 +1031,7 @@ const fogFade = `
 function fogUniforms(extra){ const u = THREE.UniformsUtils.merge([THREE.UniformsLib.fog]); return Object.assign(u, extra); }
 
 function buildMaterials(){
+  FAC.px = settings.quality === 'low' || settings.quality === 'mobile' ? 16 : 32;   // mémoire graphique réduite sur téléphone
   A.facades = STYLES.map((st, i) => makeFacade(st, 1000 + i * 77));
   A.bld = A.facades.map((f) => new THREE.MeshStandardMaterial({ map: f.map, emissiveMap: f.emissive, emissive: 0xffffff, emissiveIntensity: 1.15, roughnessMap: f.rough, roughness: 1, metalness: 0.28 }));
   A.deco = new THREE.MeshStandardMaterial({ color: 0x161c28, roughness: 0.48, metalness: 0.72 });
@@ -1097,7 +1284,7 @@ function buildRoad(){
 }
 function setupReflector(){
   const q = QUALITY[settings.quality];
-  if (q.reflect > 0 && !road.reflector){
+  if (q.reflect > 0 && GPU.float && !road.reflector){
     const shader = { name: 'RouteMouillee', uniforms: roadUniforms(), vertexShader: ROAD_VS, fragmentShader: ROAD_FS };
     const pr = renderer.getPixelRatio();
     road.reflector = new Reflector(new THREE.PlaneGeometry(FRONT * 2, 1900), { textureWidth: Math.round(VIEW.w * pr * q.reflect), textureHeight: Math.round(VIEW.h * pr * q.reflect), clipBias: 0.003, multisample: 0, shader });
@@ -1106,8 +1293,8 @@ function setupReflector(){
     road.reflector.rotation.x = -Math.PI / 2;
     scene.add(road.reflector);
   }
-  if (road.reflector) road.reflector.visible = q.reflect > 0;
-  road.plain.visible = !(q.reflect > 0);
+  if (road.reflector) road.reflector.visible = q.reflect > 0 && GPU.float;
+  road.plain.visible = !(road.reflector && road.reflector.visible);
 }
 
 /* ============ pluie ============ */
@@ -1225,6 +1412,20 @@ function genChunk(k){
   const halos = [], boxes = [], extra = [], beams = [];
   const cross = r() < 0.32 ? { a: z0 + 28 + r() * 40, w: 22 + r() * 6 } : null;
   if (cross) cross.b = cross.a + cross.w;
+  // ville ouverte : ouvertures de la rangée de façades, par côté (carrefour, rue transversale, passages)
+  const holes = [[], []], side = (s) => holes[s > 0 ? 1 : 0];
+  const holeIn = (s, a, b) => { const h = side(s); for (let i = 0; i < h.length; i++) if (a < h[i].b && b > h[i].a) return true; return false; };
+  if (cross){ holes[0].push({ a: cross.a, b: cross.b, kind: 'carrefour' }); holes[1].push({ a: cross.a, b: cross.b, kind: 'carrefour' }); }
+  for (const s of [-1, 1]){
+    if (r() < 0.55){
+      const w = 14 + r() * 6;
+      for (let t = 0; t < 4; t++){
+        const a = z0 + 12 + r() * (CH - 24 - w);
+        if (!holeIn(s, a - 14, a + w + 14)){ side(s).push({ a, b: a + w, kind: 'rue' }); break; }
+      }
+    }
+    side(s).sort((p, q) => p.a - q.a);
+  }
 
   const building = (s, front, depth, za, zb, h, base = 0) => {
     const xa = s > 0 ? front : -(front + depth), xb = s > 0 ? front + depth : -front;
@@ -1263,72 +1464,111 @@ function genChunk(k){
     deco.box(Math.min(x, s * (front - 0.05)), Math.max(x, s * (front - 0.05)), y0 - 0.5, y0 + hh + 0.5, zA - 0.5, zB + 0.5);
     faceQuad(sign, s, s * (front - 0.34), y0, y0 + hh, zA, zB, [slot.u0, slot.v0, slot.u1, slot.v0, slot.u1, slot.v1, slot.u0, slot.v1], neon(r, 3), r());
   };
+  // un immeuble de la rangée de façades : son arrière s'arrête avant l'allée
+  const facade = (s, z, zb, edgeA, edgeB) => {
+    const front = FRONT + (r() < 0.25 ? r() * 6 : 0);
+    const depth = LANE_IN - front - r() * 3;
+    const tall = r() < 0.28;
+    const h = tall ? 150 + r() * 130 : 45 + r() * 105;
+    building(s, front, depth, z, zb, h);
+    if (h > 90 && r() < 0.4){ const inset = 5 + r() * 7; building(s, front + inset, depth - inset, z + 2, zb - 2, h + 20 + r() * 50, h); }
+    // vitrines au rez de chaussée
+    const sc = r() < 0.45 ? [0.62, 0.46, 0.3] : neon(r, 0.62);
+    let zz = z + 1;
+    while (zz < zb - 2){ const ze = Math.min(zb - 1, zz + 3 + r() * 6); if (r() < 0.8) faceQuad(glow, s, s * (front - 0.08), 0.35, 3.3, zz, ze, [0, 0, 1, 0, 1, 1, 0, 1], sc); zz = ze + 0.8; }
+    if (r() < 0.75) bladeSign(s, front, z, zb, h);
+    if (r() < 0.45) flatSign(s, front, z, zb, h);
+    if (r() < 0.35){ const ax = s * (front + depth * 0.5), az = (z + zb) / 2, ah = 6 + r() * 12; deco.box(ax - 0.2, ax + 0.2, h, h + ah, az - 0.2, az + 0.2); halos.push({ x: ax, y: h + ah + 0.3, z: az, c: [3, 0.18, 0.12], s: 3.2, b: r() }); }
+    if (tall && r() < 0.3){
+      const piv = new THREE.Group(); piv.rotation.order = 'YXZ';
+      piv.position.set(s * (front + depth * 0.5), h + 1, (z + zb) / 2);
+      const m = new THREE.Mesh(A.beamGeo, A.beamMat); piv.add(m);
+      piv.userData = { ph: r() * TAU, sp: rr(0.15, 0.35, r) * (r() < 0.5 ? -1 : 1), tilt: rr(0.25, 0.55, r) };
+      beams.push(piv); extra.push(piv);
+      halos.push({ x: piv.position.x, y: h + 1.4, z: piv.position.z, c: [2.2, 2.6, 3.2], s: 5, b: -1 });
+    }
+    // néon d'angle : il signale l'entrée d'une rue ou d'un passage (quelques centimètres contre la façade)
+    if (edgeA || edgeB){
+      const ec = neon(r, 2.4), top = Math.min(h - 1, 12 + r() * 20);
+      const xa = Math.min(s * (front - 0.07), s * (front + 0.3)), xb = Math.max(s * (front - 0.07), s * (front + 0.3));
+      if (edgeA) glow.box(xa, xb, 0.3, top, z - 0.07, z + 0.3, { col: ec, py: false });
+      if (edgeB) glow.box(xa, xb, 0.3, top, zb - 0.3, zb + 0.07, { col: ec, py: false });
+    }
+  };
+  // remplit un intervalle de la rangée : des immeubles séparés par des fentes trop étroites pour le vaisseau,
+  // ou par un passage assez large pour s'y faufiler, jamais une largeur entre les deux
+  const fillRow = (s, ia, ib, openA, openB) => {
+    let z = ia, edgeA = openA;
+    while (ib - z > 0.5){
+      let len = 14 + r() * 24;
+      if (ib - z <= len + 12) len = ib - z;
+      const zb = z + len, last = zb >= ib - 0.01;
+      let gap = 0;
+      if (!last) gap = (ib - zb > 26 && r() < 0.28) ? 9 + r() * 3 : 0.8 + r() * (WALL_GAP - 0.8);
+      const pass = gap > 8;
+      facade(s, z, zb, edgeA, last ? openB : pass);
+      if (last) break;
+      if (pass) side(s).push({ a: zb, b: zb + gap, kind: 'passage' });
+      edgeA = pass;
+      z = zb + gap;
+    }
+  };
 
   for (const s of [-1, 1]){
-    let z = z0;
-    while (z < z1 - 0.5){
-      if (cross && z >= cross.a - 0.01 && z < cross.b){ z = cross.b; continue; }
-      let limit = z1;
-      if (cross && z < cross.a) limit = Math.min(limit, cross.a);
-      const zb = Math.min(z + 14 + r() * 24, limit);
-      if (zb - z < 7){ z = zb + 0.01; continue; }
-      const front = FRONT + (r() < 0.25 ? r() * 6 : 0);
-      const depth = 22 + r() * 30;
-      const tall = r() < 0.28;
-      const h = tall ? 150 + r() * 130 : 45 + r() * 105;
-      building(s, front, depth, z, zb, h);
-      if (h > 90 && r() < 0.4){ const inset = 5 + r() * 7; building(s, front + inset, depth - inset, z + 2, zb - 2, h + 20 + r() * 50, h); }
-      // vitrines au rez de chaussée
-      const sc = r() < 0.45 ? [0.62, 0.46, 0.3] : neon(r, 0.62);
-      let zz = z + 1;
-      while (zz < zb - 2){ const ze = Math.min(zb - 1, zz + 3 + r() * 6); if (r() < 0.8) faceQuad(glow, s, s * (front - 0.08), 0.35, 3.3, zz, ze, [0, 0, 1, 0, 1, 1, 0, 1], sc); zz = ze + 0.8; }
-      if (r() < 0.75) bladeSign(s, front, z, zb, h);
-      if (r() < 0.45) flatSign(s, front, z, zb, h);
-      if (r() < 0.35){ const ax = s * (front + depth * 0.5), az = (z + zb) / 2, ah = 6 + r() * 12; deco.box(ax - 0.2, ax + 0.2, h, h + ah, az - 0.2, az + 0.2); halos.push({ x: ax, y: h + ah + 0.3, z: az, c: [3, 0.18, 0.12], s: 3.2, b: r() }); }
-      if (tall && r() < 0.3){
-        const piv = new THREE.Group(); piv.rotation.order = 'YXZ';
-        piv.position.set(s * (front + depth * 0.5), h + 1, (z + zb) / 2);
-        const m = new THREE.Mesh(A.beamGeo, A.beamMat); piv.add(m);
-        piv.userData = { ph: r() * TAU, sp: rr(0.15, 0.35, r) * (r() < 0.5 ? -1 : 1), tilt: rr(0.25, 0.55, r) };
-        beams.push(piv); extra.push(piv);
-        halos.push({ x: piv.position.x, y: h + 1.4, z: piv.position.z, c: [2.2, 2.6, 3.2], s: 5, b: -1 });
-      }
-      z = zb + 1.5 + r() * 3;
+    const ops = side(s).slice(), endZ = z1 - (0.8 + r() * (WALL_GAP - 0.8));
+    let ia = z0;
+    for (let j = 0; j <= ops.length; j++){
+      fillRow(s, ia, j < ops.length ? ops[j].a : endZ, j > 0, j < ops.length);
+      if (j < ops.length) ia = ops[j].b;
     }
+    // rangée arrière : un mur de tours continu, plus haut que le plafond de vol, qui ferme l'allée
+    const endB = z1 - (0.8 + r() * 1.2);
     let zz = z0;
-    while (zz < z1){
-      const zb = Math.min(zz + 26 + r() * 40, z1);
-      if (zb - zz > 10) building(s, FRONT + 56 + r() * 22, 40 + r() * 50, zz, zb, 120 + r() * 200);
-      zz = zb + 4 + r() * 8;
+    while (endB - zz > 0.5){
+      let len = 26 + r() * 40;
+      if (endB - zz <= len + 16) len = endB - zz;
+      const zb = zz + len, bf = LANE_OUT + (r() < 0.3 ? r() * 5 : 0);
+      building(s, bf, 40 + r() * 50, zz, zb, CEIL + 12 + r() * 160);
+      // vitrines et appliques côté allée
+      const sc = neon(r, 0.5);
+      let q = zz + 1;
+      while (q < zb - 2){ const qe = Math.min(zb - 1, q + 4 + r() * 8); if (r() < 0.6) faceQuad(glow, s, s * (bf - 0.08), 0.35, 3, q, qe, [0, 0, 1, 0, 1, 1, 0, 1], sc); q = qe + 1.2; }
+      for (let lz = zz + 6; lz < zb - 3; lz += 22 + r() * 10) halos.push({ x: s * (bf - 0.5), y: 5.5, z: lz, c: [0.5, 0.4, 0.28], s: 3.2, b: -1 });
+      zz = zb + 0.8 + r() * 1.2;
     }
     // bordure de trottoir
     const cx0 = s > 0 ? ROAD : -ROAD - 0.3, cx1 = s > 0 ? ROAD + 0.3 : -ROAD;
     deco.box(cx0, cx1, 0, 0.16, z0, z1, { py: true });
   }
-  // passerelle au dessus du canyon
+  // passerelle au dessus du canyon, jamais devant une ouverture (ses bouts restent dans les façades)
   if (r() < 0.5){
-    const zc = z0 + 22 + r() * (CH - 44), y0 = 16 + r() * 95, th = 2.6, d = 4.5 + r() * 4;
-    const xa = -FRONT - 3, xb = FRONT + 3;
-    deco.box(xa, xb, y0, y0 + th, zc - d, zc + d, { ny: true });
-    boxes.push({ minX: xa, maxX: xb, minY: y0, maxY: y0 + th, minZ: zc - d, maxZ: zc + d, t: 1 });
-    const ec = neon(r, 2.6);
-    for (const e of [-1, 1]){
-      glow.box(xa, xb, y0 + th - 0.04, y0 + th + 0.12, zc + e * d - 0.12, zc + e * d + 0.12, { col: ec });
-      glow.box(xa, xb, y0 + th + 1.0, y0 + th + 1.1, zc + e * (d - 0.35) - 0.05, zc + e * (d - 0.35) + 0.05, { col: [ec[0] * 0.5, ec[1] * 0.5, ec[2] * 0.5] });
-    }
-    for (let x = xa + 5; x < xb - 3; x += 6.5){ glow.box(x - 0.7, x + 0.7, y0 - 0.06, y0, zc - 0.35, zc + 0.35, { col: [2.2, 2.3, 2.5], py: false }); halos.push({ x, y: y0 - 0.4, z: zc, c: [0.45, 0.5, 0.6], s: 3, b: -1 }); }
-    if (y0 < 52 && r() < 0.6){
-      for (const px of [-11, 11]){
-        deco.box(px - 1, px + 1, 0, y0, zc - 1, zc + 1);
-        boxes.push({ minX: px - 1, maxX: px + 1, minY: 0, maxY: y0, minZ: zc - 1, maxZ: zc + 1, t: 2 });
-        glow.box(px - 1.03, px + 1.03, 2.2, 2.5, zc - 1.03, zc + 1.03, { col: ec, py: false });
+    let zc = z0 + 22 + r() * (CH - 44);
+    const y0 = 16 + r() * 95, th = 2.6, d = 4.5 + r() * 4;
+    const clear = (c) => !holeIn(-1, c - d - 1, c + d + 1) && !holeIn(1, c - d - 1, c + d + 1);
+    if (!clear(zc)) zc = z0 + 22 + r() * (CH - 44);
+    if (clear(zc)){
+      const xa = -FRONT - 3, xb = FRONT + 3;
+      deco.box(xa, xb, y0, y0 + th, zc - d, zc + d, { ny: true });
+      boxes.push({ minX: xa, maxX: xb, minY: y0, maxY: y0 + th, minZ: zc - d, maxZ: zc + d, t: 1 });
+      const ec = neon(r, 2.6);
+      for (const e of [-1, 1]){
+        glow.box(xa, xb, y0 + th - 0.04, y0 + th + 0.12, zc + e * d - 0.12, zc + e * d + 0.12, { col: ec });
+        glow.box(xa, xb, y0 + th + 1.0, y0 + th + 1.1, zc + e * (d - 0.35) - 0.05, zc + e * (d - 0.35) + 0.05, { col: [ec[0] * 0.5, ec[1] * 0.5, ec[2] * 0.5] });
+      }
+      for (let x = xa + 5; x < xb - 3; x += 6.5){ glow.box(x - 0.7, x + 0.7, y0 - 0.06, y0, zc - 0.35, zc + 0.35, { col: [2.2, 2.3, 2.5], py: false }); halos.push({ x, y: y0 - 0.4, z: zc, c: [0.45, 0.5, 0.6], s: 3, b: -1 }); }
+      if (y0 < 52 && r() < 0.6){
+        for (const px of [-11, 11]){
+          deco.box(px - 1, px + 1, 0, y0, zc - 1, zc + 1);
+          boxes.push({ minX: px - 1, maxX: px + 1, minY: 0, maxY: y0, minZ: zc - 1, maxZ: zc + 1, t: 2 });
+          glow.box(px - 1.03, px + 1.03, 2.2, 2.5, zc - 1.03, zc + 1.03, { col: ec, py: false });
+        }
       }
     }
   }
-  // réverbères
+  // réverbères, jamais devant une ouverture
   for (let z = z0 + 8; z < z1; z += 30){
     for (const s of [-1, 1]){
-      if (cross && z > cross.a - 2 && z < cross.b + 2) continue;
+      if (holeIn(s, z - 2, z + 2)) continue;
       const x = s * (ROAD + 1.0), arm = s * (ROAD - 1.8);
       deco.box(x - 0.12, x + 0.12, 0, 8.5, z - 0.12, z + 0.12);
       deco.box(Math.min(x, arm), Math.max(x, arm), 8.3, 8.5, z - 0.1, z + 0.1);
@@ -1337,15 +1577,19 @@ function genChunk(k){
     }
   }
   if (cross){ for (let x = -ROAD + 1.2; x < ROAD - 1; x += 2.2) glow.box(x, x + 1.1, 0.02, 0.05, cross.a + 1.5, cross.a + 5.5, { col: [0.22, 0.23, 0.25] }); }
-  // hologramme publicitaire Nifo Web
+  // hologramme publicitaire Nifo Web, contre une façade pleine
   if (r() < 0.55){
-    const s = r() < 0.5 ? -1 : 1, y = 30 + r() * 50, zc = z0 + 24 + r() * (CH - 48);
-    const m = new THREE.Mesh(A.holoGeo, A.holoMat);
-    m.position.set(s * (FRONT - 0.7), y + 4, zc);
-    m.rotation.y = s > 0 ? -Math.PI / 2 : Math.PI / 2;
-    m.renderOrder = 4;
-    extra.push(m);
-    for (const e of [-1, 1]) glow.box(s > 0 ? FRONT - 0.7 : -FRONT + 0.6, s > 0 ? FRONT - 0.6 : -FRONT + 0.7, y - 0.4, y + 8.4, zc + e * 16.2 - 0.12, zc + e * 16.2 + 0.12, { col: [0.3, 2.2, 3] });
+    let s = r() < 0.5 ? -1 : 1;
+    const y = 30 + r() * 50, zc = z0 + 24 + r() * (CH - 48);
+    if (holeIn(s, zc - 16.6, zc + 16.6)) s = -s;
+    if (!holeIn(s, zc - 16.6, zc + 16.6)){
+      const m = new THREE.Mesh(A.holoGeo, A.holoMat);
+      m.position.set(s * (FRONT - 0.7), y + 4, zc);
+      m.rotation.y = s > 0 ? -Math.PI / 2 : Math.PI / 2;
+      m.renderOrder = 4;
+      extra.push(m);
+      for (const e of [-1, 1]) glow.box(s > 0 ? FRONT - 0.7 : -FRONT + 0.6, s > 0 ? FRONT - 0.6 : -FRONT + 0.7, y - 0.4, y + 8.4, zc + e * 16.2 - 0.12, zc + e * 16.2 + 0.12, { col: [0.3, 2.2, 3] });
+    }
   }
 
   const group = new THREE.Group();
@@ -1356,7 +1600,7 @@ function genChunk(k){
   if (halos.length) group.add(makeHalos(halos));
   extra.forEach((e) => group.add(e));
   scene.add(group);
-  return { k, z0, z1, group, boxes, beams };
+  return { k, z0, z1, group, boxes, beams, holes };
 }
 function disposeChunk(c){
   scene.remove(c.group);
@@ -1386,26 +1630,35 @@ const world = {
     }
     return null;
   },
-  segHit(a, b){
+  // premier impact du segment a → b (fraction 0..1) ou null ; bld : seulement les immeubles
+  segHit(a, b, bld){
     const ka = Math.floor(Math.min(a.z, b.z) / CH), kb = Math.floor(Math.max(a.z, b.z) / CH);
     const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
     let best = null;
     for (let kk = ka; kk <= kb; kk++){
       const c = this.chunks.get(kk); if (!c) continue;
-      for (const o of c.boxes){
-        let t0 = 0, t1 = 1, ok = true;
-        const ax = [[a.x, dx, o.minX, o.maxX], [a.y, dy, o.minY, o.maxY], [a.z, dz, o.minZ, o.maxZ]];
-        for (let q = 0; q < 3 && ok; q++){
-          const [s0, d, mn, mx] = ax[q];
-          if (Math.abs(d) < 1e-9){ if (s0 < mn || s0 > mx) ok = false; }
-          else { let ta = (mn - s0) / d, tb = (mx - s0) / d; if (ta > tb){ const t = ta; ta = tb; tb = t; } if (ta > t0) t0 = ta; if (tb < t1) t1 = tb; if (t0 > t1) ok = false; }
-        }
-        if (ok && (best === null || t0 < best)) best = t0;
+      const bx = c.boxes;
+      for (let i = 0; i < bx.length; i++){
+        const o = bx[i];
+        if (bld && o.t !== 0) continue;
+        const t0 = slabHit(a.x, dx, o.minX, o.maxX, a.y, dy, o.minY, o.maxY, a.z, dz, o.minZ, o.maxZ);
+        if (t0 >= 0 && (best === null || t0 < best)) best = t0;
       }
     }
     return best;
   },
 };
+// test des trois tranches d'une boîte, sans allocation : fraction d'entrée ou -1
+function slabHit(ax, dx, x0, x1, ay, dy, y0, y1, az, dz, z0, z1){
+  let t0 = 0, t1 = 1, ta, tb, t;
+  if (Math.abs(dx) < 1e-9){ if (ax < x0 || ax > x1) return -1; }
+  else { ta = (x0 - ax) / dx; tb = (x1 - ax) / dx; if (ta > tb){ t = ta; ta = tb; tb = t; } if (ta > t0) t0 = ta; if (tb < t1) t1 = tb; if (t0 > t1) return -1; }
+  if (Math.abs(dy) < 1e-9){ if (ay < y0 || ay > y1) return -1; }
+  else { ta = (y0 - ay) / dy; tb = (y1 - ay) / dy; if (ta > tb){ t = ta; ta = tb; tb = t; } if (ta > t0) t0 = ta; if (tb < t1) t1 = tb; if (t0 > t1) return -1; }
+  if (Math.abs(dz) < 1e-9){ if (az < z0 || az > z1) return -1; }
+  else { ta = (z0 - az) / dz; tb = (z1 - az) / dz; if (ta > tb){ t = ta; ta = tb; tb = t; } if (ta > t0) t0 = ta; if (tb < t1) t1 = tb; if (t0 > t1) return -1; }
+  return t0;
+}
 
 /* ============ circulation et passants ============ */
 class Traffic {
@@ -1607,22 +1860,97 @@ class Ship {
     this.heat = 0; this.overheat = false; this.boost = false; this.vy = 0; this.burnCd = 0; this.offline = 0; this.invuln = 0;
     this.dead = false; this.respawn = 0; this.item = null; this.shield = 0; this.overdrive = 0; this.fireCd = 0; this.gun = 1; this.wob = R() * 10; this.minSpd = SPEED_MIN;
     this.fwd.set(Math.sin(yaw), 0, Math.cos(yaw)); this.vel.copy(this.fwd).multiplyScalar(this.speed);
+    this.resetMoves();
+  }
+  resetMoves(){
+    this.braking = false; this.stopT = 0;
+    this.turnT = 0; this.turnCd = 0; this.turnDir = 1; this.turnYaw0 = 0; this.turnFx = 0; this.turnFz = 1;
+    this.dodgeT = 0; this.dodgeCd = 0; this.dodgeInv = 0; this.dodgeDir = 1; this.dodgeLen = DODGE_D;
+  }
+  // demi tour express : pivot de 180 degrés sur place, la vitesse s'inverse sans dérive latérale
+  startTurn(sx){
+    this.turnT = TURN_T; this.turnCd = TURN_CD; this.turnYaw0 = this.yaw;
+    this.turnFx = Math.sin(this.yaw); this.turnFz = Math.cos(this.yaw);
+    let dir;
+    if (Math.abs(sx) > 0.25) dir = sx > 0 ? -1 : 1;
+    else {
+      // la caméra passe du côté dégagé (virage à gauche : elle balaie la droite du vaisseau)
+      const rx = -this.turnFz, rz = this.turnFx, p = this.pos;
+      const okR = !world.sphereHit(T1.set(p.x + rx * 9.5, p.y + 3.1, p.z + rz * 9.5), 1.2);
+      const okL = !world.sphereHit(T1.set(p.x - rx * 9.5, p.y + 3.1, p.z - rz * 9.5), 1.2);
+      dir = okR && !okL ? 1 : okL && !okR ? -1 : (p.x * this.turnFz > 0 ? 1 : -1);
+    }
+    this.turnDir = dir;
+    if (this.p.player){ audio.uturn(); buzz(25); }
+  }
+  // esquive : bond latéral, invulnérable un instant ; raccourci si un mur est sur la trajectoire
+  startDodge(dir){
+    const rx = -Math.cos(this.yaw) * dir, rz = Math.sin(this.yaw) * dir, p = this.pos, v = this.vel;
+    let len = DODGE_D;
+    for (let q = 0; q < 4 && len > 0; q++){
+      let hit = false;
+      for (let i = 1; i <= 3 && !hit; i++){
+        const u = i / 3, lu = 1 - (1 - u) * (1 - u) * (1 - u);
+        if (world.sphereHit(T1.set(p.x + v.x * DODGE_T * u + rx * len * lu, p.y + v.y * DODGE_T * u, p.z + v.z * DODGE_T * u + rz * len * lu), BODY_R + 0.4)) hit = true;
+      }
+      if (!hit) break;
+      len = q < 2 ? len * 0.55 : 0;
+    }
+    this.dodgeT = DODGE_T; this.dodgeCd = DODGE_CD; this.dodgeInv = DODGE_INV; this.dodgeDir = dir; this.dodgeLen = len;
+    this.ghost();
+    if (this.p.player){ audio.dodge(1, 0); buzz(15); }
+    else audio.dodge(clamp(1 - p.distanceTo(camera.position) / 160, 0, 1) * 0.7, panOf(p));
+  }
+  // silhouette fantôme laissée au départ de l'esquive
+  ghost(){
+    const c = this.p.ghost, cy = Math.cos(this.yaw), sy = Math.sin(this.yaw), p = this.pos;
+    for (let i = 0; i < 4; i++){
+      const lx = DUCTS[i * 2], lz = DUCTS[i * 2 + 1], wx = cy * lx + sy * lz, wz = -sy * lx + cy * lz;
+      P.emit(p.x + wx, p.y, p.z + wz, 0, 0, 0, c, 1.6, 0.45, 0, 0, -0.5);
+      P.emit(p.x + wx * 0.5, p.y, p.z + wz * 0.5, 0, 0, 0, c, 1.0, 0.42, 0, 0, -0.5);
+    }
+    for (let j = -2; j <= 2; j++) P.emit(p.x + sy * j * 1.1, p.y, p.z + cy * j * 1.1, 0, 0, 0, c, 1.3, 0.45, 0, 0, -0.5);
+  }
+  // traînée pendant le bond
+  trail(){
+    const c = this.p.ghost, cy = Math.cos(this.yaw), sy = Math.sin(this.yaw), p = this.pos;
+    for (let i = 0; i < 4; i++){ const lx = DUCTS[i * 2], lz = DUCTS[i * 2 + 1]; P.emit(p.x + cy * lx + sy * lz, p.y, p.z - sy * lx + cy * lz, 0, 0, 0, c, 0.85, 0.28, 0, 0, -0.4); }
+    P.emit(p.x, p.y, p.z, 0, 0, 0, c, 1.2, 0.32, 0, 0, -0.4);
   }
   step(dt, inp){
     if (this.dead){ this.respawn -= dt; if (this.respawn <= 0) this.revive(); return; }
     this.invuln = Math.max(0, this.invuln - dt); this.burnCd = Math.max(0, this.burnCd - dt);
+    this.turnCd = Math.max(0, this.turnCd - dt); this.dodgeCd = Math.max(0, this.dodgeCd - dt); this.dodgeInv = Math.max(0, this.dodgeInv - dt);
     if (this.shield > 0) this.shield = Math.max(0, this.shield - dt);
     if (this.overdrive > 0) this.overdrive = Math.max(0, this.overdrive - dt);
     let off = this.offline > 0;
     if (off){ this.offline -= dt; if (this.offline <= 0){ this.offline = 0; this.invuln = 1.0; this.vy = Math.max(this.vy, 0); off = false; if (this.p.player){ flash('EN LIGNE', '', 0.7); } } }
     const sx = off ? 0 : clamp(inp.x, -1, 1), sy = off ? 0 : clamp(inp.y, -1, 1);
-    this.yaw = wrapA(this.yaw - sx * 1.55 * dt);
-    this.pitch = damp(this.pitch, off ? -0.08 : clamp(-sy * 0.78, -0.78, 0.78), off ? 1.4 : 3.4, dt);
+    // manoeuvres : demi tour et esquive ne se chevauchent pas
+    if (!off && inp.uturn && this.turnT <= 0 && this.turnCd <= 0 && this.dodgeT <= 0) this.startTurn(sx);
+    if (!off && inp.dodge && this.dodgeCd <= 0 && this.dodgeT <= 0 && this.turnT <= 0) this.startDodge(inp.dodge > 0 ? 1 : -1);
+    const braking = !off && !!inp.brake;
+    if (braking && !this.braking && this.p.player && this.speed > 8) audio.brake();
+    this.braking = braking;
     this.wob += dt * (off ? 11 : 1.3);
-    this.roll = damp(this.roll, off ? Math.sin(this.wob) * 0.7 : sx * 0.95, off ? 3 : 5.5, dt);
+    const turning = this.turnT > 0;
+    let tc = 1;
+    if (turning){
+      // pivot en douceur (départ et arrivée sans à-coup), le pilotage reprend à la fin
+      this.turnT = Math.max(0, this.turnT - dt);
+      const u = 1 - this.turnT / TURN_T, e = u * u * u * (u * (u * 6 - 15) + 10);
+      this.yaw = wrapA(this.turnYaw0 + this.turnDir * Math.PI * e);
+      this.pitch = damp(this.pitch, 0, 5, dt);
+      this.roll = damp(this.roll, -this.turnDir * Math.sin(Math.PI * u) * 1.05, 9, dt);
+      tc = Math.cos(Math.PI * e);
+    } else {
+      this.yaw = wrapA(this.yaw - sx * 1.55 * dt);
+      this.pitch = damp(this.pitch, off ? -0.08 : clamp(-sy * 0.78, -0.78, 0.78), off ? 1.4 : 3.4, dt);
+      this.roll = damp(this.roll, off ? Math.sin(this.wob) * 0.7 : sx * 0.95, off ? 3 : 5.5, dt);
+    }
     if (!off) this.target = clamp(this.target + inp.throttle * 24 * dt, this.minSpd || SPEED_MIN, SPEED_MAX);
     const od = this.overdrive > 0, was = this.boost;
-    if (off) this.boost = false;
+    if (off || braking) this.boost = false;
     else if (od) this.boost = true;
     else if (inp.boost && !this.overheat){
       this.boost = true; this.heat += dt / 2.6;
@@ -1631,12 +1959,29 @@ class Ship {
     if (!this.boost || od) this.heat = Math.max(0, this.heat - dt / (this.overheat ? 2.4 : 3.4));
     if (this.overheat && this.heat <= 0.3) this.overheat = false;
     if (this.boost && !was && this.p.player) audio.boost();
-    this.speed = off ? Math.max(20, this.speed - 10 * dt) : damp(this.speed, this.target * (this.boost ? (od ? 1.75 : 1.45) : 1), this.boost ? 2.4 : 1.6, dt);
+    // vitesse : frein jusqu'à l'arrêt, puis marche arrière lente si on garde le frein
+    if (off) this.speed = this.speed > 20 ? Math.max(20, this.speed - 10 * dt) : this.speed < 0 ? damp(this.speed, 0, 1.5, dt) : this.speed;
+    else if (braking){
+      if (this.speed > 0){ this.speed = Math.max(0, this.speed - BRAKE_DEC * dt); this.stopT = 0; }
+      else { this.stopT += dt; if (this.stopT > REV_WAIT) this.speed = Math.max(-REV_MAX, this.speed - REV_ACC * dt); }
+    }
+    else this.speed = damp(this.speed, this.target * (this.boost ? (od ? 1.75 : 1.45) : 1), this.boost ? 2.4 : 1.6, dt);
     if (!off && inp.burn && this.burnCd <= 0){ this.vy = 17; this.burnCd = 1.1; if (this.p.player) audio.burn(); for (let i = 0; i < 10; i++) P.emit(this.pos.x + rr(-1.5, 1.5), this.pos.y - 0.6, this.pos.z + rr(-1.5, 1.5), rr(-3, 3), -rr(8, 16), rr(-3, 3), [this.p.rgb[0] * 2.5, this.p.rgb[1] * 2.5, this.p.rgb[2] * 2.5], 0.9, 0.45, 2.5); }
     this.vy = off ? this.vy - 3.2 * dt : damp(this.vy, 0, 2.3, dt);
     const cp = Math.cos(this.pitch);
     this.fwd.set(Math.sin(this.yaw) * cp, Math.sin(this.pitch), Math.cos(this.yaw) * cp);
-    this.vel.copy(this.fwd).multiplyScalar(this.speed); this.vel.y += this.vy;
+    // pendant le demi tour la vitesse reste sur l'axe de départ : elle passe par zéro puis repart dans l'autre sens
+    if (turning) this.vel.set(this.turnFx * this.speed * tc * cp, Math.sin(this.pitch) * this.speed, this.turnFz * this.speed * tc * cp);
+    else this.vel.copy(this.fwd).multiplyScalar(this.speed);
+    this.vel.y += this.vy;
+    if (this.dodgeT > 0){
+      // bond latéral : déplacement exact de dodgeLen quelle que soit la cadence (profil en sortie rapide)
+      const u0 = 1 - this.dodgeT / DODGE_T;
+      this.dodgeT = Math.max(0, this.dodgeT - dt);
+      const u1 = 1 - this.dodgeT / DODGE_T, a0 = 1 - u0, a1 = 1 - u1;
+      const lv = this.dodgeLen * (a0 * a0 * a0 - a1 * a1 * a1) / Math.max(dt, 1e-4) * this.dodgeDir;
+      this.vel.x -= Math.cos(this.yaw) * lv; this.vel.z += Math.sin(this.yaw) * lv;
+    }
     const n = Math.min(6, Math.max(1, Math.ceil(this.vel.length() * dt / 1.2)));
     const h = dt / n;
     for (let i = 0; i < n; i++){
@@ -1645,6 +1990,7 @@ class Ship {
       if (this.pos.y < 1.2 || Math.abs(this.pos.x) > 175 || world.sphereHit(this.pos, BODY_R)){ this.crash(); return; }
     }
     this.maxSpeed = Math.max(this.maxSpeed, this.speed);
+    if (this.dodgeT > 0 || this.dodgeInv > DODGE_INV - DODGE_T) this.trail();
   }
   crash(){
     if (this.dead) return;
@@ -1661,13 +2007,17 @@ class Ship {
     for (let t = 0; t < 14; t++){ if (!world.sphereHit(T1.set(0, y, z), 7) && !world.sphereHit(T1.set(0, y, z + axis * 25), 7)) break; y = 20 + ((t * 37) % 110); }
     this.pos.set(0, y, z); this.yaw = axis > 0 ? 0 : Math.PI; this.pitch = 0; this.roll = 0; this.speed = SPEED_DEF; this.target = SPEED_DEF; this.vy = 0;
     this.heat = 0; this.overheat = false; this.boost = false; this.invuln = 2.2; this.dead = false; this.fwd.set(0, 0, axis);
+    this.resetMoves(); this.vel.copy(this.fwd).multiplyScalar(this.speed);
     this.m.root.visible = game.state !== 'menu';
     if (this.p.player) flash('EN LIGNE', '', 0.8);
   }
   sync(dt, t){
     const m = this.m;
     m.root.position.copy(this.pos);
-    m.root.rotation.set(-this.pitch, this.yaw, this.roll);
+    // tonneau pendant l'esquive (simple inclinaison si l'utilisateur limite les animations)
+    let barrel = 0;
+    if (this.dodgeT > 0){ const u = 1 - this.dodgeT / DODGE_T; barrel = this.dodgeDir * (reduceMotion ? Math.sin(Math.PI * u) * 0.6 : TAU * (1 - (1 - u) * (1 - u))); }
+    m.root.rotation.set(-this.pitch, this.yaw, this.roll + barrel);
     const off = this.offline > 0;
     const spin = (off ? 6 : 34 + this.speed * 0.6) * dt;
     const tilt = clamp(this.speed / 60, 0, 1.5) * 0.26;
@@ -1685,7 +2035,7 @@ class Ship {
 
 /* ============ pilotes adverses ============ */
 class Brain {
-  constructor(ship){ this.s = ship; this.t = null; this.re = 0; this.burst = 0; this.cool = rr(0.4, 1.4); this.lane = new V3(rr(-10, 10), rr(25, 80), 0); this.jinkT = 0; this.useT = rr(1, 3); this.losT = 0; this.los = true; this.des = new V3(); this.probe = new V3(); this.inp = { x: 0, y: 0, throttle: 0, boost: false, burn: false, fire: false, use: false }; }
+  constructor(ship){ this.s = ship; this.t = null; this.re = 0; this.burst = 0; this.cool = rr(0.4, 1.4); this.lane = new V3(rr(-10, 10), rr(25, 80), 0); this.jinkT = 0; this.useT = rr(1, 3); this.losT = 0; this.los = true; this.des = new V3(); this.probe = new V3(); this.inp = { x: 0, y: 0, throttle: 0, boost: false, burn: false, fire: false, use: false, brake: false, uturn: false, dodge: 0 }; }
   pickTarget(){
     const s = this.s, hard = settings.difficulty === 'hard';
     let bestT = null, bs = Infinity;
@@ -1700,8 +2050,22 @@ class Brain {
   }
   think(dt){
     const s = this.s, inp = this.inp, hard = settings.difficulty === 'hard';
-    inp.x = 0; inp.y = 0; inp.throttle = 0; inp.boost = false; inp.burn = false; inp.fire = false; inp.use = false;
+    inp.x = 0; inp.y = 0; inp.throttle = 0; inp.boost = false; inp.burn = false; inp.fire = false; inp.use = false; inp.dodge = 0;
     if (s.dead || s.offline > 0) return inp;
+    // esquive, avec parcimonie : seulement un missile verrouillé à moins de 0,3 s d'impact, un seul essai par missile
+    if (s.dodgeCd <= 0){
+      const ml = missiles.list;
+      for (let i = 0; i < ml.length; i++){
+        const m = ml[i];
+        if (m.target !== s || m.rolled) continue;
+        const rx = s.pos.x - m.pos.x, ry = s.pos.y - m.pos.y, rz = s.pos.z - m.pos.z, d = Math.hypot(rx, ry, rz);
+        const close = ((m.dir.x * m.speed - s.vel.x) * rx + (m.dir.y * m.speed - s.vel.y) * ry + (m.dir.z * m.speed - s.vel.z) * rz) / Math.max(d, 1e-3);
+        if (close <= 0 || d > close * 0.3) continue;
+        m.rolled = true;
+        if (R() < (hard ? 0.75 : 0.5)){ const lat = (m.pos.x - s.pos.x) * -Math.cos(s.yaw) + (m.pos.z - s.pos.z) * Math.sin(s.yaw); inp.dodge = lat > 0 ? -1 : 1; }
+        break;
+      }
+    }
     this.re -= dt;
     if (this.re <= 0 || !this.t || this.t.dead) this.pickTarget();
     const t = this.t, axis = Math.cos(s.yaw) >= 0 ? 1 : -1, des = this.des;
@@ -1798,7 +2162,7 @@ class Bolts {
       b.prev.copy(b.pos); b.pos.addScaledVector(b.vel, dt);
       let gone = false;
       for (const s of game.ships){
-        if (s === b.owner || s.dead) continue;
+        if (s === b.owner || s.dead || s.dodgeInv > 0) continue;   // en pleine esquive le tir passe à travers
         T1.subVectors(b.pos, b.prev); const L2 = T1.lengthSq();
         T2.subVectors(s.pos, b.prev);
         const tt = L2 > 0 ? clamp(T2.dot(T1) / L2, 0, 1) : 0;
@@ -1846,7 +2210,14 @@ class Missiles {
       P.emit(m.pos.x, m.pos.y, m.pos.z, R() - 0.5, R() - 0.5, R() - 0.5, [0.35, 0.38, 0.45], 1.2, 0.9, 1, -0.5, 2.5);
       P.emit(m.pos.x, m.pos.y, m.pos.z, 0, 0, 0, [m.owner.p.rgb[0] * 3, m.owner.p.rgb[1] * 3, m.owner.p.rgb[2] * 3], 0.9, 0.18);
       let boom = m.life <= 0 || m.pos.y < 0.5 || world.segHit(T2, m.pos) !== null;
-      if (!boom && m.target && !m.target.dead && m.pos.distanceTo(m.target.pos) < 3.4){ hitShip(m.target, m.owner, 'missile'); boom = true; }
+      if (!boom && m.target && !m.target.dead && m.pos.distanceTo(m.target.pos) < 3.4){
+        if (m.target.dodgeInv > 0){
+          // esquivé : le missile perd sa cible et file tout droit
+          const tg = m.target; m.target = null;
+          if (tg.p.player) flash('MISSILE ESQUIVÉ', '', 0.9);
+          else if (m.owner.p.player) popup('ESQUIVÉ', '#8497b6');
+        } else { hitShip(m.target, m.owner, 'missile'); boom = true; }
+      }
       if (boom){
         fx.explosion(m.pos, m.owner.p.rgb);
         audio.boom(clamp(1 - m.pos.distanceTo(camera.position) / 220, 0, 0.8), panOf(m.pos));
@@ -1927,11 +2298,14 @@ const midi = (m) => 440 * Math.pow(2, (m - 69) / 12);
 class Sound {
   constructor(){ this.ctx = null; this.ok = false; this.mode = 'menu'; }
   init(){
-    if (this.ctx){ if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    if (this.ctx){ this.wake(); return; }
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return;
     try {
+      // Safari : session « lecture », le bouton silence de l'iPhone ne coupe plus le jeu
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e){}
       const ctx = this.ctx = new AC();
+      if (SIM.audio) setTimeout(() => { try { ctx.suspend(); this.simCut = true; } catch (e){} }, 1500);
       this.master = ctx.createGain(); this.master.gain.value = 0.9;
       const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
       this.master.connect(comp); comp.connect(ctx.destination);
@@ -1951,6 +2325,24 @@ class Sound {
       this.timer = setInterval(() => this.sched(), 30);
     } catch (e){ this.ok = false; }
   }
+  // iOS ne débloque le son que dans un toucher terminé ou un clic ; il peut aussi le suspendre (« interrupted »)
+  // lors d'un appel ou d'un passage à une autre appli : on relance à chaque geste et au retour sur la page
+  unlock(){
+    this.init();
+    const ctx = this.ctx; if (!ctx) return;
+    this.wake();
+    if (!this.primed){ this.primed = true; try { const b = ctx.createBuffer(1, 1, 22050), s = ctx.createBufferSource(); s.buffer = b; s.connect(ctx.destination); s.start(0); } catch (e){} }
+    // iOS sans session audio (avant 17) : un son muet en boucle, lancé dans le même geste, fait ignorer le bouton silence
+    if (PLAT.iOS && !navigator.audioSession && !this.elOn){
+      try {
+        if (!this.el){ this.el = new Audio(); this.el.src = silentWav(); this.el.loop = true; this.el.setAttribute('playsinline', ''); this.el.preload = 'auto'; }
+        const r = this.el.play(); this.elOn = true;
+        if (r && r.catch) r.catch(() => { this.elOn = false; });
+      } catch (e){ this.elOn = false; }
+    }
+  }
+  wake(){ const ctx = this.ctx; if (!ctx || ctx.state === 'running' || ctx.state === 'closed') return; this.simCut = false; try { const r = ctx.resume(); if (r && r.catch) r.catch(() => {}); } catch (e){} }
+  sleep(){ const ctx = this.ctx; if (ctx && ctx.state === 'running'){ try { ctx.suspend(); } catch (e){} } if (this.el && this.elOn){ try { this.el.pause(); } catch (e){} this.elOn = false; } }
   apply(){ if (!this.ok) return; const t = this.ctx.currentTime; this.sfx.gain.setTargetAtTime(settings.sound ? 1 : 0, t, 0.05); this.amb.gain.setTargetAtTime(settings.sound ? 1 : 0, t, 0.1); this.mbus.gain.setTargetAtTime(settings.music ? 0.55 : 0, t, 0.1); }
   noiseBuf(sec){ const b = this.ctx.createBuffer(1, this.ctx.sampleRate * sec, this.ctx.sampleRate); const d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; }
   impulse(sec){ const rate = this.ctx.sampleRate, len = Math.floor(rate * sec), b = this.ctx.createBuffer(2, len, rate); for (let c = 0; c < 2; c++){ const d = b.getChannelData(c); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); } return b; }
@@ -2011,6 +2403,10 @@ class Sound {
   boost(){ if (!this.ok) return; this.noiseHit(0.5, 0.07, 'bandpass', 400, 1800); }
   overheat(){ if (!this.ok) return; const t = this.ctx.currentTime; this.tone('square', 300, 150, 0.15, 0.06, 0, this.sfx, t); this.tone('square', 300, 150, 0.15, 0.06, 0, this.sfx, t + 0.18); }
   burn(){ if (!this.ok) return; this.noiseHit(0.35, 0.1, 'lowpass', 3000, 400); this.tone('sine', 130, 60, 0.3, 0.12); }
+  brake(){ if (!this.ok) return; this.noiseHit(0.42, 0.07, 'lowpass', 1500, 240); }
+  uturn(){ if (!this.ok) return; this.noiseHit(0.75, 0.09, 'bandpass', 320, 1900); this.tone('sine', 480, 170, 0.5, 0.06); }
+  dodge(vol = 1, pan = 0){ if (!this.ok || vol < 0.04) return; this.noiseHit(0.22, 0.13 * vol, 'bandpass', 2600, 650, pan); }
+  wall(){ if (!this.ok) return; this.tone('square', 1250, 1250, 0.06, 0.045); }
   beep(f, dur = 0.12, vol = 0.12){ if (!this.ok) return; this.tone('sine', f, f, dur, vol); }
   ui(){ if (!this.ok) return; this.tone('triangle', 900, 900, 0.04, 0.04); }
   thunder(delay){ if (!this.ok) return; const t = this.ctx.currentTime + delay; this.noiseHit(3.2, 0.22, 'lowpass', 500, 60, 0, this.amb, t); this.tone('sine', 55, 30, 2.4, 0.1, 0, this.amb, t); }
@@ -2055,6 +2451,15 @@ class Sound {
   }
 }
 const audio = new Sound();
+// une demi seconde de silence en WAV 8 bits, fabriquée sur place (aucun fichier à charger)
+function silentWav(){
+  const n = 4000, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, 8000, true); v.setUint32(28, 8000, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, 'data'); v.setUint32(40, n, true);
+  new Uint8Array(buf, 44).fill(128);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
 function panOf(p){ T5.copy(p).applyMatrix4(camera.matrixWorldInverse); return clamp(T5.x / 40, -1, 1); }
 
 /* ============ état de la partie ============ */
@@ -2068,7 +2473,7 @@ const camVel = new V3(), lastCamPos = new V3();
 
 function hitShip(victim, attacker, kind){
   if (victim.dead) return 0;
-  if (victim.offline > 0 || victim.invuln > 0) return 1;
+  if (victim.offline > 0 || victim.invuln > 0 || victim.dodgeInv > 0) return 1;
   if (victim.shield > 0){
     victim.shield = 0; victim.invuln = 0.4;
     fx.sparks(victim.pos, [1.2, 3.5, 2.2], 30, 22, 0.5, 0.5);
@@ -2151,11 +2556,14 @@ function useItem(s){
 /* ============ commandes ============ */
 const keys = {};
 const mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false, seen: false };
-const touch = { id: null, ox: 0, oy: 0, x: 0, y: 0, fire: false, boost: false, burnEdge: false, useEdge: false };
-let burnEdge = false, useEdge = false;
-let thrLabel = navigator.language && navigator.language.toLowerCase().startsWith('fr') ? 'Z / S' : 'W / S';
-try { if (navigator.keyboard && navigator.keyboard.getLayoutMap){ navigator.keyboard.getLayoutMap().then((m) => { const w = m.get('KeyW'); if (w) thrLabel = w.toUpperCase() + ' / ' + (m.get('KeyS') || 's').toUpperCase(); setHint(); }).catch(() => {}); } } catch (e){}
-const pInp = { x: 0, y: 0, throttle: 0, boost: false, burn: false, fire: false, use: false };
+const touch = { id: null, ox: 0, oy: 0, x: 0, y: 0, fire: false, boost: false, burnEdge: false, useEdge: false, brake: false, turnEdge: false, dodge: 0 };
+let burnEdge = false, useEdge = false, turnEdge = false, dodgeEdge = 0;
+const isFr = !!(navigator.language && navigator.language.toLowerCase().startsWith('fr'));
+let thrLabel = isFr ? 'Z / S' : 'W / S';
+// touches des manoeuvres (codes physiques : Q et D sur un clavier AZERTY, A et D en QWERTY)
+const KL = { dodge: isFr ? 'Q / D' : 'A / D', brake: 'F', turn: 'R' };
+try { if (navigator.keyboard && navigator.keyboard.getLayoutMap){ navigator.keyboard.getLayoutMap().then((m) => { const g = (c, d) => (m.get(c) || d).toUpperCase(); const w = m.get('KeyW'); if (w) thrLabel = w.toUpperCase() + ' / ' + g('KeyS', 's'); KL.dodge = g('KeyA', 'a') + ' / ' + g('KeyD', 'd'); KL.brake = g('KeyF', 'f'); KL.turn = g('KeyR', 'r'); setHint(); }).catch(() => {}); } } catch (e){}
+const pInp = { x: 0, y: 0, throttle: 0, boost: false, burn: false, fire: false, use: false, brake: false, uturn: false, dodge: 0 };
 function shapeAxis(v){ const a = Math.abs(v); if (a < 0.05) return 0; return Math.sign(v) * Math.pow(Math.min(1, (a - 0.05) / 0.95), 1.35); }
 function playerInput(){
   const i = pInp;
@@ -2172,15 +2580,37 @@ function playerInput(){
   i.boost = !!(keys.ShiftLeft || keys.ShiftRight || touch.boost);
   i.burn = burnEdge || touch.burnEdge; burnEdge = false; touch.burnEdge = false;
   i.use = useEdge || touch.useEdge; useEdge = false; touch.useEdge = false;
+  i.brake = !!(keys.KeyF || touch.brake);
+  i.uturn = turnEdge || touch.turnEdge; turnEdge = false; touch.turnEdge = false;
+  i.dodge = dodgeEdge || touch.dodge; dodgeEdge = 0; touch.dodge = 0;
   i.fire = !!(mouse.down || keys.KeyJ || touch.fire) || !!(settings.autofire && game.lockT && game.lockLos && game.lockT.offline <= 0 && game.player.pos.distanceTo(game.lockT.pos) < 210);
   return i;
 }
 
 /* ============ interface ============ */
 const H = {};
-function cacheHud(){ ['hitsMe', 'board', 'timer', 'item', 'itemIcon', 'itemName', 'feed', 'markers', 'cross', 'lock', 'steer', 'big', 'sub', 'radar', 'heat', 'heatFill', 'heatLbl', 'hint', 'speed', 'alt', 'offline', 'offT', 'pops'].forEach((id) => { H[id] = $(id); }); H.rc = H.radar.getContext('2d'); }
+function cacheHud(){
+  ['hitsMe', 'board', 'timer', 'item', 'itemIcon', 'itemName', 'feed', 'markers', 'cross', 'lock', 'steer', 'big', 'sub', 'radar', 'heat', 'heatFill', 'heatLbl', 'hint', 'speed', 'alt', 'offline', 'offT', 'pops', 'gear', 'mvDodge', 'mvTurn', 'wallTag', 'tbTurn'].forEach((id) => { H[id] = $(id); });
+  H.rc = H.radar.getContext('2d');
+  H.mvDodgeB = H.mvDodge.querySelector('b'); H.mvTurnB = H.mvTurn.querySelector('b');
+  const w = $('wall'); H.wl = w.querySelector('.wl'); H.wr = w.querySelector('.wr'); H.wt = w.querySelector('.wt'); H.wb = w.querySelector('.wb');
+}
+// recharges des manoeuvres et indication de marche : écrites seulement quand elles changent
+const hudMv = { d: -1, t: -1, g: null };
+function hudMoves(p){
+  const pd = p.dodgeCd > 0 ? 1 - p.dodgeCd / DODGE_CD : 1, pt = p.turnCd > 0 ? 1 - p.turnCd / TURN_CD : 1;
+  if (Math.abs(pd - hudMv.d) > 0.008 || (pd >= 1) !== (hudMv.d >= 1)){
+    hudMv.d = pd; H.mvDodgeB.style.transform = 'scaleX(' + pd.toFixed(3) + ')'; H.mvDodge.classList.toggle('ready', pd >= 1);
+  }
+  if (Math.abs(pt - hudMv.t) > 0.008 || (pt >= 1) !== (hudMv.t >= 1)){
+    hudMv.t = pt; H.mvTurnB.style.transform = 'scaleX(' + pt.toFixed(3) + ')'; H.mvTurn.classList.toggle('ready', pt >= 1);
+    H.tbTurn.style.setProperty('--p', pt.toFixed(3)); H.tbTurn.classList.toggle('wait', pt < 1);
+  }
+  const g = p.dead || p.offline > 0 ? '' : p.speed < -0.5 ? 'MARCHE ARRIÈRE' : p.braking ? (p.speed > 0.5 ? 'FREIN' : 'ARRÊT') : '';
+  if (g !== hudMv.g){ hudMv.g = g; H.gear.textContent = g; }
+}
 let radarPx = 132, radarPr = 1;
-function sizeRadar(){ if (!H.radar) return; radarPx = (isTouch || VIEW.w < 760) ? 96 : 132; radarPr = Math.min(2, window.devicePixelRatio || 1); H.radar.width = H.radar.height = Math.round(radarPx * radarPr); }
+function sizeRadar(){ if (!H.radar) return; radarPx = (VIEW.w < 760 || (isTouch && Math.min(VIEW.w, VIEW.h) < 700)) ? 96 : 132; radarPr = Math.min(2, window.devicePixelRatio || 1); H.radar.width = H.radar.height = Math.round(radarPx * radarPr); H.radar.style.width = H.radar.style.height = radarPx + 'px'; }
 function flash(big, sub = '', dur = 1.4){ if (!H.big) return; H.big.textContent = big; H.sub.textContent = sub; H.big.classList.add('show'); H.sub.classList.toggle('show', !!sub); game.msgT = dur; }
 function popup(txt, color){
   const d = document.createElement('div'); d.className = 'pop'; d.textContent = txt; if (color) d.style.color = color;
@@ -2211,7 +2641,7 @@ function hudItem(){
   H.itemName.textContent = it ? ITEMS[it].name : 'AUCUN OBJET';
   if (it){ H.item.classList.remove('pulse'); void H.item.offsetWidth; H.item.classList.add('pulse'); }
 }
-function setHint(){ if (H.hint) H.hint.textContent = isTouch ? '' : `SOURIS PILOTER · CLIC TIR · E OBJET · ${thrLabel} GAZ · MAJ BOOST · ESPACE POUSSÉE · ÉCHAP PAUSE`; }
+function setHint(){ if (H.hint) H.hint.textContent = isTouch ? '' : `SOURIS PILOTER · CLIC TIR · E OBJET · ${thrLabel} GAZ · MAJ BOOST · ESPACE POUSSÉE · ${KL.brake} FREIN · ${KL.turn} DEMI TOUR · ${KL.dodge} ESQUIVE · ÉCHAP PAUSE`; }
 function buildMarkers(){
   H.markers.innerHTML = '';
   for (const s of game.ships){
@@ -2238,6 +2668,7 @@ function hudFrame(dt){
   H.heatLbl.classList.toggle('hot', p.overheat);
   H.offline.classList.toggle('on', p.offline > 0);
   if (p.offline > 0) H.offT.textContent = p.offline.toFixed(1).replace('.', ',') + ' S';
+  hudMoves(p);
   // viseur
   T1.copy(p.pos).addScaledVector(p.fwd, 120).project(camera);
   const cx = (T1.x * 0.5 + 0.5) * W, cy = (-T1.y * 0.5 + 0.5) * Hh;
@@ -2275,6 +2706,62 @@ function hudFrame(dt){
   }
   drawRadar();
 }
+/* ============ alerte mur proche ============ */
+// proximité des faces d'immeubles (vue caméra : gauche, droite, haut, bas) et temps avant impact devant ;
+// le bip est réarmé seulement une fois le danger passé, et jamais deux fois en WALL_BEEP secondes
+const WALL_BEEP = 2.2;
+const wallFx = { l: 0, r: 0, t: 0, b: 0, lv: 0, front: 0, armed: true, beepT: -99, tag: '', ol: -1, or: -1, ot: -1, ob: -1 };
+function wallReset(){
+  wallFx.l = wallFx.r = wallFx.t = wallFx.b = wallFx.lv = wallFx.front = 0; wallFx.armed = true; wallFx.beepT = -99; wallFx.tag = '';
+  wallFx.ol = wallFx.or = wallFx.ot = wallFx.ob = -1;
+  if (H.wl){ wallOp(H.wl, 0, 'ol'); wallOp(H.wr, 0, 'or'); wallOp(H.wt, 0, 'ot'); wallOp(H.wb, 0, 'ob'); H.wallTag.classList.remove('on'); }
+}
+function wallOp(el, v, key){ const q = Math.round(v * 40) / 40; if (q !== wallFx[key]){ wallFx[key] = q; el.style.opacity = q; } }
+function wallScan(dt){
+  const p = game.player;
+  let L = 0, Rt = 0, Tp = 0, Bt = 0, lvl = 0, front = 0;
+  if (p && !p.dead && game.state === 'playing'){
+    const e = camera.matrixWorld.elements, px = p.pos.x, py = p.pos.y, pz = p.pos.z, k = Math.floor(pz / CH);
+    for (let kk = k - 1; kk <= k + 1; kk++){
+      const c = world.chunks.get(kk); if (!c) continue;
+      const bx = c.boxes;
+      for (let i = 0; i < bx.length; i++){
+        const o = bx[i];
+        if (o.t !== 0) continue;
+        const dx = (px < o.minX ? o.minX : px > o.maxX ? o.maxX : px) - px;
+        const dy = (py < o.minY ? o.minY : py > o.maxY ? o.maxY : py) - py;
+        const dz = (pz < o.minZ ? o.minZ : pz > o.maxZ ? o.maxZ : pz) - pz;
+        const d2 = dx * dx + dy * dy + dz * dz;
+        if (d2 >= WALL_R * WALL_R || d2 < 1e-6) continue;
+        const d = Math.sqrt(d2), w = Math.min(1, (WALL_R - d) / (WALL_R - BODY_R));
+        if (w > lvl) lvl = w;
+        const sx = (dx * e[0] + dy * e[1] + dz * e[2]) / d, sy = (dx * e[4] + dy * e[5] + dz * e[6]) / d, sf = -(dx * e[8] + dy * e[9] + dz * e[10]) / d;
+        if (sx > 0){ if (w * sx > Rt) Rt = w * sx; } else if (-w * sx > L) L = -w * sx;
+        if (sy > 0){ if (w * sy > Tp) Tp = w * sy; } else if (-w * sy > Bt) Bt = -w * sy;
+        if (sf > 0.55 && w * sf > front) front = w * sf;
+      }
+    }
+    if (p.vel.lengthSq() > 9){
+      T2.copy(p.pos).addScaledVector(p.vel, WALL_TTC);
+      const hit = world.segHit(p.pos, T2, true);
+      if (hit !== null){ const f = clamp((WALL_TTC - hit * WALL_TTC) / (WALL_TTC - 0.2), 0, 1); if (f > front) front = f; }
+    }
+  }
+  const lv = Math.max(lvl, front);
+  if (lv > 0.5 && wallFx.armed && game.t - wallFx.beepT > WALL_BEEP){ wallFx.armed = false; wallFx.beepT = game.t; audio.wall(); buzz(10); }
+  if (lv < 0.15) wallFx.armed = true;
+  wallFx.lv = lv; wallFx.front = front;
+  const k = 1 - Math.exp(-14 * dt), fr = front * 0.8;
+  wallFx.l += (Math.max(L, fr) - wallFx.l) * k; wallFx.r += (Math.max(Rt, fr) - wallFx.r) * k;
+  wallFx.t += (Math.max(Tp, fr) - wallFx.t) * k; wallFx.b += (Math.max(Bt, fr) - wallFx.b) * k;
+  wallOp(H.wl, wallFx.l, 'ol'); wallOp(H.wr, wallFx.r, 'or'); wallOp(H.wt, wallFx.t, 'ot'); wallOp(H.wb, wallFx.b, 'ob');
+  let tag = '';
+  if (lv > 0.3){
+    const m = Math.max(L, Rt, Tp, Bt);
+    tag = front >= m ? 'MUR DEVANT' : m === L ? '◂ MUR PROCHE' : m === Rt ? 'MUR PROCHE ▸' : m === Tp ? 'MUR PROCHE ▴' : 'MUR PROCHE ▾';
+  }
+  if (tag !== wallFx.tag){ wallFx.tag = tag; if (tag) H.wallTag.textContent = tag; H.wallTag.classList.toggle('on', !!tag); }
+}
 function drawRadar(){
   const g = H.rc, p = game.player, W = H.radar.width, c = W / 2, Rr = c - 3 * radarPr;
   g.clearRect(0, 0, W, W);
@@ -2285,8 +2772,25 @@ function drawRadar(){
   g.strokeStyle = 'rgba(140,190,255,0.1)'; g.beginPath(); g.arc(c, c, Rr * 0.5, 0, TAU); g.stroke();
   const k = Rr / 170, fx0 = Math.sin(p.yaw), fz0 = Math.cos(p.yaw), rx = -Math.cos(p.yaw), rz = Math.sin(p.yaw);
   const toS = (x, z) => { const dx = x - p.pos.x, dz = z - p.pos.z; return [c + (dx * rx + dz * rz) * k, c - (dx * fx0 + dz * fz0) * k]; };
-  g.strokeStyle = 'rgba(39,228,255,0.3)'; g.lineWidth = 1.5 * radarPr;
-  for (const wx of [-FRONT, FRONT]){ const a = toS(wx, p.pos.z - 400), b = toS(wx, p.pos.z + 400); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+  // emprise des immeubles au sol : rues, passages et allée se lisent sur le radar (un seul tracé)
+  const px0 = p.pos.x, pz0 = p.pos.z, kc = Math.floor(pz0 / CH);
+  g.beginPath();
+  for (let kk = kc - 2; kk <= kc + 2; kk++){
+    const ch = world.chunks.get(kk); if (!ch) continue;
+    const bx = ch.boxes;
+    for (let i = 0; i < bx.length; i++){
+      const o = bx[i];
+      if (o.t !== 0 || o.minY > 0 || o.minX > px0 + 180 || o.maxX < px0 - 180 || o.minZ > pz0 + 180 || o.maxZ < pz0 - 180) continue;
+      const ax = o.minX - px0, bx2 = o.maxX - px0, az = o.minZ - pz0, bz = o.maxZ - pz0;
+      g.moveTo(c + (ax * rx + az * rz) * k, c - (ax * fx0 + az * fz0) * k);
+      g.lineTo(c + (bx2 * rx + az * rz) * k, c - (bx2 * fx0 + az * fz0) * k);
+      g.lineTo(c + (bx2 * rx + bz * rz) * k, c - (bx2 * fx0 + bz * fz0) * k);
+      g.lineTo(c + (ax * rx + bz * rz) * k, c - (ax * fx0 + bz * fz0) * k);
+      g.closePath();
+    }
+  }
+  g.fillStyle = 'rgba(39,228,255,0.13)'; g.fill();
+  g.strokeStyle = 'rgba(39,228,255,0.34)'; g.lineWidth = radarPr; g.stroke();
   g.fillStyle = 'rgba(230,245,255,0.85)';
   for (const pk of pickups.list){ if (!pk.active) continue; const [x, y] = toS(pk.pos.x, pk.pos.z); g.fillRect(x - 1.5 * radarPr, y - 1.5 * radarPr, 3 * radarPr, 3 * radarPr); }
   for (const m of missiles.list){ const [x, y] = toS(m.pos.x, m.pos.z); g.fillStyle = (game.t * 6) % 1 < 0.5 ? '#ff4d6d' : '#fff'; g.fillRect(x - 2 * radarPr, y - 2 * radarPr, 4 * radarPr, 4 * radarPr); }
@@ -2304,6 +2808,109 @@ function drawRadar(){
   g.restore();
 }
 
+/* ============ plein écran, guide d'installation, diagnostic, incidents ============ */
+// API plein écran standard ou préfixée (iPad) ; absente sur iPhone, où l'on propose l'écran d'accueil
+const FS = {
+  can(){ const d = document, el = d.documentElement; if (SIM.ios && PLAT.iPhone) return false; return !!((d.fullscreenEnabled || d.webkitFullscreenEnabled) && (el.requestFullscreen || el.webkitRequestFullscreen)); },
+  on(){ return !!(document.fullscreenElement || document.webkitFullscreenElement); },
+  toggle(){
+    const d = document, el = d.documentElement;
+    try {
+      let r;
+      if (this.on()) r = d.exitFullscreen ? d.exitFullscreen() : d.webkitExitFullscreen && d.webkitExitFullscreen();
+      else r = el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : el.webkitRequestFullscreen && el.webkitRequestFullscreen();
+      if (r && r.catch) r.catch(() => {});
+    } catch (e){}
+  },
+};
+function fsLabel(){ const f = $('fsLbl'); if (f) f.textContent = FS.on() ? 'QUITTER LE PLEIN ÉCRAN' : 'PLEIN ÉCRAN'; }
+// le guide n'a de sens que sur la page publique installable (manifeste, page principale), jamais dans un cadre
+function installable(){ if (SIM.ios) return true; try { return !!document.querySelector('link[rel="manifest"]') && window.top === window.self; } catch (e){ return false; } }
+function guideAllowed(){ return PLAT.iOS && !PLAT.standalone && installable(); }
+function openGuide(){ $('guide').hidden = false; }
+function closeGuide(){ if ($('guide').hidden) return; $('guide').hidden = true; store.set('guideSeen', true); }
+function maybeGuide(){ if (PLAT.iPhone && guideAllowed() && !store.get('guideSeen', false)) openGuide(); }
+
+const DIAG = { taps: 0, tapT: 0, timer: 0, fps: 0, n: 0, t0: 0 };
+function diagError(err){
+  const list = window.nifoErrs || (window.nifoErrs = []);
+  list.push({ t: Date.now(), m: String((err && (err.stack || err.message)) || err).split('\n').slice(0, 2).join(' | ').slice(0, 300) });
+  if (list.length > 20) list.shift();
+}
+function diagTap(){ const now = performance.now(); if (now - DIAG.tapT > 2500) DIAG.taps = 0; DIAG.tapT = now; if (++DIAG.taps >= 5){ DIAG.taps = 0; openDiag(); } }
+function openDiag(){ $('diag').hidden = false; diagRender(); clearInterval(DIAG.timer); DIAG.timer = setInterval(diagRender, 700); }
+function closeDiag(){ $('diag').hidden = true; clearInterval(DIAG.timer); }
+function diagReport(){
+  const yn = (b) => (b ? 'oui' : 'non'), r = [];
+  const pad = (() => { try { const cs = getComputedStyle($('saProbe')); return [cs.paddingTop, cs.paddingRight, cs.paddingBottom, cs.paddingLeft].map((v) => Math.round(parseFloat(v) || 0)); } catch (e){ return [0, 0, 0, 0]; } })();
+  const vv = window.visualViewport;
+  let orient = '?';
+  try { orient = screen.orientation ? screen.orientation.type + ' ' + screen.orientation.angle + '°' : 'window.orientation ' + (window.orientation || 0) + '°'; } catch (e){}
+  const ctx = audio.ctx;
+  r.push('SENTINELLE V2.0 · moteur 3D three ' + (window.nifoThree || '?'));
+  r.push('Appareil : ' + (PLAT.iPad ? 'iPad' : PLAT.iPhone ? 'iPhone' : PLAT.android ? 'Android' : 'ordinateur ou autre') + (PLAT.iOS ? ' · iOS ' + PLAT.ver : '') + (SIM.ios ? ' · SIMULATION APPLE (' + (SIM.mode || 'safari') + ')' : ''));
+  r.push('Navigateur : ' + UA);
+  r.push('Tactile : ' + yn(isTouch) + ' · points de contact ' + (navigator.maxTouchPoints || 0) + ' · pointeur grossier ' + yn(matchMedia('(pointer: coarse)').matches));
+  r.push('Écran : fenêtre ' + innerWidth + 'x' + innerHeight + ' · jeu ' + VIEW.w + 'x' + VIEW.h + (VIEW.rot ? ' tourné ' + (VIEW.rot > 0 ? '90°' : '-90°') : '') + ' · densité ' + (window.devicePixelRatio || 1) + (vv ? ' · zone visible ' + Math.round(vv.width) + 'x' + Math.round(vv.height) + ' (décalage ' + Math.round(vv.offsetTop) + ')' : ''));
+  r.push('Marges sûres : haut ' + pad[0] + ' · droite ' + pad[1] + ' · bas ' + pad[2] + ' · gauche ' + pad[3]);
+  r.push('Plein écran : ' + (FS.can() ? yn(FS.on()) : 'API absente') + ' · app installée : ' + yn(PLAT.standalone));
+  r.push('Orientation : ' + orient + ' · capteur : ' + (sensor.ok ? 'oui (quart ' + sensor.q + ')' : sensor.listening ? 'en attente' : 'non') + ' · pilotage ' + (settings.pilot === 'tilt' ? 'inclinaison' : 'manette') + ' · écran ' + settings.screen);
+  r.push('WebGL : ' + (renderer ? 'WebGL 2 · ' + (GPU.name || '?') + ' · rendu flottant ' + yn(GPU.float) + (GPU.lost ? ' · CONTEXTE PERDU' : '') : 'non démarré'));
+  r.push('Qualité : ' + settings.quality + ' · densité rendue ' + (renderer ? renderer.getPixelRatio().toFixed(2) : '?') + ' · échelle auto ' + perfScale.toFixed(2) + ' · textures ' + FAC.px + ' px');
+  r.push('Images par seconde : ' + DIAG.fps + (document.hidden ? ' (page cachée, animation suspendue)' : ''));
+  r.push('Son : ' + (ctx ? ctx.state + (audio.simCut ? ' (coupure simulée)' : '') : 'pas encore créé') + ' · session ' + (navigator.audioSession ? navigator.audioSession.type : 'absente') + ' · son muet en boucle ' + yn(!!audio.elOn) + ' · effets ' + yn(settings.sound) + ' · musique ' + yn(settings.music));
+  r.push('Stockage : ' + (store.ok ? 'oui' : 'non, mémoire seulement') + ' · record ' + best + ' · guide vu ' + yn(store.get('guideSeen', false)));
+  r.push('Partie : ' + game.state);
+  const errs = window.nifoErrs || [];
+  r.push('Erreurs (' + errs.length + ')' + (errs.length ? ' :' : ''));
+  for (const e of errs.slice(-8)) r.push('  ' + new Date(e.t).toLocaleTimeString('fr-FR') + ' ' + e.m);
+  return r.join('\n');
+}
+function diagRender(){ $('diagTxt').textContent = diagReport(); }
+function copyDiag(){
+  const txt = diagReport(), b = $('diagCopy');
+  const done = (ok) => { b.textContent = ok ? 'RAPPORT COPIÉ' : 'COPIE IMPOSSIBLE'; setTimeout(() => { b.textContent = 'COPIER LE RAPPORT'; }, 1800); };
+  const fallback = () => {
+    try {
+      const ta = document.createElement('textarea'); ta.value = txt; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;left:-9999px;top:0;font-size:16px;';
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, txt.length);
+      const ok = document.execCommand('copy'); ta.remove(); done(ok);
+    } catch (e){ done(false); }
+  };
+  try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(() => done(true), fallback); else fallback(); } catch (e){ fallback(); }
+}
+// incidents : perte de l'affichage 3D ou erreur qui fige le jeu ; RELANCER recharge en gardant le record
+function showIncident(kind){
+  if (kind === 'lost'){ $('fatalT').textContent = 'AFFICHAGE INTERROMPU'; $('fatalMsg').textContent = "L'appareil a coupé l'affichage 3D, souvent faute de mémoire. Touche RELANCER : le jeu repart et garde ton record."; $('fatalResume').hidden = true; }
+  else if (kind === 'restored'){ $('fatalT').textContent = 'AFFICHAGE RÉTABLI'; $('fatalMsg').textContent = "L'affichage 3D est revenu. Reprends la partie, ou relance le jeu si l'image reste figée."; $('fatalResume').hidden = false; }
+  else { $('fatalT').textContent = 'UN SOUCI EST SURVENU'; $('fatalMsg').textContent = "Le jeu a rencontré une erreur et s'est figé. Touche RELANCER pour le recharger, ton record est gardé."; $('fatalResume').hidden = true; }
+  $('fatal').hidden = false;
+}
+function relaunch(){
+  store.set('best', best);
+  try { history.replaceState(null, '', location.pathname + location.search + '#best=' + best); } catch (e){}
+  location.reload();
+}
+// garde d'historique (page principale seulement, pas dans un cadre ni en application installée) : un geste
+// « page précédente » (bord de l'écran dans Safari, bouton retour d'Android) met la partie en pause au lieu de
+// quitter le jeu. Une seule entrée en plus, posée pendant le geste d'entrée (même adresse, requête comprise),
+// remise seulement quand un retour l'a consommée : l'historique ne grossit pas.
+const HIST = { on: false, marks: 0 };
+function historyGuard(){
+  if (HIST.on || PLAT.standalone) return;
+  try { if (window.top !== window) return; } catch (e){ return; }
+  const mark = () => { try { history.pushState({ nifoGarde: 1 }, '', location.href); HIST.marks++; return true; } catch (e){ return false; } };
+  if (!mark()) return;
+  HIST.on = true;
+  addEventListener('popstate', () => {
+    if (history.state && history.state.nifoGarde) return;   // retour sur notre entrée (page suivante) : rien à faire
+    mark();
+    if (game.state === 'playing' || game.state === 'countdown') pauseGame();
+    else if (!$('diag').hidden || !$('guide').hidden){ closeDiag(); closeGuide(); }
+    else if (!$('menu').hidden && (UI.cur === 'settings' || UI.cur === 'controls')) back();
+  });
+}
+
 /* ============ menus ============ */
 const UI = { panels: {}, cur: 'main', sel: 0, stack: [] };
 function items(){ return [...UI.panels[UI.cur].querySelectorAll('.mi')].filter((el) => !el.hidden); }
@@ -2317,7 +2924,7 @@ function openPanel(name, push = true){
   $('backTop').hidden = !(name === 'controls' || name === 'settings');
   if (name === 'settings') renderSettings();
   if (name === 'controls') renderControls();
-  if (name === 'main') $('fsItem').hidden = !(isTouch && document.fullscreenEnabled);
+  if (name === 'main'){ $('fsItem').hidden = !(isTouch && FS.can() && !PLAT.standalone); fsLabel(); }
   if (name === 'main') $('recordLbl').innerHTML = best > 0 ? `RECORD <b>${best}</b> TOUCHE${best > 1 ? 'S' : ''}` : 'AUCUN RECORD POUR L\'INSTANT';
   highlight();
 }
@@ -2332,7 +2939,7 @@ function renderSettings(){
     const d = SETS[k], v = settings[k], i = Math.max(0, d.values.indexOf(v));
     const name = typeof d.names === 'function' ? d.names(v) : d.names[i];
     return `<button class="mi set" id="set-${k}" data-set="${k}"><b>[${String(n + 1).padStart(2, '0')}]</b><span class="k">${d.label}</span><span class="v"><span class="dec">‹</span><em>${name}</em><span class="inc">›</span></span></button>`;
-  }).join('') + '<button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>';
+  }).join('') + (guideAllowed() ? `<button class="mi set" data-act="guide"><b>[${String(keysS.length + 1).padStart(2, '0')}]</b><span class="k">PLEIN ÉCRAN</span><span class="v"><em>MODE D'EMPLOI</em></span></button>` : '') + '<button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>';
   $('setNote').hidden = !(isTouch && settings.pilot === 'tilt' && !sensor.ok);
   highlight();
 }
@@ -2344,6 +2951,11 @@ function renderControls(){
     ['OBJET', 'UTILISER L\'OBJET RAMASSÉ'],
     ['BOOST', 'ACCÉLÉRER, SURCHAUFFE, LAISSE REFROIDIR'],
     ['SAUT', 'POUSSÉE VERTICALE, MONTÉE INSTANTANÉE'],
+    ['FREIN', 'MAINTENIR POUR S\'ARRÊTER, PLUS LONGTEMPS POUR RECULER'],
+    ['DEMI TOUR', 'RETOURNEMENT EXPRESS EN UNE SECONDE, RECHARGE 4 S'],
+    ['BALAYER À DROITE', 'ESQUIVE : UN COUP DE DOIGT VERS LA GAUCHE OU LA DROITE, INVULNÉRABLE UN INSTANT, RECHARGE 2,5 S'],
+    ['MUR PROCHE', 'LE BORD DE L\'ÉCRAN ROUGIT DU CÔTÉ DU MUR, UN BIP PRÉVIENT'],
+    ['RUES', 'RUES ET PASSAGES ENTRE LES FAÇADES MÈNENT À UNE ALLÉE QUI LONGE LE CANYON'],
     ['TOUCHÉ', 'HORS LIGNE 2 S, SEULE LA GRILLE TUE'],
   ] : [
     ['SOURIS', 'PILOTER, L\'ÉCART AU CENTRE INCLINE LE VAISSEAU'],
@@ -2352,8 +2964,13 @@ function renderControls(){
     [thrLabel, 'GAZ, PLUS OU MOINS VITE'],
     ['MAJ', 'BOOST, SURCHAUFFE, LAISSE REFROIDIR'],
     ['ESPACE', 'POUSSÉE VERTICALE, MONTÉE INSTANTANÉE'],
+    [KL.brake, 'FREIN, MAINTENIR POUR S\'ARRÊTER, PLUS LONGTEMPS POUR RECULER'],
+    [KL.turn, 'DEMI TOUR EXPRESS EN UNE SECONDE, RECHARGE 4 S'],
+    [KL.dodge, 'ESQUIVE À GAUCHE OU À DROITE, INVULNÉRABLE UN INSTANT, RECHARGE 2,5 S'],
     ['FLÈCHES', 'PILOTER AU CLAVIER'],
     ['ÉCHAP / P', 'PAUSE'],
+    ['MUR PROCHE', 'LE BORD DE L\'ÉCRAN ROUGIT DU CÔTÉ DU MUR, UN BIP PRÉVIENT'],
+    ['RUES', 'RUES ET PASSAGES ENTRE LES FAÇADES MÈNENT À UNE ALLÉE QUI LONGE LE CANYON'],
     ['TOUCHÉ', 'HORS LIGNE 2 S, SEULE LA GRILLE TUE'],
   ];
   $('ctlRows').innerHTML = rows.map(([k, v]) => `<div class="krow"><kbd>${k}</kbd><span>${v}</span></div>`).join('') + '<div class="krow"><kbd>OBJETS</kbd><span>BOUCLIER, IMPULSION IEM, MISSILE TRAQUEUR, SURVOLTEUR</span></div>';
@@ -2388,7 +3005,8 @@ function activate(el, dir = 1){
   else if (act === 'back') back();
   else if (act === 'resume') resume();
   else if (act === 'quit' || act === 'menu') toMenu();
-  else if (act === 'fullscreen'){ try { if (document.fullscreenElement) document.exitFullscreen(); else { const r = document.documentElement.requestFullscreen({ navigationUI: 'hide' }); if (r && r.catch) r.catch(() => {}); } } catch (e){} }
+  else if (act === 'fullscreen') FS.toggle();
+  else if (act === 'guide') openGuide();
 }
 
 /* ============ déroulé ============ */
@@ -2424,6 +3042,8 @@ function startMatch(){
   setShipsVisible(true);
   H.feed.innerHTML = '';
   hudBoard(); hudItem(); setHint();
+  wallReset(); hudMv.d = hudMv.t = -1; hudMv.g = null;
+  turnEdge = false; dodgeEdge = 0; touch.turnEdge = false; touch.dodge = 0;
   H.hint.style.opacity = 1;
   audio.musicMode('game');
 }
@@ -2454,7 +3074,7 @@ function pauseGame(){
   if (game.state !== 'playing' && game.state !== 'countdown') return;
   game.prev = game.state; game.state = 'paused';
   document.body.classList.remove('playing');
-  mouse.down = false; touch.fire = false;
+  mouse.down = false; touch.fire = false; touch.brake = false;
   audio.engine(false, 0, false); audio.musicMode('menu');
   UI.stack = [];
   openPanel('pause', false);
@@ -2506,14 +3126,22 @@ function updateChaseCam(dt, stiff){
 }
 
 /* ============ boucle principale ============ */
-let last = performance.now(), perfAcc = 0, perfN = 0;
+let last = performance.now(), perfAcc = 0, perfN = 0, loopErr = 0;
 function loop(now){
   requestAnimationFrame(loop);
   let dt = (now - last) / 1000; last = now;
   if (!(dt > 0)) dt = 0.001;
   if (dt > 0.05) dt = 0.05;
-  if (game.state !== 'paused') update(dt);
-  render();
+  // une erreur isolée est notée ; trois images de suite en erreur : le jeu est figé, on le dit en clair
+  try {
+    if (game.state !== 'paused') update(dt);
+    render();
+    loopErr = 0;
+  } catch (err){
+    diagError(err);
+    if (++loopErr === 3) showIncident('error');
+  }
+  DIAG.n++; if (now - DIAG.t0 >= 1000){ DIAG.fps = Math.round(DIAG.n * 1000 / (now - DIAG.t0)); DIAG.n = 0; DIAG.t0 = now; }
   perfAcc += dt; perfN++;
   if (perfAcc > 2.5){
     const avg = perfAcc / perfN;
@@ -2533,7 +3161,7 @@ function update(dt){
     const n = Math.ceil(game.cd - 1);
     if (n !== game.lastBeep){
       game.lastBeep = n;
-      if (n >= 1){ const tips = isTouch ? ['', settings.autofire ? 'LE TIR PART SEUL SUR UNE CIBLE VERROUILLÉE' : 'MAINTIENS TIR À DROITE', 'À DROITE : TIR, BOOST, SAUT, OBJET', (settings.pilot === 'tilt' && sensor.ok ? 'PENCHE LE TÉLÉPHONE POUR PILOTER' : 'GLISSE À GAUCHE POUR PILOTER')] : null; flash(String(n), tips ? tips[n] : 'ENGAGEMENT', 1.1); audio.beep(660); }
+      if (n >= 1){ const tips = isTouch ? ['', settings.autofire ? 'LE TIR PART SEUL SUR UNE CIBLE VERROUILLÉE' : 'MAINTIENS TIR À DROITE', 'À DROITE, BALAIE POUR ESQUIVER', (settings.pilot === 'tilt' && sensor.ok ? 'PENCHE LE TÉLÉPHONE POUR PILOTER' : 'GLISSE À GAUCHE POUR PILOTER')] : null; flash(String(n), tips ? tips[n] : 'ENGAGEMENT', 1.1); audio.beep(660); }
       else { flash('ENGAGEZ', 'LE PLUS DE TOUCHES GAGNE', 1.2); audio.beep(1320, 0.3, 0.14); game.state = 'playing'; calibrateTilt(); }
     }
     for (const s of game.ships){ s.pos.y += Math.sin(t * 2 + s.wob) * 0.01; s.vel.set(0, 0, 0); s.sync(dt, t); }
@@ -2578,6 +3206,7 @@ function update(dt){
     if (game.time <= 0){ game.time = 0; endMatch(); }
     if (game.time > 0 && game.time <= 10){ const s = Math.ceil(game.time); if (s !== game.lastBeep){ game.lastBeep = s; audio.beep(880, 0.08, 0.08); } }
     updateChaseCam(dt, pl.dead ? 2 : 8);
+    wallScan(dt);
   }
   if (game.msgT > 0){ game.msgT -= dt; if (game.msgT <= 0){ H.big.classList.remove('show'); H.sub.classList.remove('show'); } }
   if ((st === 'playing' || st === 'countdown') && H.hint && game.time < MATCH_TIME - 12) H.hint.style.opacity = 0;
@@ -2617,21 +3246,37 @@ function update(dt){
   fxState.offline = damp(fxState.offline, off ? 1 : 0, 10, dt);
   fxState.hit = Math.max(0, fxState.hit - dt * 2.2);
   fxState.flash = Math.max(0, fxState.flash - dt * 2.5);
-  fxState.boost = damp(fxState.boost, pl && st === 'playing' && pl.boost ? 1 : 0, 4, dt);
+  fxState.boost = damp(fxState.boost, pl && st === 'playing' && (pl.boost || pl.dodgeT > 0) ? 1 : 0, pl && pl.dodgeT > 0 ? 9 : 4, dt);
   const u = fxPass.uniforms, rm = reduceMotion ? 0.35 : 1;
   u.uTime.value = t; u.uOffline.value = fxState.offline * rm; u.uHit.value = fxState.hit * rm; u.uBoost.value = fxState.boost * 0.85 * rm; u.uFlash.value = fxState.flash + fl * 0.035;
   if ((st === 'playing' || st === 'countdown') && pl) hudFrame(dt);
 }
-function render(){ composer.render(); }
+function render(){ if (!GPU.lost) composer.render(); }
 
 /* ============ évènements ============ */
 function bindEvents(){
   addEventListener('resize', scheduleLayout);
   addEventListener('orientationchange', scheduleLayout);
   try { if (screen.orientation && screen.orientation.addEventListener) screen.orientation.addEventListener('change', scheduleLayout); } catch (e){}
-  if (window.visualViewport) window.visualViewport.addEventListener('resize', scheduleLayout);
+  // Safari : ses barres apparaissent et disparaissent, la zone visible change sans toujours déclencher resize
+  if (window.visualViewport){ window.visualViewport.addEventListener('resize', scheduleLayout); window.visualViewport.addEventListener('scroll', scheduleLayout); }
+  try { const mq = matchMedia('(orientation: portrait)'); if (mq.addEventListener) mq.addEventListener('change', scheduleLayout); else if (mq.addListener) mq.addListener(scheduleLayout); } catch (e){}
   try { new ResizeObserver(() => scheduleLayout()).observe($('vp')); } catch (e){}
-  document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden){ pauseGame(); audio.sleep(); } else { audio.wake(); scheduleLayout(); } });
+  // son : déblocage dans un toucher terminé, un clic ou une touche (jamais au simple contact, refusé par iOS)
+  const unlockAudio = () => audio.unlock();
+  document.addEventListener('touchend', unlockAudio, { passive: true });
+  document.addEventListener('click', unlockAudio);
+  addEventListener('keydown', unlockAudio);
+  // fenêtres : guide, diagnostic (cinq touches sur la version ou le logo), incidents
+  $('guideOk').addEventListener('click', closeGuide);
+  $('diagClose').addEventListener('click', closeDiag);
+  $('diagCopy').addEventListener('click', copyDiag);
+  $('fatalReload').addEventListener('click', relaunch);
+  $('fatalResume').addEventListener('click', () => { $('fatal').hidden = true; });
+  $('fatalDiag').addEventListener('click', openDiag);
+  $('ver').addEventListener('click', diagTap);
+  const logo = document.querySelector('#pMain .eyebrow svg'); if (logo) logo.addEventListener('click', diagTap);
   addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.down = false; });
   addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; mouse.x = e.clientX; mouse.y = e.clientY; mouse.seen = true; });
   document.addEventListener('mouseleave', () => { mouse.x = innerWidth / 2; mouse.y = innerHeight / 2; });
@@ -2645,6 +3290,8 @@ function bindEvents(){
   addEventListener('contextmenu', (e) => e.preventDefault());
   addEventListener('keydown', (e) => {
     const c = e.code;
+    if (!$('fatal').hidden){ if (c === 'Enter' || c === 'NumpadEnter') relaunch(); return; }
+    if (!$('diag').hidden || !$('guide').hidden){ if (c === 'Escape' || c === 'Enter' || c === 'NumpadEnter'){ e.preventDefault(); closeDiag(); closeGuide(); } return; }
     if (!intro.done){ if (c === 'Enter' || c === 'NumpadEnter' || c === 'Space'){ e.preventDefault(); enterGame(); } return; }
     if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(c)) e.preventDefault();
     if (!$('menu').hidden){
@@ -2656,10 +3303,14 @@ function bindEvents(){
       else if (c === 'Escape'){ if (UI.cur === 'pause') resume(); else back(); }
       return;
     }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;   // raccourcis du navigateur : jamais une touche de jeu bloquée
     if (e.repeat){ keys[c] = true; return; }
     keys[c] = true;
     if (c === 'Space') burnEdge = true;
     if (c === 'KeyE') useEdge = true;
+    if (c === 'KeyR') turnEdge = true;
+    if (c === 'KeyA') dodgeEdge = -1;
+    if (c === 'KeyD') dodgeEdge = 1;
     if (c === 'Escape' || c === 'KeyP') pauseGame();
   });
   addEventListener('keyup', (e) => { keys[e.code] = false; });
@@ -2673,6 +3324,7 @@ function bindEvents(){
   // tactile
   const zone = $('stickZone'), stick = $('stick'), knob = $('knob');
   zone.addEventListener('pointerdown', (e) => {
+    if (nearEdge(e.clientX)) return;   // toucher né au bord de l'écran : il appartient à Safari, pas à la manette
     audio.init();
     if (touch.id !== null) return;
     const g0 = toGame(e.clientX, e.clientY);
@@ -2690,20 +3342,56 @@ function bindEvents(){
   });
   const endStick = (e) => { if (e.pointerId !== touch.id) return; touch.id = null; touch.x = 0; touch.y = 0; stick.classList.remove('on'); };
   zone.addEventListener('pointerup', endStick); zone.addEventListener('pointercancel', endStick);
+  // esquive au doigt : un coup de doigt latéral rapide ; jamais depuis un toucher né au bord de l'écran (nearEdge)
+  const flick = (minPx) => {
+    const st = { id: null, x: 0, y: 0, t: 0, done: true };
+    return {
+      down(e){
+        st.id = e.pointerId; st.done = nearEdge(e.clientX);
+        const g = toGame(e.clientX, e.clientY); st.x = g[0]; st.y = g[1]; st.t = e.timeStamp;
+      },
+      move(e){
+        if (e.pointerId !== st.id || st.done) return;
+        const g = toGame(e.clientX, e.clientY), dx = g[0] - st.x, dy = g[1] - st.y;
+        if (e.timeStamp - st.t > 320){ st.x = g[0]; st.y = g[1]; st.t = e.timeStamp; return; }
+        if (Math.abs(dx) >= minPx && Math.abs(dx) > Math.abs(dy) * 1.3){ st.done = true; touch.dodge = dx > 0 ? 1 : -1; }
+      },
+      up(e){ if (e.pointerId === st.id){ st.id = null; st.done = true; } },
+    };
+  };
+  const swipe = $('swipeZone'), sf = flick(36);
+  swipe.addEventListener('pointerdown', (e) => { e.preventDefault(); audio.init(); try { swipe.setPointerCapture(e.pointerId); } catch (er){} sf.down(e); }, { passive: false });
+  swipe.addEventListener('pointermove', (e) => sf.move(e));
+  swipe.addEventListener('pointerup', (e) => sf.up(e)); swipe.addEventListener('pointercancel', (e) => sf.up(e));
   document.querySelectorAll('.tb').forEach((b) => {
-    const t = b.dataset.t;
+    const t = b.dataset.t, fl = t === 'fire' ? flick(44) : null;   // sur TIR, le coup de doigt esquive sans couper le tir
     b.addEventListener('pointerdown', (e) => {
       e.preventDefault(); audio.init(); b.classList.add('down');
       try { b.setPointerCapture(e.pointerId); } catch (er){}
       if (t === 'fire') touch.fire = true; else if (t === 'boost') touch.boost = true; else if (t === 'burn') touch.burnEdge = true; else if (t === 'use') touch.useEdge = true; else if (t === 'pause') pauseGame();
-    });
-    const up = () => { b.classList.remove('down'); if (t === 'fire') touch.fire = false; if (t === 'boost') touch.boost = false; };
+      else if (t === 'brake') touch.brake = true; else if (t === 'uturn') touch.turnEdge = true;
+      if (fl) fl.down(e);
+    }, { passive: false });
+    if (fl) b.addEventListener('pointermove', (e) => fl.move(e));
+    const up = (e) => { b.classList.remove('down'); if (t === 'fire') touch.fire = false; if (t === 'boost') touch.boost = false; if (t === 'brake') touch.brake = false; if (fl && e) fl.up(e); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
   });
+  // iOS : ni loupe par pincement, ni zoom au double appui, ni défilement élastique pendant le jeu (les listes de réglages défilent)
+  const stopGesture = (e) => e.preventDefault();
+  document.addEventListener('gesturestart', stopGesture, { passive: false });
+  document.addEventListener('gesturechange', stopGesture, { passive: false });
+  document.addEventListener('dblclick', stopGesture, { passive: false });
+  document.addEventListener('touchmove', (e) => { const el = e.target; if (!(el && el.closest && el.closest('#setRows,#ctlRows,.mbox'))) e.preventDefault(); }, { passive: false });
 }
 
 /* ============ démarrage ============ */
+function bootFail(text){
+  window.__nifoStarted = true;
+  $('ldBar').hidden = true;
+  const s = $('ldSub'); s.hidden = false; s.className = 'ld-sub err'; s.textContent = text;
+}
 async function boot(data){
+  window.__nifoBooting = true;
   try {
     if (data && data.settings) Object.assign(settings, data.settings);
     if (data && typeof data.best === 'number') best = Math.max(best, data.best);
@@ -2714,7 +3402,10 @@ async function boot(data){
     if (isTouch) document.body.classList.add('touch');
     startSensor(false);
     computeView();
+    if (!webgl2Ok()){ bootFail("Ton appareil ou ton navigateur est trop ancien pour Sentinelle : le jeu a besoin de WebGL 2, présent à partir d'iOS 15 et dans les navigateurs récents. Mets à jour le système ou essaie un autre appareil."); return; }
     initRenderer();
+    // sans rendu flottant, ni bloom ni reflet : préréglage PERFORMANCE pour cette session
+    if (!GPU.float && settings.quality !== 'low'){ settings.quality = 'low'; scene.fog.density = QUALITY.low.fog; applyPixelRatio(false); }
     buildMaterials();
     scene.environment = buildEnvironment();
     scene.environmentIntensity = 1.0;
@@ -2744,12 +3435,11 @@ async function boot(data){
     requestAnimationFrame((t) => { last = t; loop(t); });
     window.__nifoStarted = true;
     introReady();
+    if (QS.has('diag')) openDiag();
+    if (SIM.lost > 0) setTimeout(() => { try { const x = renderer.getContext().getExtension('WEBGL_lose_context'); GPU.loseExt = x; if (x) x.loseContext(); } catch (e){} }, SIM.lost * 1000);
   } catch (err){
-    window.__nifoStarted = true;
-    $('ldBar').hidden = true;
-    const s = $('ldSub'); s.hidden = false;
-    s.className = 'ld-sub err';
-    s.textContent = "Le jeu n'a pas pu démarrer sur cet appareil : " + (err && err.message ? err.message : err) + '. Essaie un navigateur récent, ordinateur ou téléphone.';
+    diagError(err);
+    bootFail("Le jeu n'a pas pu démarrer sur cet appareil : " + (err && err.message ? err.message : err) + '. Essaie un navigateur récent, ordinateur ou téléphone.');
     console.error(err);
   }
 }
@@ -2767,13 +3457,15 @@ function enterGame(){
   if (intro.done) return;
   if (!intro.ready || $('introGo').hidden){ intro.want = true; return; }
   intro.done = true;
+  historyGuard();   // dans le geste d'entrée : une entrée posée sans geste serait sautée par le retour
   startSensor(true);
-  audio.init(); audio.ui();
+  audio.unlock(); audio.ui();
   const l = $('loader'); l.classList.add('gone');
-  setTimeout(() => { l.hidden = true; }, 780);
+  setTimeout(() => { l.hidden = true; maybeGuide(); }, 780);
 }
 $('loader').addEventListener('click', () => enterGame());
-document.addEventListener('fullscreenchange', () => { const f = $('fsLbl'); if (f) f.textContent = document.fullscreenElement ? 'QUITTER LE PLEIN ÉCRAN' : 'PLEIN ÉCRAN'; });
+document.addEventListener('fullscreenchange', fsLabel);
+document.addEventListener('webkitfullscreenchange', fsLabel);
 boot({});
 </script>
 

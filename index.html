@@ -546,7 +546,47 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
 #entry.low2{padding-top:calc(4px + var(--env-t));}
 #entry.low2 h2{display:none;}
 #entry.low2 .ebox{padding:8px 12px;}
-@media (max-width:760px){ .camps{gap:8px;} .camp .pl{font-size:10.5px;} .camp h3{font-size:12px;letter-spacing:.12em;} #pRoom,#pFriends,#pJoin,#pOnline{grid-template-columns:minmax(0,1fr);} }
+@media (max-width:760px){ .camps{gap:8px;} .camp .pl{font-size:10.5px;} .camp h3{font-size:12px;letter-spacing:.12em;} #pRoom,#pFriends,#pJoin,#pOnline,#pCompte,#pAmis{grid-template-columns:minmax(0,1fr);} }
+/* comptes joueurs : panneaux MON COMPTE et AMIS, QR code du lien, fenêtre des formulaires hors du cadre tourné */
+.nnote a{color:var(--dim);text-decoration:underline;text-underline-offset:2px;}
+.nnote a:hover{color:var(--ink);}
+#amisRows{display:grid;gap:6px;width:min(470px,100%);max-height:min(34vh,250px);overflow-y:auto;align-content:start;position:relative;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+#amisRows .mi.fb{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.14em;padding:8px 9px;border:1px solid rgba(39,228,255,.5);border-radius:5px;color:var(--ink);background:rgba(39,228,255,.08);}
+#amisRows .mi.fb.del{border-color:rgba(140,190,255,.25);color:var(--dim);background:none;}
+#amisRows .mi.fb.sel,#amisRows .mi.fb:hover{background:rgba(39,228,255,.22);color:#fff;}
+body.touch #amisRows .mi.fb{padding:11px 12px;}
+body.short #amisRows{max-height:calc(var(--lh,375px) - 200px - var(--sa-t) - var(--sa-b));}
+.fhead{margin:6px 0 0;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--faint);text-align:left;}
+.fhead:first-child{margin-top:0;}
+body.short #pCompte .title,body.short #pCompte .eyebrow,body.short #pAmis .title,body.short #pAmis .eyebrow{display:none;}
+body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data-panel="amis"] .panel{top:calc(52px + var(--sa-t));transform:none;}
+#netboxQr{display:grid;justify-items:center;gap:8px;}
+#netboxQr svg{display:block;width:min(200px,calc(var(--lh,100vh) * .36));height:auto;border-radius:6px;box-shadow:0 0 0 5px rgba(39,228,255,.16);}
+.mbox #netboxQr p{font-size:11px;letter-spacing:.14em;text-align:center;}
+#acct{position:fixed;left:0;top:0;width:100%;height:100%;z-index:79;display:grid;align-items:start;justify-items:center;box-sizing:border-box;padding:calc(10px + var(--env-t)) calc(12px + var(--env-r)) 10px calc(12px + var(--env-l));background:rgba(3,5,10,.9);pointer-events:auto;touch-action:manipulation;overflow:hidden;}
+.abox{width:min(460px,100%);max-height:calc(100% - min(4vh,32px));box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;display:grid;gap:10px;padding:18px;margin-top:min(4vh,32px);border:1px solid rgba(39,228,255,.45);border-radius:10px;background:rgba(6,12,24,.97);box-shadow:0 0 30px rgba(39,228,255,.18);text-align:left;}
+.abox h2{margin:0;font-weight:600;font-size:20px;letter-spacing:.14em;color:var(--ink);}
+.abox form,.abox .af{display:grid;gap:6px;}
+.abox .fl{margin-top:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--dim);}
+.abox input[type=text],.abox input[type=email],.abox input[type=password]{display:block;width:100%;box-sizing:border-box;min-height:44px;font:500 16px var(--mono);letter-spacing:.04em;color:var(--ink);background:rgba(39,228,255,.08);border:1px solid rgba(39,228,255,.55);border-radius:6px;padding:10px 12px;outline:none;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default;touch-action:manipulation;}
+.abox input.up{text-transform:uppercase;letter-spacing:.18em;}
+.abox input:focus{border-color:var(--nifo);box-shadow:0 0 14px rgba(39,228,255,.3);}
+.abox input::placeholder{color:var(--faint);opacity:1;text-transform:none;letter-spacing:0;}
+.abox .ck{display:flex;gap:10px;align-items:flex-start;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;line-height:1.55;color:var(--dim);cursor:pointer;}
+.abox .ck input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--nifo);cursor:pointer;}
+.abox a{color:var(--nifo);}
+.abox .mbtn{margin-top:8px;}
+.abox .mbtn[disabled]{opacity:.45;cursor:wait;}
+.abox .mbtns .mbtn{margin-top:0;}
+.ahelp{margin:0;font-family:var(--mono);font-size:11px;letter-spacing:.1em;line-height:1.6;color:var(--dim);overflow-wrap:anywhere;}
+.ahelp:empty{display:none;}
+.ahelp.err{color:var(--warn);}
+.ahelp.ok{color:var(--ok);}
+.atext{margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere;}
+.atext b{color:var(--ink);font-weight:500;}
+#acct.low .abox{margin-top:0;max-height:100%;gap:6px;padding:12px 14px;}
+#acct.low .eyebrow{display:none;}
+#acct.low h2{font-size:16px;}
 </style>
 
 </head>
@@ -718,12 +758,13 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
         <button class="mi small" data-act="netFriends" data-need id="onRecent" hidden>JOUEURS RÉCENTS</button>
         <button class="mi small" data-act="netJoinPanel" data-need>J'AI UN CODE</button>
         <button class="mi small" data-act="netName" data-need>PSEUDO&nbsp;<span id="onName"></span></button>
+        <button class="mi small" data-act="netAccount" data-need id="onAcct">MON COMPTE<small id="onAcctTag"></small></button>
       </div>
       <button class="mi" data-act="netRetry" id="onRetry" hidden><b>[01]</b>RÉESSAYER</button>
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="onState"></p>
-    <p class="nnote" id="onNote">En ligne, la mise en relation passe par un service externe (PeerJS), qui voit ton adresse IP le temps de la connexion ; les joueurs de ta salle aussi, car la liaison entre vous est directe. Seuls ton pseudo et ton code ami sont partagés. Rien n'est enregistré sur nos serveurs.</p>
+    <p class="nnote" id="onNote">En ligne, la mise en relation passe par un service externe (PeerJS), qui voit ton adresse IP le temps de la connexion ; les joueurs de ta salle aussi, car la liaison entre vous est directe. Sans compte, rien n'est enregistré chez nous. Avec un compte, ton mail, ton pseudo, tes amis et tes invitations sont gardés chez notre hébergeur (Supabase, Londres). <a href="legal/conditions.html" target="_blank" rel="noopener">Conditions</a> · <a href="legal/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="legal/mentions.html" target="_blank" rel="noopener">Mentions légales</a></p>
   </section>
   <section class="panel" id="pJoin" hidden aria-label="J'ai un code">
     <p class="eyebrow">EN LIGNE <span>//</span> J'AI UN CODE</p>
@@ -748,6 +789,7 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
       <button class="mi" data-act="netStart" data-host><b>[01]</b>LANCER LA PARTIE</button>
       <button class="mi" data-act="netInvite" data-priv><b>[02]</b>INVITER DES AMIS</button>
       <button class="mi" data-act="netFriends" data-priv><b>[03]</b>JOUEURS RÉCENTS</button>
+      <button class="mi" data-act="acFriends" data-priv data-acct hidden><b>[04]</b>MES AMIS</button>
       <button class="mi" data-act="netCamp"><b>[04]</b>CHANGER DE CAMP</button>
       <button class="mi" data-act="netBalance" data-host><b>[05]</b>ÉQUILIBRER</button>
       <button class="mi" data-act="netLeave"><b>[06]</b>QUITTER LA SALLE</button>
@@ -763,6 +805,34 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="friendMsg"></p>
+  </section>
+  <section class="panel" id="pCompte" hidden aria-label="Mon compte">
+    <p class="eyebrow">EN LIGNE <span>//</span> MON COMPTE</p>
+    <h2 class="title sm"><span class="t1">COM</span><span class="t2">PTE</span></h2>
+    <p class="nline" id="acState"></p>
+    <nav class="mlist" id="acNav">
+      <button class="mi" data-act="acSignup" data-out hidden><b>[01]</b>CRÉER UN COMPTE</button>
+      <button class="mi" data-act="acLogin" data-out hidden><b>[02]</b>SE CONNECTER</button>
+      <button class="mi" data-act="acFriends" data-in hidden><b>[01]</b>AMIS<small id="acFriendsTag"></small></button>
+      <button class="mi" data-act="acSearch" data-in data-prof hidden><b>[02]</b>CHERCHER UN PILOTE</button>
+      <button class="mi" data-act="acProfile" data-in hidden><b>[03]</b>MON PROFIL</button>
+      <button class="mi" data-act="acLogout" data-in hidden><b>[04]</b>SE DÉCONNECTER</button>
+      <button class="mi" data-act="acRetry" id="acRetry" hidden><b>[01]</b>RÉESSAYER</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
+    <p class="nline" id="acMsg"></p>
+    <p class="nnote" id="acNote">Compte facultatif, dès 15 ans : pseudo unique, amis et invitations sur tous tes appareils. Ton mail, ton pseudo, tes amis et tes invitations sont gardés chez notre hébergeur (Supabase, Londres). <a href="legal/conditions.html" target="_blank" rel="noopener">Conditions</a> · <a href="legal/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="legal/mentions.html" target="_blank" rel="noopener">Mentions légales</a></p>
+  </section>
+  <section class="panel" id="pAmis" hidden aria-label="Amis">
+    <p class="eyebrow">MON COMPTE <span>//</span> AMIS</p>
+    <h2 class="title sm"><span class="t1">AM</span><span class="t2">IS</span></h2>
+    <div id="amisRows"></div>
+    <nav class="mlist">
+      <button class="mi" data-act="acSearch"><b>[01]</b>CHERCHER UN PILOTE</button>
+      <button class="mi" data-act="acFriendsRefresh"><b>[02]</b>ACTUALISER</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
+    <p class="nline" id="amisMsg"></p>
   </section>
   <footer class="foot"><span id="footKeys">↑↓ CHOISIR · ENTRÉE VALIDER · ÉCHAP RETOUR</span><span class="brand">UN JEU NIFO WEB · CYBERSÉCURITÉ · SITES WEB · APPLICATIONS · <button class="ver" id="ver" aria-label="Version du jeu">V2.0</button></span></footer>
 </div>
@@ -824,6 +894,7 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
     <p class="eyebrow">EN LIGNE</p>
     <h2 id="netboxT"></h2>
     <p id="netboxMsg"></p>
+    <div id="netboxQr" hidden></div>
     <div class="mbtns"><button class="mbtn" id="netboxOk">COMPRIS</button></div>
   </div>
 </div>
@@ -837,6 +908,55 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
     <p class="ehelp" id="entryHelp"></p>
     <div class="mbtns"><button type="button" class="mbtn alt" id="entryNo">ANNULER</button><button type="submit" class="mbtn" id="entryOk">VALIDER</button></div>
   </form>
+</div>
+<div id="acct" hidden role="dialog" aria-modal="true" aria-labelledby="acctT">
+  <div class="abox" id="acctBox">
+    <p class="eyebrow">EN LIGNE · MON COMPTE</p>
+    <h2 id="acctT"></h2>
+    <form id="afSignup" novalidate autocomplete="on" hidden>
+      <p class="atext">Facultatif, dès 15 ans : ton pseudo devient unique, et tu retrouves tes amis et leurs invitations sur tous tes appareils.</p>
+      <label class="fl" for="asPseudo">PSEUDO</label>
+      <input id="asPseudo" class="up" name="nickname" type="text" autocomplete="nickname" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="32" enterkeyhint="next">
+      <p class="ahelp" id="asPseudoMsg" aria-live="polite"></p>
+      <label class="fl" for="asMail">ADRESSE MAIL</label>
+      <input id="asMail" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="254" enterkeyhint="next">
+      <label class="fl" for="asPass">MOT DE PASSE</label>
+      <input id="asPass" name="new-password" type="password" autocomplete="new-password" placeholder="8 signes, lettres et chiffres" enterkeyhint="next">
+      <label class="fl" for="asYear">ANNÉE DE NAISSANCE</label>
+      <input id="asYear" name="bday-year" type="text" inputmode="numeric" autocomplete="bday-year" maxlength="4" placeholder="AAAA" enterkeyhint="done">
+      <label class="ck"><input id="asAge" type="checkbox"><span>J'ai 15 ans ou plus.</span></label>
+      <label class="ck"><input id="asTerms" type="checkbox"><span>J'accepte les <a href="legal/conditions.html" target="_blank" rel="noopener">conditions d'utilisation</a> et j'ai lu la <a href="legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span></label>
+      <button type="submit" class="mbtn">CRÉER MON COMPTE</button>
+    </form>
+    <form id="afLogin" novalidate autocomplete="on" hidden>
+      <label class="fl" for="alMail">ADRESSE MAIL</label>
+      <input id="alMail" name="username" type="email" autocomplete="username" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="254" enterkeyhint="next">
+      <label class="fl" for="alPass">MOT DE PASSE</label>
+      <input id="alPass" name="password" type="password" autocomplete="current-password" enterkeyhint="go">
+      <button type="submit" class="mbtn">SE CONNECTER</button>
+      <button type="button" class="mbtn alt" id="alMagic">RECEVOIR UN LIEN DE CONNEXION</button>
+      <p class="atext">Mot de passe oublié : le lien de connexion, reçu par mail, ouvre ta session sans mot de passe.</p>
+    </form>
+    <form id="afProfile" novalidate autocomplete="off" hidden>
+      <p class="atext" id="apInfo"></p>
+      <label class="fl" for="apPseudo">PSEUDO</label>
+      <input id="apPseudo" class="up" name="nickname" type="text" autocomplete="nickname" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="32" enterkeyhint="done">
+      <p class="ahelp" id="apPseudoMsg" aria-live="polite"></p>
+      <div class="af" id="apNew" hidden>
+        <label class="fl" for="apYear">ANNÉE DE NAISSANCE</label>
+        <input id="apYear" name="bday-year" type="text" inputmode="numeric" autocomplete="bday-year" maxlength="4" placeholder="AAAA" enterkeyhint="done">
+        <label class="ck"><input id="apAge" type="checkbox"><span>J'ai 15 ans ou plus.</span></label>
+      </div>
+      <button type="submit" class="mbtn">ENREGISTRER</button>
+      <p class="atext">Pour supprimer ton compte ou tes données, suis la <a href="legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</p>
+    </form>
+    <div class="af" id="afSent" hidden>
+      <p class="atext" id="afSentTxt"></p>
+      <button type="button" class="mbtn alt" id="afResend">RENVOYER LE MAIL</button>
+    </div>
+    <p class="ahelp" id="acctMsg" role="status" aria-live="polite"></p>
+    <div class="mbtns"><button type="button" class="mbtn alt" id="acctNo">FERMER</button></div>
+  </div>
 </div>
 <div id="saProbe" aria-hidden="true"></div>
 
@@ -3062,7 +3182,7 @@ function gpFrame(dt){
   const down = (i) => now[i] && !GP.prev[i];
   const lx = ax(0), ly = ax(1), rx = ax(2), ry = ax(3);
   if (now.some(Boolean) || Math.hypot(lx, ly) > 0.3 || Math.hypot(rx, ry) > 0.3){ if (!GP.used){ GP.used = true; setHint(); } }
-  const inMenu = !intro.done || !$('menu').hidden || !$('guide').hidden || !$('diag').hidden || !$('fatal').hidden || !$('invite').hidden || !$('netbox').hidden || !$('entry').hidden;
+  const inMenu = !intro.done || !$('menu').hidden || !$('guide').hidden || !$('diag').hidden || !$('fatal').hidden || !$('invite').hidden || !$('netbox').hidden || !$('entry').hidden || !$('acct').hidden;
   if (inMenu){
     let dir = '';
     if (now[12] || ly < -0.6) dir = 'ArrowUp'; else if (now[13] || ly > 0.6) dir = 'ArrowDown'; else if (now[14] || lx < -0.6) dir = 'ArrowLeft'; else if (now[15] || lx > 0.6) dir = 'ArrowRight';
@@ -3454,10 +3574,12 @@ function historyGuard(){
   addEventListener('popstate', () => {
     if (history.state && history.state.nifoGarde) return;   // retour sur notre entrée (page suivante) : rien à faire
     mark();
+    if (ACCT.urlCb) return;   // retour d'un lien reçu par mail : la bibliothèque des comptes nettoie l'adresse, ce n'est pas un retour
     if (!$('entry').hidden) entryClose(false);
+    else if (!$('acct').hidden) acctClose();
     else if (game.state === 'playing' || game.state === 'countdown'){ if (NET.match && NET.pause){ if (UI.cur === 'settings') back(); } else pauseGame(); }
     else if (!$('diag').hidden || !$('guide').hidden){ closeDiag(); closeGuide(); }
-    else if (!$('menu').hidden && (UI.cur === 'settings' || UI.cur === 'controls' || UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends')) back();
+    else if (!$('menu').hidden && (UI.cur === 'settings' || UI.cur === 'controls' || UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends' || UI.cur === 'compte' || UI.cur === 'amis')) back();
   });
 }
 
@@ -3467,7 +3589,7 @@ function items(){ return [...UI.panels[UI.cur].querySelectorAll('.mi')].filter((
 function highlight(){
   items().forEach((el, i) => el.classList.toggle('sel', i === UI.sel));
   // au clavier, à la télécommande ou à la manette : l'entrée choisie reste visible dans les listes qui défilent
-  const el = items()[UI.sel], c = el && document.body.classList.contains('kbnav') && el.closest('#setRows,#friendRows');
+  const el = items()[UI.sel], c = el && document.body.classList.contains('kbnav') && el.closest('#setRows,#friendRows,#amisRows');
   if (c && c.scrollHeight > c.clientHeight){ const top = el.offsetTop, bot = top + el.offsetHeight; if (top < c.scrollTop) c.scrollTop = top; else if (bot > c.scrollTop + c.clientHeight) c.scrollTop = bot - c.clientHeight; }
 }
 function openPanel(name, push = true){
@@ -3477,7 +3599,7 @@ function openPanel(name, push = true){
   const m = $('menu'); m.hidden = false;
   m.classList.toggle('center', game.state === 'paused' || game.state === 'results');
   m.dataset.panel = name;
-  $('backTop').hidden = !(name === 'controls' || name === 'settings' || name === 'online' || name === 'join' || name === 'friends');
+  $('backTop').hidden = !(name === 'controls' || name === 'settings' || name === 'online' || name === 'join' || name === 'friends' || name === 'compte' || name === 'amis');
   if (name === 'settings') renderSettings();
   if (name === 'controls') renderControls();
   if (name === 'main'){ $('fsItem').hidden = !(isTouch && FS.can() && !PLAT.standalone); fsLabel(); }
@@ -3490,7 +3612,7 @@ function back(){
   const prev = UI.stack.pop();
   if (prev) openPanel(prev, false);
   else if (game.state === 'paused' || (NET.match && NET.pause)) resume();
-  else if (!NET.on && (UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends')) openPanel('main', false);
+  else if (!NET.on && (UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends' || UI.cur === 'compte' || UI.cur === 'amis')) openPanel('main', false);
 }
 function renderSettings(){
   const keysS = Object.keys(SETS).filter((k) => (k !== 'screen' && k !== 'pilot') || isTouch);
@@ -3585,6 +3707,7 @@ function activate(el, dir = 1){
   else if (act === 'fullscreen') FS.toggle();
   else if (act === 'guide') openGuide();
   else if (act === 'online' || (act && act.startsWith('net'))) netAct(act, el);
+  else if (act && act.startsWith('ac')) acctAct(act, el);
 }
 
 /* ============ déroulé ============ */
@@ -3876,13 +3999,15 @@ function bindEvents(){
     if (e.button === 2) useEdge = true;
   });
   addEventListener('pointerup', (e) => { if (e.pointerType === 'mouse' && e.button === 0) mouse.down = false; });
-  addEventListener('contextmenu', (e) => e.preventDefault());
+  addEventListener('contextmenu', (e) => { if (e.target && e.target.closest && e.target.closest('#acct')) return; e.preventDefault(); });   // champs des comptes : coller reste possible
   addEventListener('keydown', (e) => {
     const c = keyCode(e);
     if (c === 'Escape' && e.code !== 'Escape') e.preventDefault();   // touche retour d'une télécommande : pas de retour du navigateur
     if (!$('menu').hidden && /^(Arrow|Enter|NumpadEnter|Tab)/.test(c)) document.body.classList.add('kbnav');
     // saisie : le champ garde ses touches ; Entrée (ou « OK » du clavier du téléphone) valide, Échap annule
     if (!$('entry').hidden){ if (c === 'Escape'){ e.preventDefault(); entryClose(false); } else if ((e.key === 'Enter' || c === 'Enter' || c === 'NumpadEnter' || e.keyCode === 13) && !e.isComposing){ e.preventDefault(); entryClose(true); } return; }
+    // fenêtre des comptes : les champs gardent leurs touches (espace, lettres, flèches), Échap ferme
+    if (!$('acct').hidden){ acctKey(e, c); return; }
     if (!$('fatal').hidden){ if (c === 'Enter' || c === 'NumpadEnter') relaunch(); return; }
     if (!$('diag').hidden || !$('guide').hidden){ if (c === 'Escape' || c === 'Enter' || c === 'NumpadEnter'){ e.preventDefault(); closeDiag(); closeGuide(); } return; }
     if (!$('netbox').hidden){ if (c === 'Escape' || c === 'Enter' || c === 'NumpadEnter'){ e.preventDefault(); netboxClose(); } return; }
@@ -3990,7 +4115,7 @@ function bindEvents(){
   document.addEventListener('gesturestart', stopGesture, { passive: false });
   document.addEventListener('gesturechange', stopGesture, { passive: false });
   document.addEventListener('dblclick', stopGesture, { passive: false });
-  document.addEventListener('touchmove', (e) => { const el = e.target; if (!(el && el.closest && el.closest('#setRows,#ctlRows,.mbox,#friendRows,#roomCamps,.ebox'))) e.preventDefault(); }, { passive: false });
+  document.addEventListener('touchmove', (e) => { const el = e.target; if (!(el && el.closest && el.closest('#setRows,#ctlRows,.mbox,#friendRows,#roomCamps,.ebox,#amisRows,.abox'))) e.preventDefault(); }, { passive: false });
 }
 
 /* ============ en ligne : jeu entre amis ============ */
@@ -3998,8 +4123,9 @@ function bindEvents(){
 // par défaut). Une salle est un pair nommé d'après son code ; les invités s'y relient, l'hôte relaie ce qu'ils disent.
 // L'hôte fait foi pour le chrono, les objets, les scores, les IA et la fin de partie. Chaque joueur pilote son
 // vaisseau, envoie son état 20 fois par seconde et signale lui même les touches qu'il subit ; l'hôte les valide.
-// Rien n'est gardé sur un serveur : pseudo, code ami et liste d'amis restent dans l'appareil.
-const NET_BUILD = '7d2b50490c';   // remplacé à la construction du site par une empreinte du code : deux versions différentes ne jouent pas ensemble
+// Sans compte, rien n'est gardé sur un serveur : pseudo, code ami et liste d'amis restent dans l'appareil. Les comptes,
+// facultatifs (comptes.js), gardent pseudo, amis et invitations chez l'hébergeur des comptes ; le jeu reste sur PeerJS.
+const NET_BUILD = '79a2158408';   // remplacé à la construction du site par une empreinte du code : deux versions différentes ne jouent pas ensemble
 const NET_PROTO = 1;
 const PEERJS_URL = 'https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';
 const PEERJS_SRI = 'sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu';
@@ -4046,7 +4172,7 @@ function netNow(){ return netNowMs() / 1000; }
 function setLine(id, txt, cls){ const el = $(id); if (!el) return; el.textContent = txt || ''; el.className = 'nline' + (cls ? ' ' + cls : ''); }
 let toastT = 0;
 function toast(txt, sec){ const el = $('toast'); if (!el) return; el.textContent = txt; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), (sec || 2.5) * 1000); }
-function netbox(title, msg){ $('netboxT').textContent = title; $('netboxMsg').textContent = msg; $('netbox').hidden = false; }
+function netbox(title, msg){ QR.k++; const q = $('netboxQr'); if (q){ q.hidden = true; q.innerHTML = ''; } $('netboxT').textContent = title; $('netboxMsg').textContent = msg; $('netbox').hidden = false; }
 function netboxClose(){ $('netbox').hidden = true; }
 function copyText(txt, done){
   const fallback = () => {
@@ -4096,7 +4222,7 @@ function idLoad(){
 }
 // joueurs récents : les pilotes croisés en ligne (et les codes ami ajoutés), le plus récent d'abord
 function friendsLoad(){ const l = store.get('netFriends', []); return Array.isArray(l) ? l.filter((f) => f && friendOk(f.fc) && f.fc !== ID.fc).sort((a, b) => (+b.t || 0) - (+a.t || 0)).slice(0, 30) : []; }
-function friendsSave(l){ store.set('netFriends', l.slice(0, 30).map((f) => ({ fc: f.fc, n: f.n || '', t: +f.t || 0 }))); }
+function friendsSave(l){ store.set('netFriends', l.slice(0, 30).map((f) => ({ fc: f.fc, n: f.n || '', t: +f.t || 0, u: uuidOk(f.u) ? f.u : '' }))); }
 function recentsAdd(){
   const l = friendsLoad(), now = Date.now();
   let n = 0;
@@ -4104,9 +4230,12 @@ function recentsAdd(){
     if (!p || !friendOk(p.f) || p.f === ID.fc) continue;
     const i = l.findIndex((x) => x.fc === p.f);
     if (i >= 0) l.splice(i, 1);
-    l.unshift({ fc: p.f, n: p.n || '', t: now }); n++;
+    l.unshift({ fc: p.f, n: p.n || '', t: now, u: uuidOk(p.u) ? p.u : '' }); n++;
   }
   if (n) friendsSave(l);
+  // compte connecté : ses joueurs récents le suivent aussi sur ses autres appareils
+  const ids = acctUid() ? NET.lobby.map((p) => p && p.u).filter((u) => uuidOk(u) && u !== ACCT.id) : [];
+  if (ids.length && ACCT.C) ACCT.C.noterJoueursRecents(ids).then(() => acctRecentsLoad()).catch(() => {});
 }
 function friendName(fc){ const st = NET.fstat[fc], f = friendsLoad().find((x) => x.fc === fc); return (st && st.n) || (f && f.n) || 'TON AMI ' + fcShow(fc); }
 
@@ -4295,13 +4424,18 @@ function friendMsgSet(t, cls){ NET.friendMsg = t || ''; NET.friendCls = cls || '
 let friendsHtml = '';
 function friendsRender(){
   if (UI.cur !== 'friends' || $('menu').hidden) return;
-  // les codes ami vivent dans J'AI UN CODE
-  const l = friendsLoad();
-  const html = !l.length ? '<p class="nline">PERSONNE POUR L\'INSTANT : LES PILOTES CROISÉS EN LIGNE APPARAÎTRONT ICI.</p>' : l.map((f) => {
+  // les codes ami vivent dans J'AI UN CODE ; compte connecté : d'abord ses joueurs récents avec un compte (synchronisés),
+  // puis ceux de cet appareil trouvés par leur code ami
+  const acc = ACCT.prof ? ACCT.recents : [], accIds = new Set(acc.map((r) => r.id));
+  const l = friendsLoad().filter((f) => !(f.u && accIds.has(f.u)));
+  const rows = acc.map((r) => { const b = acButtons(r.id, false); return acRow(r.joueur.pseudo, (b.label ? b.label + ' · ' : '') + acPres(r.id), ACCT.on.has(r.id), b.btns); });
+  const loc = l.map((f) => {
     const st = NET.fstat[f.fc] || {}, on = st.st === 'on', wait = !!st.busy;
     const label = wait ? 'VÉRIFICATION' : on ? 'EN LIGNE' : st.st === 'off' ? 'HORS LIGNE' : 'ÉTAT INCONNU';
     return `<div class="frow${on ? ' on' : ''}${wait ? ' wait' : ''}"><i class="dot"></i><div class="nm"><span>${esc(st.n || f.n || 'AMI')}</span><small>${label}</small></div><button class="mi fb" data-act="netInv" data-fc="${f.fc}"${st.st === 'off' ? ' hidden' : ''}>INVITER</button><button class="mi fb del" data-act="netDel" data-fc="${f.fc}">${NET.delArm === f.fc ? 'CONFIRMER' : 'RETIRER'}</button></div>`;
-  }).join('');
+  });
+  const html = !rows.length && !loc.length ? '<p class="nline">PERSONNE POUR L\'INSTANT : LES PILOTES CROISÉS EN LIGNE APPARAÎTRONT ICI.</p>'
+    : (rows.length ? '<p class="fhead">AVEC UN COMPTE</p>' + rows.join('') + (loc.length ? '<p class="fhead">PAR CODE AMI</p>' : '') : '') + loc.join('');
   // on ne reconstruit la liste que si elle change : un appui en cours n'est pas perdu
   if (html !== friendsHtml){ friendsHtml = html; $('friendRows').innerHTML = html; highlight(); }
   setLine('friendMsg', NET.friendMsg, NET.friendCls);
@@ -4367,10 +4501,12 @@ function inviteAnswer(ok, expired){
   const inv = NET.invite; if (!inv) return;
   NET.invite = null; clearTimeout(inv.timer);
   $('invite').hidden = true;
-  inv.link.send({ t: 'invr', ok: ok ? 1 : 0 });
+  // invitation d'un compte : la réponse part chez l'hébergeur des comptes ; sinon par la liaison PeerJS de l'ami
+  if (inv.compte) acctAnswer(inv.compte, ok); else inv.link.send({ t: 'invr', ok: ok ? 1 : 0 });
   setTimeout(inv.end, 1500);
-  if (expired){ toast('INVITATION EXPIRÉE', 2.5); return; }
-  if (!ok) return;
+  if (expired){ toast('INVITATION EXPIRÉE', 2.5); acctInvNext(); return; }
+  if (!ok){ acctInvNext(); return; }
+  ACCT.invQ = [];   // on part chez un ami : les autres invitations en attente expireront d'elles mêmes
   if (NET.on) netLeave(true);
   else if (game.state !== 'menu') toMenu();
   NET.joinCode = inv.code; NET.joinMsg = 'INVITATION DE ' + inv.name;
@@ -4388,6 +4524,7 @@ function netSessionBegin(host, code){
   else NET.synced = false;
   clearInterval(NET.timer); NET.timer = setInterval(netWatch, 500);
   urlClean();
+  presSet();
 }
 // salle privée : cinq lettres ; partie rapide : un des halls publics numérotés de 1 à HALLS, propres à chaque version
 const HALLS = 5, HALL_WAIT = 10;
@@ -4425,7 +4562,7 @@ function hostBegin(room, code){
   NET.room = room;
   room.on('connection', hostIncoming);
   room.on('disconnected', () => { if (NET.room === room) peerRejoin(room); });
-  NET.pilots.set('h', { pid: 'h', tok: '', name: ID.name, fc: ID.fc, camp: 0, host: true, conn: true, order: NET.order++, link: null, ship: -1, leftK: 0 });
+  NET.pilots.set('h', { pid: 'h', tok: '', name: ID.name, fc: ID.fc, u: acctUid(), camp: 0, host: true, conn: true, order: NET.order++, link: null, ship: -1, leftK: 0 });
   netStatus('');
   UI.stack = [];
   openPanel('room', false);
@@ -4537,7 +4674,7 @@ function guestConnect(code, rejoin, ms, quick){
     const fin = (err, val) => { if (done) return; done = true; clearTimeout(to); NET.pend.delete(id); if (err){ L.onclose = null; L.close(); rej(err); } else res(val); };
     const to = setTimeout(() => fin(Object.assign(new Error('délai'), { type: L.open ? 'noanswer' : 'webrtc' })), ms || 16000);
     NET.pend.set(id, () => fin(Object.assign(new Error('introuvable'), { type: 'peer-unavailable' })));
-    L.onopen = () => L.send({ t: 'hello', v: NET_BUILD, p: NET_PROTO, n: ID.name, fc: ID.fc, rj: rejoin || '', q: quick ? 1 : 0 });
+    L.onopen = () => L.send({ t: 'hello', v: NET_BUILD, p: NET_PROTO, n: ID.name, fc: ID.fc, u: acctUid(), rj: rejoin || '', q: quick ? 1 : 0 });
     L.onmsg = (m) => {
       if (m.t === 'welcome' && typeof m.pid === 'string' && typeof m.tok === 'string'){ L.hold(); fin(null, { link: L, pid: m.pid, tok: m.tok, h: +m.h }); }
       else if (m.t === 'no') fin(Object.assign(new Error('refus'), { type: 'refused', why: m.why }));
@@ -4573,6 +4710,16 @@ function inviteShare(url){
 function linkBox(url, ok, changed){
   netbox(changed ? 'NOUVEAU LIEN' : ok ? 'LIEN COPIÉ' : 'TON LIEN D\'INVITATION',
     (changed ? 'Le premier lien n\'est plus valable. ' : '') + (ok && !changed ? 'Colle le dans un message à tes amis.' : 'Copie ce lien et envoie le à tes amis.') + ' En le touchant, ils rejoignent ta partie directement.\n\n' + url.replace(/^https?:\/\//, ''));
+  qrShow(url);
+}
+// QR code du lien, fabriqué sur place (module des comptes seul, sans sa bibliothèque) : lisible par tous les téléphones
+const QR = { k: 0 };
+function qrShow(url){
+  const z = $('netboxQr'), k = ++QR.k;
+  comptesMod().then((C) => C.qrCodeSvg(url, 200)).then((svg) => {
+    if (k !== QR.k || $('netbox').hidden || typeof svg !== 'string' || !/^<svg[\s>]/.test(svg)) return;
+    z.innerHTML = svg + '<p>OU SCANNE CE CODE AVEC UN TÉLÉPHONE</p>'; z.hidden = false;
+  }).catch(() => {});
 }
 // départ volontaire (QUITTER LA SALLE, accepter une autre invitation)
 function netLeave(silent){
@@ -4619,6 +4766,7 @@ function netSessionEnd(){
   netUnload();
   $('onTag').textContent = '';
   urlClean();
+  presSet();
 }
 
 /* ---------- hôte : accueil des invités ---------- */
@@ -4651,7 +4799,7 @@ function hostHello(L, m){
   if (cnt[0] + cnt[1] >= NET_MAX){ L.send({ t: 'no', why: 'full' }); setTimeout(() => L.close(), 800); return; }
   let camp = cnt[0] <= cnt[1] ? 0 : 1;
   if (cnt[camp] >= CAMP_MAX) camp = 1 - camp;
-  const P = { pid: 'p' + randCode(FRIEND_ABC, 6), tok: randCode(FRIEND_ABC, 12), name: uniqueName(safeName(m.n, 'PILOTE')), fc: friendOk(m.fc) ? m.fc : '', camp, host: false, conn: true, order: NET.order++, link: L, ship: -1, leftK: 0 };
+  const P = { pid: 'p' + randCode(FRIEND_ABC, 6), tok: randCode(FRIEND_ABC, 12), name: uniqueName(safeName(m.n, 'PILOTE')), fc: friendOk(m.fc) ? m.fc : '', u: uuidOk(m.u) ? m.u : '', camp, host: false, conn: true, order: NET.order++, link: L, ship: -1, leftK: 0 };
   NET.pilots.set(P.pid, P);
   L.pid = P.pid; NET.links.add(L);
   L.send({ t: 'welcome', pid: P.pid, tok: P.tok, h: Math.round(netNowMs()) });
@@ -4693,7 +4841,7 @@ function hostDrop(L){
   lobbySend();
 }
 function lobbyList(){
-  return [...NET.pilots.values()].filter((P) => P.conn || P.leftK).sort((a, b) => a.order - b.order).map((P) => ({ p: P.pid, n: P.name, c: P.camp, h: P.host ? 1 : 0, o: P.conn ? 1 : 0, f: P.fc || '' }));
+  return [...NET.pilots.values()].filter((P) => P.conn || P.leftK).sort((a, b) => a.order - b.order).map((P) => ({ p: P.pid, n: P.name, c: P.camp, h: P.host ? 1 : 0, o: P.conn ? 1 : 0, f: P.fc || '', u: P.u || '' }));
 }
 function lobbySend(){
   if (!NET.host) return;
@@ -4731,7 +4879,7 @@ function guestMsg(m, raw){
   switch (m.t){
     case 'lobby':
       if (Array.isArray(m.l)){
-        NET.lobby = m.l.filter((p) => p && typeof p.p === 'string').slice(0, 12).map((p) => ({ p: p.p, n: safeName(p.n, 'PILOTE'), c: p.c ? 1 : 0, h: p.h ? 1 : 0, o: p.o ? 1 : 0, f: friendOk(p.f) ? p.f : '' }));
+        NET.lobby = m.l.filter((p) => p && typeof p.p === 'string').slice(0, 12).map((p) => ({ p: p.p, n: safeName(p.n, 'PILOTE'), c: p.c ? 1 : 0, h: p.h ? 1 : 0, o: p.o ? 1 : 0, f: friendOk(p.f) ? p.f : '', u: uuidOk(p.u) ? p.u : '' }));
         NET.running = !!m.run; NET.autoK = +m.ak > 0 ? +m.ak : 0;
         if (UI.cur === 'room' && !$('menu').hidden) roomRender();
       }
@@ -4838,7 +4986,7 @@ function netWarnUpdate(){
 function netDiag(){
   if (netFramed()) return 'indisponible (page dans un cadre)';
   let s = !NET.on ? (NET.meReady ? 'présence active' : 'hors salle') : 'salle ' + NET.code + ' · ' + (NET.host ? 'hôte · ' + (NET.links.size + 1) : 'invité · ' + NET.lobby.length) + ' pilotes' + (NET.host ? '' : ' · écho ' + Math.round(NET.rtt) + ' ms') + (NET.match ? ' · partie en cours' : '');
-  return s + ' · code ami ' + fcShow(ID.fc) + ' · version ' + NET_BUILD;
+  return s + ' · code ami ' + fcShow(ID.fc) + ' · version ' + NET_BUILD + ' · compte ' + (ACCT.id ? (ACCT.prof ? 'connecté' : 'sans profil') : ACCT.C ? 'non connecté' : 'non chargé');
 }
 
 /* ---------- partie en ligne : ville, vaisseaux, départ ---------- */
@@ -4963,7 +5111,8 @@ function netStartUi(){
   cam.pos.set(me.pos.x - Math.sin(me.yaw) * 9.5, me.pos.y + 3.1, me.pos.z - Math.cos(me.yaw) * 9.5);
   camera.position.copy(cam.pos); lastCamPos.copy(cam.pos); cam.shake = 0;
   game.state = 'countdown'; game.time = Math.max(0, NET.endK - netNow()); game.lastBeep = -1; game.cd = 4; game.lockT = null;
-  entryClose(false);
+  entryClose(false); acctClose();
+  presSet();
   $('menu').hidden = true; $('hud').hidden = false; $('touch').hidden = !isTouch;
   document.body.classList.add('playing');
   setShipsVisible(true);
@@ -5532,6 +5681,7 @@ function netEndMatch(m){
     return;
   }
   NET.ended = true; NET.match = false; NET.pause = false; NET.provisional = !m;
+  presSet();
   if (NET.host){ NET.running = false; if (NET.hall) NET.autoHold = netNow() + 12; for (const P of NET.pilots.values()) P.ship = -1; lobbySend(); }
   game.state = 'results';
   document.body.classList.remove('playing');
@@ -5602,6 +5752,516 @@ function netBuildMarkers(){
   }
 }
 
+/* ---------- comptes joueurs (facultatifs) : pseudo unique, amis, invitations en direct, présence ---------- */
+// Le jeu en ligne reste sur PeerJS ; le compte ne sert qu'autour. Le module comptes.js, posé à côté de la page, et sa
+// bibliothèque ne se chargent qu'à la demande : en ouvrant MON COMPTE, ou dès l'entrée si l'appareil garde une session
+// (invitations des amis) ou revient d'un lien reçu par mail. Une invitation ne porte que le code de la salle : on la
+// rejoint ensuite par le chemin habituel (netJoin). Sans compte, tout marche comme avant.
+const ACCT = {
+  modP: null, p: null, bootP: null, C: null, fail: false, loading: false, gen: 0, busy: false, fbusy: false,
+  id: '', mail: '', prof: null, amis: [], on: new Map(), recents: [], res: null, q: '',
+  stopInv: null, stopAuth: null, invQ: [], sent: '', delArm: '',
+  msg: '', cls: '', amisMsg: '', amisCls: '', urlCb: '', urlErr: '', mode: '', pseudoT: 0, pseudoK: 0,
+};
+const ACCT_KEY = 'nifoweb.sentinelle.compte';   // clé où la bibliothèque des comptes garde la session sur l'appareil
+const uuidOk = (u) => typeof u === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(u);
+function acctUid(){ return ACCT.prof && uuidOk(ACCT.id) ? ACCT.id : ''; }
+function acctStored(){ try { return !!localStorage.getItem(ACCT_KEY); } catch (e){ return false; } }
+function acctBase(){ return location.origin + location.pathname; }
+// le module seul suffit au QR code ; les comptes demandent aussi sa bibliothèque (init)
+function comptesMod(){
+  if (netFramed()) return Promise.reject(new Error('frame'));
+  if (!ACCT.modP){ const p = ACCT.modP = import('./comptes.js'); p.catch(() => { if (ACCT.modP === p) ACCT.modP = null; }); }
+  return ACCT.modP;
+}
+function comptes(){
+  if (netFramed()) return Promise.reject(new Error('frame'));
+  if (!ACCT.p){ const p = ACCT.p = comptesMod().then(async (C) => { await C.init(); return C; }); p.catch(() => { if (ACCT.p === p) ACCT.p = null; }); }
+  return ACCT.p;
+}
+// messages du module (en français), mis en capitales comme le reste du jeu ; module ou bibliothèque absents : service indisponible
+function acctUp(t){ return String(t || '').toUpperCase().replace(/[\s.!]+$/, ''); }
+function acctErr(e){
+  if (!e || e.name !== 'ErreurCompte' || e.code === 'BIBLIOTHEQUE') return 'SERVICE DES COMPTES INDISPONIBLE : VÉRIFIE TA CONNEXION ET RÉESSAIE';
+  return acctUp(e.message) || 'ERREUR INATTENDUE, RÉESSAIE';
+}
+function acctMsg(t, cls){ ACCT.msg = t || ''; ACCT.cls = cls || ''; if (UI.cur === 'compte' && !$('menu').hidden) setLine('acMsg', ACCT.msg, ACCT.cls); }
+function acctAmisMsg(t, cls){
+  ACCT.amisMsg = t || ''; ACCT.amisCls = cls || '';
+  if (UI.cur === 'amis' && !$('menu').hidden) setLine('amisMsg', ACCT.amisMsg, ACCT.amisCls);
+  else if (UI.cur === 'friends' && t) friendMsgSet(t, cls);
+}
+function acctRefreshUi(){
+  if ($('menu').hidden) return;
+  if (UI.cur === 'compte') acctRender();
+  else if (UI.cur === 'amis') amisRender();
+  else if (UI.cur === 'online') onlineRender();
+  else if (UI.cur === 'friends'){ friendsHtml = ''; friendsRender(); }
+  else if (UI.cur === 'room') roomRender();
+}
+// présence : seules les listes changent
+function acctLiveUi(){
+  if ($('menu').hidden) return;
+  if (UI.cur === 'amis') amisRender(); else if (UI.cur === 'compte') acctRender(); else if (UI.cur === 'friends') friendsRender();
+}
+
+/* connexion au service : session reprise (appareil ou lien reçu par mail), puis profil, amis, invitations, présence */
+function acctBoot(){
+  if (ACCT.C) return Promise.resolve(ACCT.C);
+  if (ACCT.bootP) return ACCT.bootP;
+  ACCT.loading = true; ACCT.fail = false; acctRefreshUi();
+  const p = ACCT.bootP = comptes().then(async (C) => {
+    if (!ACCT.stopAuth) ACCT.stopAuth = await C.surChangement((ev, s) => { setTimeout(() => { acctSession(s, ev).catch(diagError); }, 0); });
+    ACCT.C = C; ACCT.loading = false;
+    try { await acctSession(await C.session(), 'INITIAL'); } catch (e){ acctMsg(acctErr(e), 'err'); }
+    acctRefreshUi();
+    return C;
+  });
+  p.catch((e) => { if (ACCT.bootP === p) ACCT.bootP = null; ACCT.loading = false; ACCT.fail = true; acctMsg(acctErr(e), 'err'); acctRefreshUi(); });
+  return p;
+}
+async function acctSession(s, ev){
+  const id = s && s.user && uuidOk(s.user.id) ? s.user.id : '';
+  if (id === ACCT.id){ if (id) ACCT.mail = s.user.email || ACCT.mail; return; }
+  const g = ++ACCT.gen;
+  await acctStopLive();
+  if (g !== ACCT.gen) return;
+  Object.assign(ACCT, { id, mail: id ? s.user.email || '' : '', prof: null, amis: [], on: new Map(), recents: [], res: null, q: '', invQ: [], delArm: '' });
+  if (!id){ acctNameSync(); acctRefreshUi(); return; }
+  try { ACCT.prof = await ACCT.C.monProfil(); } catch (e){ if (g === ACCT.gen) acctMsg(acctErr(e), 'err'); }
+  if (g !== ACCT.gen) return;
+  acctNameSync(); acctRefreshUi();
+  await Promise.all([acctFriendsLoad(), acctRecentsLoad()]);
+  if (g !== ACCT.gen) return;
+  try {
+    const stop = await ACCT.C.ecouterInvitations({ recue: acctInvite, reponse: acctReply });
+    if (g !== ACCT.gen){ stop(); return; }
+    ACCT.stopInv = stop;
+  } catch (e){ if (g === ACCT.gen) acctMsg('INVITATIONS EN DIRECT INDISPONIBLES POUR LE MOMENT', 'err'); }
+  await acctInvLoad();   // celles arrivées avant la connexion (valables 10 minutes)
+  await acctPresence();
+  acctRefreshUi();
+}
+async function acctStopLive(){
+  const si = ACCT.stopInv, pr = NET.pres;
+  ACCT.stopInv = null; NET.pres = null; NET.presEtat = '';
+  try { if (si) await si(); } catch (e){}
+  try { if (pr) await pr.quitter(); } catch (e){}
+}
+// pseudo du compte quand on est connecté (avec un profil), sinon le pseudo de l'appareil
+function acctNameSync(){
+  const local = safeName(store.get('netName', ''), '') || ID.name;
+  ID.name = ACCT.prof ? safeName(ACCT.prof.pseudo, local) : local;
+}
+async function acctFriendsLoad(){
+  if (!ACCT.C || !ACCT.id) return;
+  const g = ACCT.gen;
+  try { const l = await ACCT.C.amis(); if (g === ACCT.gen) ACCT.amis = (Array.isArray(l) ? l : []).filter((a) => a && a.joueur && uuidOk(a.joueur.id) && uuidOk(a.id)); }
+  catch (e){ if (g === ACCT.gen) acctAmisMsg(acctErr(e), 'err'); }
+  if (g === ACCT.gen) acctRefreshUi();
+}
+async function acctRecentsLoad(){
+  if (!ACCT.C || !ACCT.prof) return;
+  const g = ACCT.gen;
+  try { const l = await ACCT.C.joueursRecents(20); if (g === ACCT.gen) ACCT.recents = (Array.isArray(l) ? l : []).filter((r) => r && uuidOk(r.id) && r.joueur && r.id !== ACCT.id); } catch (e){}
+  if (g === ACCT.gen && !$('menu').hidden && (UI.cur === 'friends' || UI.cur === 'online')) acctRefreshUi();
+}
+async function acctInvLoad(){
+  if (!ACCT.C || !ACCT.id) return;
+  const g = ACCT.gen;
+  try { const l = await ACCT.C.invitationsRecues(); if (g === ACCT.gen) (Array.isArray(l) ? l : []).forEach(acctInvite); } catch (e){}
+}
+
+/* présence : au menu, dans une salle ou en partie ; le pseudo affiché d'un ami vient de la liste d'amis */
+function presState(){ return NET.match ? 'partie' : NET.on ? 'salle' : 'menu'; }
+function presSet(){ const e = presState(); if (NET.pres && NET.presEtat !== e){ NET.presEtat = e; NET.pres.changer(e).catch(() => {}); } }
+async function acctPresence(){
+  if (!ACCT.C || !ACCT.prof || NET.pres) return;
+  const g = ACCT.gen, etat = presState();
+  try {
+    const pr = await ACCT.C.presence(etat, (liste) => {
+      if (g !== ACCT.gen) return;
+      ACCT.on = new Map((Array.isArray(liste) ? liste : []).filter((j) => j && uuidOk(j.id)).map((j) => [j.id, String(j.etat || '')]));
+      acctLiveUi();
+    });
+    if (g !== ACCT.gen || NET.pres){ pr.quitter().catch(() => {}); return; }
+    NET.pres = pr; NET.presEtat = etat;
+    presSet();   // l'état a pu changer pendant l'inscription au canal
+  } catch (e){}   // présence indisponible : le reste marche
+}
+
+/* invitations reçues en direct : même fenêtre que les autres, jamais par dessus une partie en cours */
+function acctInvite(inv){
+  if (!inv || !uuidOk(inv.id) || !roomOk(inv.code)) return;
+  if (inv.expire && new Date(inv.expire).getTime() <= Date.now()) return;
+  if ((NET.invite && NET.invite.compte === inv.id) || ACCT.invQ.some((q) => q.id === inv.id)) return;
+  if (NET.on && NET.code === inv.code){ acctAnswer(inv.id, true); return; }   // déjà dans cette salle
+  if (NET.invite){ ACCT.invQ.push(inv); return; }   // une autre invitation est affichée : celle ci attend son tour
+  NET.invite = { name: safeName(inv.de && inv.de.pseudo, 'UN PILOTE'), code: inv.code, compte: inv.id, link: null, end: () => {} };
+  NET.invite.timer = setTimeout(() => inviteAnswer(false, true), 60000);
+  inviteShow();
+}
+function acctInvNext(){ while (!NET.invite && ACCT.invQ.length) acctInvite(ACCT.invQ.shift()); }
+function acctAnswer(id, ok){ comptes().then((C) => C.repondreInvitation(id, !!ok)).catch(() => {}); }
+function acctReply(r){
+  if (!r || (r.statut !== 'accepted' && r.statut !== 'declined')) return;
+  const a = ACCT.amis.find((x) => x.joueur && x.joueur.id === r.a), name = safeName(a && a.joueur.pseudo, 'TON AMI');
+  const ok = r.statut === 'accepted', t = name + (ok ? ' A ACCEPTÉ L\'INVITATION' : ' A REFUSÉ L\'INVITATION');
+  toast(t, 3.5); acctAmisMsg(t, ok ? 'ok' : 'err');
+  if (NET.on && !NET.hall) roomNote(t, ok ? 'ok' : 'err');
+}
+// inviter un ami : la salle s'ouvre d'abord si besoin (comme pour un code ami), puis l'invitation part
+function acctInviteFriend(pid){
+  const a = ACCT.amis.find((x) => x.statut === 'ami' && x.joueur && x.joueur.id === pid);
+  if (!a || !ACCT.C) return;
+  if (NET.on && NET.hall){ acctAmisMsg('PAS D\'INVITATION EN PARTIE RAPIDE : QUITTE LA SALLE, PUIS INVITE DEPUIS EN LIGNE', 'err'); return; }
+  const name = safeName(a.joueur.pseudo, 'TON AMI');
+  const go = () => {
+    if (!NET.on || !roomOk(NET.code)) return;
+    ACCT.C.inviter(pid, NET.code, acctBase()).then(() => {
+      const t = 'INVITATION ENVOYÉE À ' + name + (ACCT.on.has(pid) ? '' : ' (HORS LIGNE : VALABLE 10 MIN)');
+      toast(t, 3); acctAmisMsg(t, 'ok'); roomNote(t, 'ok');
+    }).catch((e) => { const t = acctErr(e); toast(t, 3.5); acctAmisMsg(t, 'err'); roomNote(t, 'err'); });
+  };
+  if (NET.on) go(); else netCreate().then(() => { if (NET.on) go(); });
+}
+
+/* amis : demandes, réponses, retrait (confirmé par un second appui) */
+function acctFriendAct(fn, okTxt){
+  if (!ACCT.C || ACCT.fbusy) return;
+  ACCT.fbusy = true;
+  Promise.resolve().then(fn).then((r) => { acctAmisMsg(typeof okTxt === 'function' ? okTxt(r) : okTxt, 'ok'); return acctFriendsLoad(); })
+    .catch((e) => acctAmisMsg(acctErr(e), 'err'))
+    .then(() => { ACCT.fbusy = false; acctRefreshUi(); });
+}
+function acctRemove(f){
+  if (ACCT.delArm !== f){ ACCT.delArm = f; amisHtml = ''; amisRender(); setTimeout(() => { if (ACCT.delArm === f){ ACCT.delArm = ''; amisHtml = ''; amisRender(); } }, 3500); return; }
+  ACCT.delArm = '';
+  acctFriendAct(() => ACCT.C.retirerAmi(f), 'AMI RETIRÉ');
+}
+function acctSearchEntry(){
+  if (!ACCT.prof){ acctOpen(ACCT.id ? 'profile' : 'login'); return; }
+  entryOpen({
+    title: 'CHERCHER UN PILOTE', ey: 'MON COMPTE · AMIS', value: ACCT.q, ph: 'PSEUDO', help: 'SON PSEUDO EXACT, OU SON DÉBUT : 3 SIGNES AU MOINS.',
+    live: (v) => v.toUpperCase().replace(NAME_CHARS, '').replace(/\s+/g, ' ').replace(/^ /, '').slice(0, 16),
+    filter: (v) => v.replace(/\s+/g, ' ').trim(),
+    check: (v) => v.length < 3 ? '3 SIGNES AU MOINS' : '',
+    ok: (v) => { acctSearch(v); },
+  });
+}
+async function acctSearch(q){
+  ACCT.q = q; ACCT.res = null;
+  if (UI.cur !== 'amis') openPanel('amis');
+  acctAmisMsg('RECHERCHE DE « ' + q + ' »…');
+  amisHtml = ''; amisRender();
+  try {
+    const r = await ACCT.C.rechercher(q);
+    if (ACCT.q !== q) return;
+    ACCT.res = (Array.isArray(r) ? r : []).filter((j) => j && uuidOk(j.id));
+    acctAmisMsg(ACCT.res.length ? '' : 'AUCUN PILOTE TROUVÉ POUR « ' + q + ' »', ACCT.res.length ? '' : 'err');
+  } catch (e){ acctAmisMsg(acctErr(e), 'err'); }
+  amisHtml = ''; amisRender();
+}
+function acctLogout(){
+  if (!ACCT.C || !ACCT.id || ACCT.busy) return;
+  ACCT.busy = true; acctMsg('DÉCONNEXION…');
+  ACCT.C.deconnecter().then(() => acctMsg('TU ES DÉCONNECTÉ : LE JEU RESTE OUVERT SANS COMPTE', 'ok'))
+    .catch((e) => { acctMsg(acctErr(e), 'err'); ACCT.id = ''; return ACCT.C.session().then((s) => acctSession(s, 'REPRISE')); })
+    .catch(() => {})
+    .then(() => { ACCT.busy = false; acctRefreshUi(); });
+}
+function acctAct(act, el){
+  const id = el && el.dataset.id, f = el && el.dataset.f;
+  switch (act){
+    case 'acSignup': acctOpen('signup'); break;
+    case 'acLogin': acctOpen('login'); break;
+    case 'acProfile': acctOpen('profile'); break;
+    case 'acLogout': acctLogout(); break;
+    case 'acRetry': acctMsg(''); acctBoot().catch(() => {}); break;
+    case 'acFriends': ACCT.res = null; ACCT.q = ''; ACCT.amisMsg = ''; openPanel('amis'); acctFriendsLoad(); break;
+    case 'acFriendsRefresh': acctAmisMsg('ACTUALISATION…'); acctFriendsLoad().then(() => { if (ACCT.amisMsg === 'ACTUALISATION…') acctAmisMsg(''); }); break;
+    case 'acSearch': acctSearchEntry(); break;
+    case 'acAdd': if (uuidOk(id)) acctFriendAct(() => ACCT.C.demanderAmi(id), (r) => r && r.statut === 'ami' ? 'VOUS ÊTES AMIS' : r && r.deja ? 'DEMANDE DÉJÀ ENVOYÉE' : 'DEMANDE ENVOYÉE'); break;
+    case 'acAccept': if (uuidOk(f)) acctFriendAct(() => ACCT.C.accepterAmi(f), 'DEMANDE ACCEPTÉE : VOUS ÊTES AMIS'); break;
+    case 'acRefuse': if (uuidOk(f)) acctFriendAct(() => ACCT.C.refuserAmi(f), 'DEMANDE REFUSÉE'); break;
+    case 'acCancel': if (uuidOk(f)) acctFriendAct(() => ACCT.C.retirerAmi(f), 'DEMANDE ANNULÉE'); break;
+    case 'acRemove': if (uuidOk(f)) acctRemove(f); break;
+    case 'acInv': if (uuidOk(id)) acctInviteFriend(id); break;
+  }
+}
+
+/* rendu : MON COMPTE, AMIS, et lignes de joueurs communes (amis, recherche, joueurs récents) */
+function acPres(id){ const e = ACCT.on.get(id); return e === undefined ? 'HORS LIGNE' : e === 'partie' ? 'EN LIGNE · EN PARTIE' : e === 'salle' ? 'EN LIGNE · EN SALLE' : 'EN LIGNE'; }
+function acRow(name, label, on, btns){ return `<div class="frow${on ? ' on' : ''}"><i class="dot"></i><div class="nm"><span>${esc(name || 'PILOTE')}</span><small>${esc(label || '')}</small></div>${btns || ''}</div>`; }
+function acBtn(act, txt, id, f, cls){ return `<button class="mi fb${cls ? ' ' + cls : ''}" data-act="${act}" data-id="${esc(id || '')}" data-f="${esc(f || '')}">${txt}</button>`; }
+// boutons selon le lien avec ce pilote : ami (INVITER), demande reçue (ACCEPTER), envoyée, inconnu (AJOUTER)
+function acButtons(pid, full){
+  const a = ACCT.amis.find((x) => x.joueur && x.joueur.id === pid);
+  if (!a) return { label: '', btns: acBtn('acAdd', 'AJOUTER', pid) };
+  if (a.statut === 'ami') return { label: 'AMI', btns: acBtn('acInv', 'INVITER', pid) + (full ? acBtn('acRemove', ACCT.delArm === a.id ? 'CONFIRMER' : 'RETIRER', pid, a.id, 'del') : '') };
+  if (a.statut === 'recue') return { label: 'DEMANDE REÇUE', btns: acBtn('acAccept', 'ACCEPTER', pid, a.id) + (full ? acBtn('acRefuse', 'REFUSER', pid, a.id, 'del') : '') };
+  return { label: 'DEMANDE ENVOYÉE', btns: full ? acBtn('acCancel', 'ANNULER', pid, a.id, 'del') : '' };
+}
+function recentsCount(){ const acc = ACCT.prof ? ACCT.recents : [], ids = new Set(acc.map((r) => r.id)); return acc.length + friendsLoad().filter((f) => !(f.u && ids.has(f.u))).length; }
+function acctRender(){
+  if (UI.cur !== 'compte' || $('menu').hidden) return;
+  const inn = !!ACCT.id, ready = !!ACCT.C;
+  document.querySelectorAll('#acNav [data-out]').forEach((el) => { el.hidden = !ready || inn; });
+  document.querySelectorAll('#acNav [data-in]').forEach((el) => { el.hidden = !inn || (el.hasAttribute('data-prof') && !ACCT.prof); });
+  $('acRetry').hidden = !(ACCT.fail && !ready && !ACCT.loading);
+  let st, cls = '';
+  if (!ready){ st = ACCT.fail && !ACCT.loading ? 'SERVICE DES COMPTES INDISPONIBLE' : 'CONNEXION AU SERVICE DES COMPTES…'; cls = ACCT.fail && !ACCT.loading ? 'err' : ''; }
+  else if (!inn) st = 'NON CONNECTÉ · TU PEUX AUSSI JOUER SANS COMPTE';
+  else if (!ACCT.prof){ st = 'CONNECTÉ · PROFIL À COMPLÉTER DANS MON PROFIL'; cls = 'err'; }
+  else { st = 'CONNECTÉ : ' + ACCT.prof.pseudo; cls = 'ok'; }
+  setLine('acState', st, cls);
+  const on = ACCT.amis.filter((a) => a.statut === 'ami' && ACCT.on.has(a.joueur.id)).length, req = ACCT.amis.filter((a) => a.statut === 'recue').length;
+  $('acFriendsTag').textContent = (on ? ' · ' + on + ' EN LIGNE' : '') + (req ? ' · ' + req + ' DEMANDE' + (req > 1 ? 'S' : '') : '');
+  setLine('acMsg', ACCT.msg, ACCT.cls);
+  renumber($('pCompte'));
+  highlight();
+}
+let amisHtml = '';
+function amisRender(){
+  if (UI.cur !== 'amis' || $('menu').hidden) return;
+  const out = [];
+  if (!ACCT.id) out.push('<p class="nline">CONNECTE TOI DANS MON COMPTE POUR RETROUVER TES AMIS.</p>');
+  else {
+    if (ACCT.res){
+      out.push(`<p class="fhead">RÉSULTATS POUR « ${esc(ACCT.q)} »</p>`);
+      for (const j of ACCT.res){
+        if (j.id === ACCT.id){ out.push(acRow(j.pseudo, 'C\'EST TOI', false, '')); continue; }
+        const b = acButtons(j.id, false);
+        out.push(acRow(j.pseudo, (b.label ? b.label + ' · ' : '') + acPres(j.id), ACCT.on.has(j.id), b.btns));
+      }
+    }
+    const ord = { recue: 0, ami: 1, envoyee: 2 }, en = (a) => (ACCT.on.has(a.joueur.id) ? 1 : 0);
+    const l = ACCT.amis.slice().sort((x, y) => (ord[x.statut] - ord[y.statut]) || (en(y) - en(x)) || String(x.joueur.pseudo).localeCompare(String(y.joueur.pseudo)));
+    if (l.length && ACCT.res) out.push('<p class="fhead">MES AMIS</p>');
+    if (!l.length && !ACCT.res) out.push('<p class="nline">PAS ENCORE D\'AMIS : CHERCHE LE PSEUDO D\'UN PILOTE, OU AJOUTE UN JOUEUR RÉCENT.</p>');
+    for (const a of l){
+      const b = acButtons(a.joueur.id, true);
+      out.push(acRow(a.joueur.pseudo, a.statut === 'ami' ? acPres(a.joueur.id) : b.label, a.statut === 'ami' && ACCT.on.has(a.joueur.id), b.btns));
+    }
+  }
+  const html = out.join('');
+  if (html !== amisHtml){ amisHtml = html; $('amisRows').innerHTML = html; highlight(); }
+  setLine('amisMsg', ACCT.amisMsg, ACCT.amisCls);
+}
+
+/* fenêtre des comptes : vrais champs (gestionnaires de mots de passe, pas de loupe de Safari), hors du cadre tourné,
+   calée sur la zone visible au dessus du clavier comme la fenêtre de saisie */
+function acctHelp(t, cls){ const h = $('acctMsg'); h.textContent = t || ''; h.className = 'ahelp' + (cls ? ' ' + cls : ''); }
+function acctBusy(on){ ACCT.busy = on; document.querySelectorAll('#acctBox button').forEach((b) => { if (b.id !== 'acctNo') b.disabled = on; }); }
+function acctFocus(el){ if (!el) return; try { el.focus({ preventScroll: true }); } catch (e){ try { el.focus(); } catch (x){} } acctReveal(el); }
+function acctOpen(mode){
+  if (!ACCT.C){ acctBoot().then(() => acctOpen(mode)).catch(() => {}); return; }
+  if (mode === 'profile' && !ACCT.id) mode = 'login';
+  if ((mode === 'signup' || mode === 'login') && ACCT.id) mode = 'profile';
+  ACCT.mode = mode;
+  for (const [id, m] of [['afSignup', 'signup'], ['afLogin', 'login'], ['afProfile', 'profile'], ['afSent', 'sent']]) $(id).hidden = m !== mode;
+  $('acctT').textContent = mode === 'signup' ? 'CRÉER UN COMPTE' : mode === 'login' ? 'SE CONNECTER' : mode === 'sent' ? 'OUVRE TON MAIL' : ACCT.prof ? 'MON PROFIL' : 'COMPLÈTE TON PROFIL';
+  acctHelp('');
+  let first = null;
+  if (mode === 'signup'){
+    if (!$('asPseudo').value) $('asPseudo').value = ID.name;
+    acctPseudoLive($('asPseudo'), $('asPseudoMsg'), '');
+    first = !$('asPseudo').value ? $('asPseudo') : !$('asMail').value ? $('asMail') : $('asPass');
+  } else if (mode === 'login'){
+    if (!$('alMail').value && ACCT.sent) $('alMail').value = ACCT.sent;
+    first = $('alMail').value ? $('alPass') : $('alMail');
+  } else if (mode === 'profile'){
+    $('apPseudo').value = ACCT.prof ? ACCT.prof.pseudo : ID.name;
+    $('apNew').hidden = !!ACCT.prof;
+    $('apInfo').textContent = 'Compte : ' + (ACCT.mail || 'connecté') + (ACCT.prof ? '' : '. Choisis ton pseudo et indique ton année de naissance.');
+    acctPseudoLive($('apPseudo'), $('apPseudoMsg'), ACCT.prof ? ACCT.prof.pseudo : '');
+    first = $('apPseudo');
+  } else if (mode === 'sent'){
+    $('afSentTxt').innerHTML = 'Un mail de confirmation part vers <b>' + esc(ACCT.sent) + '</b>. Ouvre le lien qu\'il contient, de préférence sur cet appareil : ton compte sera prêt. Pense à regarder dans les indésirables.';
+    first = $('afResend');
+  }
+  $('acct').hidden = false;
+  $('acctBox').scrollTop = 0;
+  acctFit();
+  // au doigt, le clavier ne s'ouvre pas tout seul : on lit d'abord la fenêtre, puis on touche le champ voulu
+  if (!isTouch) acctFocus(first);
+}
+function acctClose(){
+  if ($('acct').hidden) return;
+  $('acct').hidden = true; ACCT.mode = '';
+  $('asPass').value = ''; $('alPass').value = '';   // aucun mot de passe ne reste dans la page
+  clearTimeout(ACCT.pseudoT); ACCT.pseudoK++;
+  try { const a = document.activeElement; if (a && a !== document.body && a.blur) a.blur(); } catch (e){}
+  scheduleLayout();
+  acctRefreshUi();
+}
+function acctFit(){
+  const e = $('acct');
+  if (e.hidden) return;
+  const vv = window.visualViewport;
+  if (vv && vv.width > 0 && vv.height > 0){ e.style.left = Math.round(vv.offsetLeft) + 'px'; e.style.top = Math.round(vv.offsetTop) + 'px'; e.style.width = Math.round(vv.width) + 'px'; e.style.height = Math.round(vv.height) + 'px'; }
+  else { e.style.left = e.style.top = '0px'; e.style.width = '100%'; e.style.height = '100%'; }
+  const h = vv && vv.height > 0 ? vv.height : innerHeight;
+  e.classList.toggle('low', h < 480);
+  const a = document.activeElement;
+  if (a && a !== document.body && $('acctBox').contains(a)) acctReveal(a);
+}
+// le champ en cours de saisie reste visible dans la fenêtre (qui défile), au dessus du clavier
+function acctReveal(el){
+  const box = $('acctBox');
+  if (!el || !box.contains(el) || el === box) return;
+  const t = el.closest('.ck') || el, r = t.getBoundingClientRect(), b = box.getBoundingClientRect();
+  if (r.top < b.top + 8) box.scrollTop -= b.top + 8 - r.top;
+  else if (r.bottom > b.bottom - 8) box.scrollTop += r.bottom - (b.bottom - 8);
+}
+// clavier : Échap ferme ; manette et télécommande (touches logiques) : flèches pour passer d'un champ à l'autre, OK pour valider
+function acctKey(e, c){
+  if (c === 'Escape'){ e.preventDefault(); acctClose(); return; }
+  const box = $('acctBox'), a = document.activeElement, inBox = a && box.contains(a);
+  const text = inBox && a.tagName === 'INPUT' && a.type !== 'checkbox';
+  if ((c === 'ArrowDown' || c === 'ArrowUp') && (!e.isTrusted || !text)){
+    const f = [...box.querySelectorAll('input,button,a[href]')].filter((x) => !x.disabled && x.getClientRects().length);
+    if (!f.length) return;
+    e.preventDefault();
+    const i = f.indexOf(a), n = i < 0 ? f[0] : f[(i + (c === 'ArrowDown' ? 1 : -1) + f.length) % f.length];
+    acctFocus(n);
+    return;
+  }
+  // Entrée (ou « OK », « Suivant » du clavier du téléphone) : champ, le formulaire est validé ; case, bouton ou lien : actionné
+  if (c === 'Enter' || c === 'NumpadEnter'){
+    if (!inBox || e.isComposing) return;
+    e.preventDefault();
+    if (text){ const fm = a.form; if (fm){ if (fm.requestSubmit) fm.requestSubmit(); else fm.dispatchEvent(new Event('submit', { cancelable: true })); } }
+    else a.click();
+  }
+}
+// pseudo : mêmes signes et même filtre que dans le jeu, puis pseudo libre ou pris (vérifié chez l'hébergeur des comptes)
+function acctPseudoLive(inp, out, current){
+  const raw = inp.value, v = raw.toUpperCase().replace(NAME_CHARS, '').replace(/\s+/g, ' ').replace(/^ /, '').slice(0, 16);
+  if (v !== raw && v !== raw.toUpperCase()){
+    let pos = inp.selectionStart;
+    inp.value = v;
+    if (pos != null && document.activeElement === inp){ pos = Math.max(0, Math.min(v.length, pos - (raw.length - v.length))); try { inp.setSelectionRange(pos, pos); } catch (e){} }
+  }
+  clearTimeout(ACCT.pseudoT); const k = ++ACCT.pseudoK;
+  const set = (t, cls) => { out.textContent = t || ''; out.className = 'ahelp' + (cls ? ' ' + cls : ''); };
+  const p = v.trim();
+  if (!p){ set(''); return; }
+  if (p.length < 3){ set('3 SIGNES AU MOINS'); return; }
+  const chk = checkName(p);
+  if (!chk.ok){ set(chk.why, 'err'); return; }
+  if (current && chk.name === current){ set('C\'EST TON PSEUDO ACTUEL'); return; }
+  if (!ACCT.C){ set(''); return; }
+  set('VÉRIFICATION DU PSEUDO…');
+  ACCT.pseudoT = setTimeout(() => {
+    ACCT.C.pseudoDisponible(chk.name).then((free) => { if (k === ACCT.pseudoK) set(free ? chk.name + ' EST LIBRE' : chk.name + ' EST DÉJÀ PRIS : CHOISIS EN UN AUTRE', free ? 'ok' : 'err'); })
+      .catch((e) => { if (k === ACCT.pseudoK) set(acctErr(e), 'err'); });
+  }, 450);
+}
+async function acctSignup(){
+  if (ACCT.busy || !ACCT.C) return;
+  const C = ACCT.C, chk = checkName($('asPseudo').value), mail = $('asMail').value.trim(), pass = $('asPass').value, year = $('asYear').value.trim();
+  const fail = (t, el) => { acctHelp(t, 'err'); acctFocus(el); };
+  if (!chk.ok) return fail(chk.why, $('asPseudo'));
+  let t = C.verifierMail(mail); if (t) return fail(acctUp(t), $('asMail'));
+  t = C.verifierMotDePasse(pass); if (t) return fail(acctUp(t), $('asPass'));
+  t = C.verifierAge(year); if (t) return fail(acctUp(t), $('asYear'));
+  if (!$('asAge').checked) return fail('COCHE LA CASE : J\'AI 15 ANS OU PLUS', $('asAge'));
+  if (!$('asTerms').checked) return fail('ACCEPTE LES CONDITIONS D\'UTILISATION ET LA POLITIQUE DE CONFIDENTIALITÉ', $('asTerms'));
+  acctBusy(true); acctHelp('CRÉATION DU COMPTE…');
+  try {
+    const r = await C.inscrire({ pseudo: chk.name, email: mail, motDePasse: pass, anneeNaissance: year, ageCertifie: true, conditionsAcceptees: true });
+    $('asPass').value = '';
+    acctBusy(false);
+    if (r && r.confirmationEnvoyee){ ACCT.sent = mail; acctOpen('sent'); }
+    else { acctClose(); acctMsg('COMPTE CRÉÉ : TU ES CONNECTÉ', 'ok'); }
+  } catch (e){ acctBusy(false); acctHelp(acctErr(e), 'err'); }
+}
+async function acctLogin(){
+  if (ACCT.busy || !ACCT.C) return;
+  const mail = $('alMail').value.trim(), pass = $('alPass').value;
+  const t = ACCT.C.verifierMail(mail);
+  if (t){ acctHelp(acctUp(t), 'err'); acctFocus($('alMail')); return; }
+  if (!pass){ acctHelp('ÉCRIS TON MOT DE PASSE, OU DEMANDE UN LIEN DE CONNEXION', 'err'); acctFocus($('alPass')); return; }
+  acctBusy(true); acctHelp('CONNEXION…');
+  try { await ACCT.C.connecter(mail, pass); $('alPass').value = ''; acctBusy(false); acctClose(); acctMsg('CONNECTÉ', 'ok'); }
+  catch (e){ acctBusy(false); acctHelp(acctErr(e), 'err'); }
+}
+async function acctMagic(){
+  if (ACCT.busy || !ACCT.C) return;
+  const mail = $('alMail').value.trim(), t = ACCT.C.verifierMail(mail);
+  if (t){ acctHelp(acctUp(t), 'err'); acctFocus($('alMail')); return; }
+  acctBusy(true); acctHelp('ENVOI DU LIEN…');
+  try { await ACCT.C.lienMagique(mail); acctHelp('LIEN ENVOYÉ À ' + mail + ' : OUVRE LE MAIL SUR CET APPAREIL', 'ok'); }
+  catch (e){ acctHelp(acctErr(e), 'err'); }
+  acctBusy(false);
+}
+async function acctResend(){
+  if (ACCT.busy || !ACCT.C || !ACCT.sent) return;
+  acctBusy(true); acctHelp('ENVOI…');
+  try { await ACCT.C.renvoyerConfirmation(ACCT.sent); acctHelp('MAIL RENVOYÉ À ' + ACCT.sent, 'ok'); }
+  catch (e){ acctHelp(acctErr(e), 'err'); }
+  acctBusy(false);
+}
+async function acctProfileSave(){
+  if (ACCT.busy || !ACCT.C || !ACCT.id) return;
+  const C = ACCT.C, chk = checkName($('apPseudo').value);
+  if (!chk.ok){ acctHelp(chk.why, 'err'); acctFocus($('apPseudo')); return; }
+  const taken = chk.name + ' EST DÉJÀ PRIS : CHOISIS EN UN AUTRE';
+  if (!ACCT.prof){
+    const year = $('apYear').value.trim();
+    let t = C.verifierAge(year);
+    if (t){ acctHelp(acctUp(t), 'err'); acctFocus($('apYear')); return; }
+    if (!$('apAge').checked){ acctHelp('COCHE LA CASE : J\'AI 15 ANS OU PLUS', 'err'); acctFocus($('apAge')); return; }
+  }
+  acctBusy(true); acctHelp('ENREGISTREMENT…');
+  try {
+    if (!ACCT.prof){
+      ACCT.prof = await C.creerProfil({ pseudo: chk.name, anneeNaissance: $('apYear').value.trim() });
+      acctNameSync(); acctBusy(false); acctClose(); acctMsg('PROFIL CRÉÉ : ' + ACCT.prof.pseudo, 'ok');
+      acctRecentsLoad(); acctPresence();
+      return;
+    }
+    if (chk.name !== ACCT.prof.pseudo){
+      if (!(await C.pseudoDisponible(chk.name))){ acctBusy(false); acctHelp(taken, 'err'); return; }
+      ACCT.prof = await C.modifierProfil({ pseudo: chk.name });
+      acctNameSync();
+      // la présence annonce le pseudo : on la relance
+      const pr = NET.pres; NET.pres = null; NET.presEtat = '';
+      if (pr){ try { await pr.quitter(); } catch (e){} }
+      acctPresence();
+    }
+    acctBusy(false); acctClose(); acctMsg('PROFIL ENREGISTRÉ : ' + ACCT.prof.pseudo, 'ok');
+  } catch (e){ acctBusy(false); acctHelp(e && e.code === '23505' ? taken : acctErr(e), 'err'); }
+}
+function acctInit(){
+  $('afSignup').addEventListener('submit', (e) => { e.preventDefault(); acctSignup(); });
+  $('afLogin').addEventListener('submit', (e) => { e.preventDefault(); acctLogin(); });
+  $('afProfile').addEventListener('submit', (e) => { e.preventDefault(); acctProfileSave(); });
+  $('alMagic').addEventListener('click', acctMagic);
+  $('afResend').addEventListener('click', acctResend);
+  $('acctNo').addEventListener('click', acctClose);
+  // pseudo filtré au fil de la frappe, jamais pendant une composition (clavier prédictif des téléphones)
+  [['asPseudo', 'asPseudoMsg', () => ''], ['apPseudo', 'apPseudoMsg', () => (ACCT.prof ? ACCT.prof.pseudo : '')]].forEach(([i, o, cur]) => {
+    const f = (e) => { if (e && e.isComposing) return; acctPseudoLive($(i), $(o), cur()); };
+    $(i).addEventListener('input', f); $(i).addEventListener('compositionend', () => f(null));
+  });
+  ['asYear', 'apYear'].forEach((i) => $(i).addEventListener('input', () => { const el = $(i), v = el.value.replace(/\D/g, '').slice(0, 4); if (v !== el.value) el.value = v; }));
+  $('acct').addEventListener('focusin', (e) => { setTimeout(() => acctReveal(e.target), 60); setTimeout(() => acctReveal(e.target), 400); });
+  if (window.visualViewport){ visualViewport.addEventListener('resize', acctFit); visualViewport.addEventListener('scroll', acctFit); }
+  addEventListener('resize', acctFit);
+  // retour d'un lien reçu par mail : la bibliothèque des comptes lit elle même le jeton dans l'adresse (le jeu ne l'efface
+  // jamais avant elle) ; un lien refusé (expiré, déjà utilisé) est lu ici et l'adresse nettoyée
+  if (!netFramed()){
+    const hp = new URLSearchParams(String(location.hash || '').replace(/^#/, ''));
+    if (hp.get('access_token') && hp.get('refresh_token')) ACCT.urlCb = hp.get('type') || 'lien';
+    else if (hp.get('error_description') || hp.get('error_code')){
+      ACCT.urlErr = hp.get('error_code') === 'otp_expired' ? 'LIEN EXPIRÉ OU DÉJÀ UTILISÉ : DEMANDE EN UN NOUVEAU' : 'LE LIEN REÇU PAR MAIL N\'A PAS PU SERVIR : DEMANDE EN UN NOUVEAU';
+      try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e){}
+    }
+  }
+}
+
 /* ---------- panneaux EN LIGNE ---------- */
 // numérotation [01] [02] des entrées visibles (les entrées changent selon hôte, invité, solo)
 function renumber(panel){
@@ -5625,6 +6285,8 @@ function netPanel(name){
   else if (name === 'join') joinRender();
   else if (name === 'room') roomRender();
   else if (name === 'friends'){ friendsHtml = ''; friendsRender(); }
+  else if (name === 'compte') acctRender();
+  else if (name === 'amis'){ amisHtml = ''; amisRender(); }
   renumber(panel);
   if (NET.invite && $('invite').hidden) inviteShow();
 }
@@ -5642,7 +6304,9 @@ function onlineRender(){
   else if (why === 'browser') setLine('onState', 'CE NAVIGATEUR NE PERMET PAS LE JEU EN LIGNE : ESSAIE UN NAVIGATEUR RÉCENT.', 'err');
   else setLine('onState', NET.status, NET.statusCls);
   $('onName').textContent = ID.name;
-  const nr = why ? 0 : friendsLoad().length;
+  const req = ACCT.amis.filter((a) => a.statut === 'recue').length;
+  $('onAcctTag').textContent = req ? ' · ' + req : '';
+  const nr = why ? 0 : recentsCount();
   $('onRecent').hidden = !nr; $('onRecent').textContent = 'JOUEURS RÉCENTS · ' + nr;
   renumber($('pOnline'));
   highlight();
@@ -5659,7 +6323,7 @@ function roomRender(){
   $('roomRole').textContent = NET.host ? 'HÔTE' : 'INVITÉ';
   $('roomCodeLine').hidden = !!NET.hall || !NET.showCode;
   $('roomCodeLine').innerHTML = 'CODE DE LA SALLE <b>' + NET.code + '</b>';
-  document.querySelectorAll('#roomNav [data-priv]').forEach((el) => { el.hidden = !!NET.hall; });
+  document.querySelectorAll('#roomNav [data-priv]').forEach((el) => { el.hidden = !!NET.hall || (el.hasAttribute('data-acct') && !ACCT.prof); });
   $('roomShow').textContent = NET.showCode ? 'MASQUER LE CODE' : 'VOIR LE CODE';
   const l = NET.host ? lobbyList() : NET.lobby, myPid = NET.host ? 'h' : NET.pid;
   const me = l.find((p) => p.p === myPid);
@@ -5753,7 +6417,8 @@ function netAct(act, el){
     case 'netShowCode': NET.showCode = !NET.showCode; roomRender(); break;
     case 'netJoinPanel': NET.joinMsg = ''; openPanel('join'); break;
     case 'netFriends': openPanel('friends'); friendsRefresh(); break;
-    case 'netName': askName(null); break;
+    case 'netName': if (ACCT.id) acctOpen('profile'); else askName(null); break;
+    case 'netAccount': acctMsg(''); openPanel('compte'); acctBoot().catch(() => {}); break;
     case 'netRetry': NET.libFail = false; netWarmup(); break;
     case 'netCodeEdit': codeEntry(false); break;
     case 'netJoinGo': joinGo(); break;
@@ -5773,7 +6438,7 @@ function netAct(act, el){
 }
 function netInit(){
   idLoad();
-  Object.assign(UI.panels, { online: $('pOnline'), join: $('pJoin'), room: $('pRoom'), friends: $('pFriends') });
+  Object.assign(UI.panels, { online: $('pOnline'), join: $('pJoin'), room: $('pRoom'), friends: $('pFriends'), compte: $('pCompte'), amis: $('pAmis') });
   NET.solo = game.ships; NET.soloPlayer = game.player;
   const lc = cleanRoom(QS.get('salle'));
   NET.linkCode = roomOk(lc) ? lc : '';
@@ -5793,11 +6458,14 @@ function netInit(){
   $('invNo').addEventListener('click', () => inviteAnswer(false));
   $('netboxOk').addEventListener('click', netboxClose);
   addEventListener('pagehide', netBye);
+  acctInit();
   mainOnline();
 }
 // après l'écran d'entrée : un lien d'invitation mène droit au panneau REJOINDRE
 function netAfterIntro(){
   if (QS.has('diag')) openDiag();   // ?diag : le diagnostic s'ouvre tout seul, prêt à être copié
+  // compte gardé sur cet appareil : la session reprend dès l'entrée, pour que les invitations des amis arrivent
+  if (!netWhyOff() && !ACCT.urlCb && !ACCT.urlErr && acctStored()) acctBoot().catch(() => {});
   if (NET.linkCode){
     const code = NET.linkCode;
     NET.linkCode = '';
@@ -5805,6 +6473,20 @@ function netAfterIntro(){
     openPanel('online');
     if (netWhyOff()) return;
     netJoinLink(code);   // lien d'invitation : droit dans la partie de l'ami, sans rien taper
+    return;
+  }
+  // retour d'un lien reçu par mail (confirmation d'inscription, lien de connexion) : droit dans MON COMPTE
+  if (!netWhyOff() && (ACCT.urlCb || ACCT.urlErr)){
+    const cb = ACCT.urlCb;
+    netOpenHub(); openPanel('compte');
+    if (ACCT.urlErr){ acctMsg(ACCT.urlErr, 'err'); ACCT.urlErr = ''; }
+    acctBoot().then(() => {
+      if (cb) acctMsg(ACCT.id ? (cb === 'signup' ? 'ADRESSE CONFIRMÉE : TON COMPTE EST PRÊT' : 'CONNECTÉ GRÂCE AU LIEN REÇU PAR MAIL') : 'LE LIEN N\'A PAS PU OUVRIR TA SESSION : CONNECTE TOI', ACCT.id ? 'ok' : 'err');
+    }).catch(() => {}).then(() => {
+      // jeton refusé : la bibliothèque le laisse dans l'adresse, on l'enlève ; jeton lu : elle laisse un # seul
+      if ((!ACCT.id && /[#&]access_token=/.test(location.hash)) || /#$/.test(location.href)){ try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e){} }
+      setTimeout(() => { ACCT.urlCb = ''; }, 1500);
+    });
     return;
   }
   // des amis enregistrés : la présence s'inscrit pour que leurs invitations arrivent

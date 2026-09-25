@@ -23,7 +23,7 @@
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" media="print" onload="this.media='all'">
 <style>
 :root{
   color-scheme: dark;
@@ -35,6 +35,21 @@
 }
 /* page figée plein cadre : pas de rebond élastique, pas de sélection, pas de loupe ni de menu d'appui long (iOS) */
 html,body{position:fixed;inset:0;width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none;}
+#boot{position:fixed;left:0;top:0;right:0;bottom:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:#03050a;color:#e9f3ff;font:14px/1.5 -apple-system,system-ui,"Segoe UI",sans-serif;text-align:center;overflow:auto;}
+/* écran de secours : hors de l'encoche et de la barre d'accueil ; texte trop long pour l'écran : il défile depuis
+   son début (marges automatiques, jamais de haut coupé comme avec un simple centrage) */
+#boot{padding:calc(16px + var(--env-t)) calc(16px + var(--env-r)) calc(16px + var(--env-b)) calc(16px + var(--env-l));scroll-padding:calc(16px + var(--env-t)) 0 calc(16px + var(--env-b));}
+#boot .bt-box{margin:auto;max-width:100%;}
+#boot.off{display:none;}
+#boot p{margin:0;}
+#boot .bt-logo{font-size:34px;letter-spacing:.14em;font-weight:300;margin-bottom:10px;}
+#boot .bt-logo b{color:#27e4ff;font-weight:700;margin-left:.3em;}
+#boot .bt-sub{font-size:11px;letter-spacing:.3em;color:#8497b6;}
+#btMsg{max-width:32em;margin:10px auto 0;color:#ffb3c1;}
+#boot .bt-hint{max-width:32em;margin:10px auto 0;color:#8497b6;font-size:13px;}
+#boot button{margin:14px 6px 0;min-height:44px;padding:10px 18px;font:600 13px/1.2 -apple-system,system-ui,sans-serif;letter-spacing:.1em;color:#e9f3ff;background:#0b1830;border:1px solid #27e4ff;border-radius:6px;}
+#btRep{display:block;width:100%;max-width:34em;height:140px;height:min(140px,30vh);margin:12px auto 0;font:11px/1.4 ui-monospace,monospace;color:#e9f3ff;background:#050912;border:1px solid #33415c;}
+#btRep[hidden]{display:none;}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%;text-size-adjust:100%;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;-webkit-tap-highlight-color:transparent;}
 #gl{position:fixed;inset:0;width:100%;height:100%;display:block;background:var(--bg);}
 .layer{position:fixed;inset:0;pointer-events:none;}
@@ -47,6 +62,8 @@ body.r2 #app{transform:translateY(var(--vh)) rotate(-90deg);}
 :root{--env-t:env(safe-area-inset-top,0px);--env-r:env(safe-area-inset-right,0px);--env-b:env(safe-area-inset-bottom,0px);--env-l:env(safe-area-inset-left,0px);}
 :root.simsafe{--env-t:47px;--env-r:0px;--env-b:34px;--env-l:0px;}
 body{--sa-t:var(--env-t);--sa-r:var(--env-r);--sa-b:var(--env-b);--sa-l:var(--env-l);}
+/* milieu de la zone sûre : en paysage, la barre d'accueil ne réserve que le bas, les panneaux centrés remontent d'autant */
+body{--pmid:calc(50% + (var(--sa-t) - var(--sa-b)) / 2);}
 body.r1{--sa-t:var(--env-r);--sa-r:var(--env-b);--sa-b:var(--env-l);--sa-l:var(--env-t);}
 body.r2{--sa-t:var(--env-l);--sa-r:var(--env-t);--sa-b:var(--env-r);--sa-l:var(--env-b);}
 #saProbe{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:var(--env-t) var(--env-r) var(--env-b) var(--env-l);}
@@ -90,7 +107,7 @@ body.playing,body.playing *{cursor:none;}
 /* menus */
 #menu{z-index:20;pointer-events:auto;background:linear-gradient(90deg,rgba(3,5,10,0) 28%,rgba(3,5,10,.5) 66%,rgba(3,5,10,.78));}
 #menu.center{background:radial-gradient(ellipse at center,rgba(3,6,14,.72),rgba(3,5,10,.9));}
-.panel{position:absolute;right:calc(clamp(16px,6vw,104px) + var(--sa-r));top:50%;transform:translateY(-50%);width:min(560px,calc(100% - 32px));display:grid;justify-items:end;text-align:right;gap:14px;}
+.panel{position:absolute;right:calc(clamp(16px,6vw,104px) + var(--sa-r));top:var(--pmid);transform:translateY(-50%);width:min(560px,calc(100% - 32px));display:grid;justify-items:end;text-align:right;gap:14px;}
 #menu.center .panel{right:50%;transform:translate(50%,-50%);justify-items:center;text-align:center;}
 .eyebrow{margin:0;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--rootkit);}
 .eyebrow span{color:var(--faint);}
@@ -137,7 +154,7 @@ body.touch .mi.backTop,body.short .mi.backTop{padding:9px 16px;}
 .mi.set .k{min-width:0;}
 @media (max-width:760px){ .mi.set b{display:none;} .mi.set{letter-spacing:.12em;font-size:14px;gap:8px;} .mi.set .v{gap:4px;} .mi.set .v em{min-width:8ch;} .mi.set .dec,.mi.set .inc{padding:2px 5px;} }
 body.short #setRows{max-height:calc(var(--lh,375px) - 96px);overflow-y:auto;}
-body.short #ctlRows{max-height:calc(var(--lh,375px) - 170px);overflow-y:auto;}
+body.short #ctlRows{max-height:calc(var(--lh,375px) - 170px - var(--sa-t) - var(--sa-b));overflow-y:auto;}
 body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 .record{margin:6px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--faint);}
 .record b{color:var(--trojan);font-weight:500;}
@@ -159,7 +176,7 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 @media (max-width:760px){
   #menu{background:linear-gradient(180deg,rgba(3,5,10,0) 18%,rgba(3,5,10,.62) 52%,rgba(3,5,10,.9));}
   .panel{left:calc(var(--g) + var(--sa-l));right:calc(var(--g) + var(--sa-r));width:auto;justify-items:start;text-align:left;top:auto;bottom:calc(64px + var(--sa-b));transform:none;}
-  #menu.center .panel{left:calc(var(--g) + var(--sa-l));right:calc(var(--g) + var(--sa-r));top:50%;bottom:auto;transform:translateY(-50%);}
+  #menu.center .panel{left:calc(var(--g) + var(--sa-l));right:calc(var(--g) + var(--sa-r));top:var(--pmid);bottom:auto;transform:translateY(-50%);}
   .mlist{justify-items:start;margin-top:8px;}
   .mi.sel,.mi:hover{transform:translateX(6px);}
   .foot{font-size:9px;letter-spacing:.14em;}
@@ -266,7 +283,7 @@ body.touch .mi{padding:11px 0;}
 body.touch .tr{top:calc(60px + var(--sa-t));}
 body.touch .tb{width:var(--tb);height:var(--tb);}
 body.touch .tb.fire{width:var(--tbf);height:var(--tbf);}
-body.touch .tb.pause{width:42px;height:42px;}
+body.touch .tb.pause{width:44px;height:44px;}
 body.touch .bc{top:calc(138px + var(--sa-t));bottom:auto;}
 /* manoeuvres : FREIN maintenu, DEMI TOUR, balayage d'esquive */
 #touch .tb,#swipeZone,#stickZone{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;}
@@ -300,7 +317,7 @@ body.touch #mvTurn{display:none;}
 #wallTag.on{opacity:1;}
 /* fenêtres : guide d'installation, diagnostic, incidents */
 .modal{z-index:60;display:grid;place-items:center;pointer-events:auto;background:rgba(3,5,10,.84);padding:calc(16px + var(--sa-t)) calc(16px + var(--sa-r)) calc(16px + var(--sa-b)) calc(16px + var(--sa-l));}
-.mbox{width:min(540px,100%);max-height:100%;overflow:auto;display:grid;gap:14px;padding:22px;border:1px solid rgba(39,228,255,.45);border-radius:10px;background:rgba(6,12,24,.94);box-shadow:0 0 30px rgba(39,228,255,.18);text-align:left;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.mbox{box-sizing:border-box;width:min(540px,100%);max-height:100%;overflow:auto;display:grid;gap:14px;padding:22px;border:1px solid rgba(39,228,255,.45);border-radius:10px;background:rgba(6,12,24,.94);box-shadow:0 0 30px rgba(39,228,255,.18);text-align:left;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 .mbox h2{margin:0;font-weight:600;font-size:22px;letter-spacing:.14em;color:var(--ink);}
 .mbox p,.mbox li{margin:0;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--dim);}
 .mbox b{color:var(--ink);font-weight:500;}
@@ -318,8 +335,8 @@ body.touch #mvTurn{display:none;}
 .eyebrow svg{cursor:pointer;}
 @media (max-width:760px){ .tl .me .lbl{display:none;} .tl .me{letter-spacing:.2em;gap:10px;} }
 body.short #menu{background:linear-gradient(90deg,rgba(3,5,10,0) 18%,rgba(3,5,10,.62) 58%,rgba(3,5,10,.88));}
-body.short .panel{left:auto;right:calc(clamp(16px,5vw,64px) + var(--sa-r));width:min(470px,calc(100% - 32px));top:50%;bottom:auto;transform:translateY(-50%);justify-items:end;text-align:right;gap:8px;}
-body.short #menu.center .panel{left:auto;right:50%;top:50%;bottom:auto;transform:translate(50%,-50%);justify-items:center;text-align:center;}
+body.short .panel{left:auto;right:calc(clamp(16px,5vw,64px) + var(--sa-r));width:min(470px,calc(100% - 32px));top:var(--pmid);bottom:auto;transform:translateY(-50%);justify-items:end;text-align:right;gap:8px;}
+body.short #menu.center .panel{left:auto;right:50%;top:var(--pmid);bottom:auto;transform:translate(50%,-50%);justify-items:center;text-align:center;}
 body.short .title{font-size:44px;}
 body.short .title.sm{font-size:34px;}
 body.short .tagline,body.short .record,body.short .hintp{display:none;}
@@ -333,7 +350,7 @@ body.short .krow{font-size:10px;gap:10px;}
 body.short .res th{padding:3px 10px;}
 body.short .res td{padding:4px 10px;}
 body.short .stats{line-height:1.5;font-size:10px;}
-body.short .foot{bottom:8px;}
+body.short .foot{bottom:calc(8px + var(--sa-b));}
 @media (prefers-reduced-motion:reduce){ .pop,#item.pulse,.ld-bar i{animation:none;} }
 /* clavier seul, télécommande, manette : anneau de sélection bien visible */
 body.kbnav .mi.sel{outline:2px solid var(--nifo);outline-offset:4px;border-radius:4px;}
@@ -365,13 +382,13 @@ html.big #cross::after{top:calc(11px * var(--u,1));width:calc(24px * var(--u,1))
 html.big #lock{width:calc(46px * var(--u,1));height:calc(46px * var(--u,1));}
 /* écran tactile : chaque entrée de menu offre au moins 40 px de hauteur au doigt, sans changer la mise en page */
 body.touch .mi:not(.backTop){position:relative;}
-body.touch .mi::after{content:"";position:absolute;left:0;right:0;top:-7px;bottom:-7px;}
+body.touch .mi::after{content:"";position:absolute;left:0;right:0;top:-9px;bottom:-9px;}
 body.touch .mbtn{min-height:44px;}
 /* écrans courts : le pied de page laisse la place aux panneaux secondaires */
 body.short #menu:not([data-panel="main"]) .foot{display:none;}
 body.short #pOnline .eyebrow{display:none;}
 /* campagne du 25/09 : petits écrans */
-body.short #setRows{max-height:calc(var(--lh,375px) - 112px);}
+body.short #setRows{max-height:calc(var(--lh,375px) - 112px - var(--sa-t) - var(--sa-b));}
 body.touch.short #item{width:44px;height:44px;}
 body.touch.short #item svg{width:22px;height:22px;}
 body.touch.short #itemName{display:none;}
@@ -379,13 +396,13 @@ body.touch.short .bc{top:calc(102px + var(--sa-t));}
 body.touch.short .br{right:auto;left:calc(var(--g) + var(--sa-l));bottom:calc(122px + var(--sa-b));text-align:left;}
 @media (max-width:760px){ #menu:not([data-panel="main"]) .foot{display:none;} }
 /* fenêtres basses d'ordinateur (entre 520 et 800 px) : les longues listes défilent au lieu de déborder */
-body:not(.short) #ctlRows{max-height:calc((var(--lh,100vh) - 340px) / var(--u,1));overflow-y:auto;}
-body:not(.short) #setRows{max-height:calc((var(--lh,100vh) - 200px) / var(--u,1));overflow-y:auto;}
+body:not(.short) #ctlRows{max-height:calc((var(--lh,100vh) - 340px - var(--sa-t) - var(--sa-b)) / var(--u,1));overflow-y:auto;}
+body:not(.short) #setRows{max-height:calc((var(--lh,100vh) - 200px - var(--sa-t) - var(--sa-b)) / var(--u,1));overflow-y:auto;}
 /* téléphone tenu en portrait (écran PORTRAIT) : le pied de page est masqué sur les panneaux secondaires, le panneau
    descend donc au bas de l'écran ; la liste des réglages laisse la place au bouton RETOUR du haut */
 @media (max-width:760px){
   body.tall #menu:not(.center):not([data-panel="main"]) .panel{bottom:calc(18px + var(--sa-b));}
-  body.tall #setRows{max-height:calc(var(--lh,100vh) - 180px);}
+  body.tall #setRows{max-height:calc(var(--lh,100vh) - 180px - var(--sa-t) - var(--sa-b));}
 }
 @media (max-width:760px) and (max-height:700px){
   body.tall #pOnline .eyebrow{display:none;}
@@ -407,6 +424,32 @@ body.tiny .ld-sub.err{font-size:12px;max-width:100%;}
 /* mention discrète sur les données en ligne */
 .nnote{margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.04em;line-height:1.55;color:var(--faint);max-width:54ch;overflow-wrap:anywhere;}
 body.short .nnote{font-size:9px;line-height:1.35;max-width:74ch;}
+/* EN LIGNE simplifié : deux grands boutons d'abord, puis une rangée de petits */
+.mi.big{justify-content:center;width:min(360px,100%);padding:13px 18px;border:1px solid rgba(39,228,255,.6);border-radius:8px;background:rgba(6,14,28,.78);color:var(--ink);font-size:18px;letter-spacing:.18em;transform:none!important;}
+.mi.big.alt{border-color:rgba(255,45,149,.62);}
+.mi.big.sel,.mi.big:hover{background:rgba(39,228,255,.2);color:#fff;}
+.mi.big.alt.sel,.mi.big.alt:hover{background:rgba(255,45,149,.2);}
+.mrow{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px 18px;width:min(360px,100%);}
+.mi.small{font-size:11.5px;letter-spacing:.16em;padding:6px 0;transform:none!important;}
+.mi.small span{color:var(--ink);}
+.mi.big::before,.mi.small::before{display:none!important;}
+#netboxMsg{white-space:pre-line;overflow-wrap:anywhere;}
+body.short .mi.big{padding:8px 14px;font-size:15px;}
+body.short .mi.small{padding:3px 0;}
+body.touch .mi.small{padding:6px 0;}
+@media (max-width:760px){ body:not(.short) .mrow{justify-content:flex-start;} }
+/* iPad mini tenu droit (744 px de large) et petites tablettes : le jeu tourné donne un grand cadre en paysage,
+   les panneaux reprennent donc leur place de tablette (à droite, centrés) au lieu de celle d'un téléphone en portrait */
+@media (max-width:760px){
+  body.rot:not(.short) #menu{background:linear-gradient(90deg,rgba(3,5,10,0) 28%,rgba(3,5,10,.5) 66%,rgba(3,5,10,.78));}
+  body.rot:not(.short) .panel{left:auto;right:calc(clamp(16px,6vw,104px) + var(--sa-r));width:min(560px,calc(100% - 32px));justify-items:end;text-align:right;top:var(--pmid);bottom:auto;transform:translateY(-50%);}
+  body.rot:not(.short) #menu.center .panel{left:auto;right:50%;transform:translate(50%,-50%);justify-items:center;text-align:center;}
+  body.rot:not(.short) .mlist{justify-items:end;}
+  body.rot:not(.short) #menu.center .mlist{justify-items:center;}
+  body.rot:not(.short) .mrow{justify-content:flex-end;}
+  body.rot:not(.short) .mi.sel,body.rot:not(.short) .mi:hover{transform:translateX(-6px);}
+  body.rot:not(.short) #menu.center .mi.sel,body.rot:not(.short) #menu.center .mi:hover{transform:none;}
+}
 .camps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(470px,100%);text-align:left;}
 .camp{display:grid;gap:5px;align-content:start;padding:9px 11px;border:1px solid rgba(140,190,255,.14);border-radius:6px;background:rgba(6,12,24,.6);min-width:0;}
 .camp h3{margin:0 0 2px;font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.2em;display:flex;justify-content:space-between;gap:8px;}
@@ -475,8 +518,34 @@ body.short #roomCodeLine b{color:var(--nifo);font-size:15px;}
 body.short #roomNav{display:grid;grid-template-columns:repeat(2,auto);gap:0 22px;}
 body.short #roomNav .mi{font-size:13px;letter-spacing:.14em;white-space:nowrap;gap:9px;}
 body.short .camp{padding:6px 9px;gap:2px;}
-body.short #friendRows{max-height:calc(var(--lh,375px) - 200px);}
+body.short #friendRows{max-height:calc(var(--lh,375px) - 200px - var(--sa-t) - var(--sa-b));}
 body.short .nline{font-size:10px;line-height:1.5;}
+/* audit iPhone du 25/09 : cadre de jeu court et étroit (iPhone SE dans Safari, barres visibles, jeu tourné) */
+body.short.narrow .mi.backTop{padding:5px 14px;}
+body.short.narrow #menu[data-panel="online"] .panel{top:calc(52px + var(--sa-t));transform:none;}
+body.short.narrow #pOnline .mi.big{padding:6px 14px;}
+body.short.narrow #pOnline .mi.back{margin-top:4px;}
+body.short.narrow #pOnline .nnote{line-height:1.25;}
+/* J'AI UN CODE avec un message (lien d'une partie fermée) : même place, sous le RETOUR du haut */
+body.short.narrow #menu[data-panel="join"] .panel{top:calc(52px + var(--sa-t));transform:none;}
+body.short.narrow #pJoin .eyebrow{display:none;}
+body.short.narrow #roomNav{gap:0 14px;}
+body.short.narrow #roomNav .mi{font-size:12px;letter-spacing:.08em;}
+body.short.narrow #roomNav .mi b{display:none;}
+body.touch.short.narrow .bc{left:calc(var(--g) + var(--sa-l));top:calc(50px + var(--sa-t));transform:none;justify-items:start;width:min(150px,32%);}
+/* très court (iPhone SE tenu en paysage dans Safari, 270 px de haut) : boutons de jeu plus petits, et sur les
+   panneaux EN LIGNE et J'AI UN CODE seul le RETOUR du haut reste (le clavier et la manette gardent ÉCHAP et B) */
+body.touch.xshort{--tb:58px;--tbf:78px;}
+body.touch.xshort #pOnline .mi.back,body.touch.xshort #pJoin .mi.back{display:none;}
+/* moins de 360 px de haut : le fil des touches garde ses deux lignes les plus récentes, au dessus des boutons de tir */
+body.touch.cramped #feed li:nth-child(n+3){display:none;}
+/* clavier ouvert : zone visible basse, la fenêtre de saisie se resserre pour garder le champ au dessus du clavier */
+#entry.low .ebox{margin-top:0;gap:8px;padding:12px 16px;}
+#entry.low .eyebrow{display:none;}
+#entry.low h2{font-size:16px;}
+#entry.low2{padding-top:calc(4px + var(--env-t));}
+#entry.low2 h2{display:none;}
+#entry.low2 .ebox{padding:8px 12px;}
 @media (max-width:760px){ .camps{gap:8px;} .camp .pl{font-size:10.5px;} .camp h3{font-size:12px;letter-spacing:.12em;} #pRoom,#pFriends,#pJoin,#pOnline{grid-template-columns:minmax(0,1fr);} }
 </style>
 
@@ -484,6 +553,62 @@ body.short .nline{font-size:10px;line-height:1.5;}
 <body>
 <noscript><p style="color:#e9f3ff;font:16px system-ui;padding:24px">Active JavaScript pour jouer à Sentinelle.</p></noscript>
 <div id="vp" aria-hidden="true"></div>
+<!-- écran de secours : du HTML et du CSS simples, hors de #app (jamais tourné), visible tout de suite ; il reste
+     jusqu'à ce que le jeu signale que son écran d'entrée est vraiment à l'écran, sinon il explique et offre un rapport -->
+<div id="boot" role="status" aria-live="polite">
+  <div class="bt-box">
+    <p class="bt-logo">NIFO<b>WEB</b></p>
+    <p class="bt-sub" id="btSub">CHARGEMENT DE SENTINELLE…</p>
+    <div id="btFail" hidden>
+      <p id="btMsg"></p>
+      <p class="bt-hint">Touche RÉESSAYER. Si le problème revient, touche COPIER LE RAPPORT et envoie le texte, ou ouvre l'adresse du jeu avec ?diag à la fin.</p>
+      <div><button type="button" id="btRetry">RÉESSAYER</button><button type="button" id="btCopy">COPIER LE RAPPORT</button></div>
+      <textarea id="btRep" readonly hidden></textarea>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var t0 = Date.now(), errs = window.nifoErrs || (window.nifoErrs = []), ready = false;
+  function note(m){ errs.push({ t: Date.now(), m: String(m).slice(0, 300) }); if (errs.length > 30) errs.shift(); }
+  window.nifoNote = note;
+  window.addEventListener('error', function(e){
+    var src = e && e.target && e.target !== window && (e.target.src || e.target.href);
+    note((e && e.message ? e.message : 'chargement refusé') + (e && e.filename ? ' @ ' + String(e.filename).split('/').pop() + ':' + e.lineno : src ? ' @ ' + src : ''));
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){ var r = e && e.reason; note('promesse : ' + (r && r.message ? r.message : r)); });
+  function report(){
+    var ua = navigator.userAgent, m = ua.match(/OS (\d+)_(\d+)(_\d+)?/), gl = 'inconnu';
+    try { var c = document.createElement('canvas'); gl = c.getContext('webgl2') ? 'WebGL 2' : c.getContext('webgl') ? 'WebGL 1 seulement' : 'aucun'; } catch (x){ gl = 'erreur : ' + x.message; }
+    var a = document.getElementById('app'), r = a ? a.getBoundingClientRect() : null, vv = window.visualViewport;
+    var L = ['Sentinelle : rapport de démarrage', 'Adresse : ' + location.href, 'Navigateur : ' + ua, 'iOS : ' + (m ? m[1] + '.' + m[2] : 'non'), 'Graphismes : ' + gl,
+      'Écran : ' + screen.width + 'x' + screen.height + ', fenêtre ' + innerWidth + 'x' + innerHeight + (vv ? ', zone visible ' + Math.round(vv.width) + 'x' + Math.round(vv.height) : '') + ', densité ' + (window.devicePixelRatio || 1),
+      'Étape : ' + (window.nifoStage || 'avant le moteur 3D') + ', après ' + Math.round((Date.now() - t0) / 1000) + ' s',
+      'Zone du jeu : ' + (r ? Math.round(r.left) + ', ' + Math.round(r.top) + ', ' + Math.round(r.width) + 'x' + Math.round(r.height) : 'absente')];
+    for (var i = 0; i < errs.length; i++) L.push('Erreur : ' + errs[i].m);
+    return L.join('\n');
+  }
+  window.nifoReport = report;
+  window.nifoBootFail = function(msg){
+    if (ready) return;
+    document.getElementById('boot').className = '';
+    document.getElementById('btSub').hidden = true;
+    document.getElementById('btMsg').textContent = msg;
+    document.getElementById('btFail').hidden = false;
+  };
+  // le jeu l'appelle quand son écran d'entrée est réellement visible ; un démarrage lent finit donc bien
+  window.nifoReady = function(){ ready = true; document.getElementById('boot').className = 'off'; };
+  document.getElementById('btRetry').onclick = function(){ location.reload(); };
+  document.getElementById('btCopy').onclick = function(){
+    var t = report(), ta = document.getElementById('btRep'), ok = false;
+    ta.value = t; ta.hidden = false;
+    try { ta.focus(); ta.select(); ta.setSelectionRange(0, t.length); ok = document.execCommand('copy'); } catch (x){}
+    try { if (!ok && navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t); ok = true; } } catch (x){}
+    this.textContent = ok ? 'RAPPORT COPIÉ' : 'SÉLECTIONNE LE TEXTE AFFICHÉ';
+  };
+  setTimeout(function(){ if (!ready) window.nifoBootFail("Le jeu ne s'est pas affiché après 8 secondes. La connexion est sans doute lente, ou ce navigateur a un souci avec le jeu."); }, 8000);
+})();
+</script>
 <div id="app">
 <canvas id="gl" aria-label="Scène du jeu Sentinelle"></canvas>
 
@@ -584,55 +709,57 @@ body.short .nline{font-size:10px;line-height:1.5;}
     <p class="nline" id="resNet" hidden></p>
   </section>
   <section class="panel" id="pOnline" hidden aria-label="En ligne">
-    <p class="eyebrow">JEU ENTRE AMIS <span>//</span> 2 À 8 PILOTES</p>
+    <p class="eyebrow">JEU EN LIGNE <span>//</span> 2 À 8 PILOTES</p>
     <h2 class="title sm"><span class="t1">EN LI</span><span class="t2">GNE</span></h2>
-    <p class="nline" id="onWho"></p>
-    <p class="nline" id="onState"></p>
     <nav class="mlist" id="onNav">
-      <button class="mi" data-act="netCreate" data-need><b>[01]</b>CRÉER UNE SALLE</button>
-      <button class="mi" data-act="netJoinPanel" data-need><b>[02]</b>REJOINDRE UNE SALLE</button>
-      <button class="mi" data-act="netFriends" data-need><b>[03]</b>AMIS</button>
-      <button class="mi" data-act="netName" data-need><b>[04]</b>CHANGER DE PSEUDO</button>
-      <button class="mi" data-act="netRetry" id="onRetry" hidden><b>[05]</b>RÉESSAYER</button>
+      <button class="mi big" data-act="netInviteNew" data-need>INVITER DES AMIS</button>
+      <button class="mi big alt" data-act="netQuick" data-need>PARTIE RAPIDE</button>
+      <div class="mrow">
+        <button class="mi small" data-act="netFriends" data-need id="onRecent" hidden>JOUEURS RÉCENTS</button>
+        <button class="mi small" data-act="netJoinPanel" data-need>J'AI UN CODE</button>
+        <button class="mi small" data-act="netName" data-need>PSEUDO&nbsp;<span id="onName"></span></button>
+      </div>
+      <button class="mi" data-act="netRetry" id="onRetry" hidden><b>[01]</b>RÉESSAYER</button>
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
+    <p class="nline" id="onState"></p>
     <p class="nnote" id="onNote">En ligne, la mise en relation passe par un service externe (PeerJS), qui voit ton adresse IP le temps de la connexion ; les joueurs de ta salle aussi, car la liaison entre vous est directe. Seuls ton pseudo et ton code ami sont partagés. Rien n'est enregistré sur nos serveurs.</p>
   </section>
-  <section class="panel" id="pJoin" hidden aria-label="Rejoindre une salle">
-    <p class="eyebrow">EN LIGNE <span>//</span> REJOINDRE</p>
-    <h2 class="title sm"><span class="t1">REJOIN</span><span class="t2">DRE</span></h2>
+  <section class="panel" id="pJoin" hidden aria-label="J'ai un code">
+    <p class="eyebrow">EN LIGNE <span>//</span> J'AI UN CODE</p>
+    <h2 class="title sm"><span class="t1">CO</span><span class="t2">DES</span></h2>
     <nav class="mlist wide">
       <button class="mi set field" data-act="netCodeEdit"><span class="k">CODE DE LA SALLE</span><span class="v"><em id="joinCode">· · · · ·</em></span></button>
-      <button class="mi set field" data-act="netName"><span class="k">TON PSEUDO</span><span class="v"><em id="joinName"></em></span></button>
       <button class="mi" data-act="netJoinGo" id="joinGo"><b>[01]</b>REJOINDRE LA SALLE</button>
+      <button class="mi" data-act="netAddFriend"><b>[02]</b>AJOUTER UN CODE AMI</button>
+      <button class="mi" data-act="netShareCode"><b>[03]</b>DONNER MON CODE AMI</button>
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="joinMsg"></p>
+    <p class="nline" id="joinMine"></p>
   </section>
   <section class="panel" id="pRoom" hidden aria-label="Salle en ligne">
-    <p class="eyebrow">SALLE EN LIGNE <span>//</span> <span id="roomRole">HÔTE</span></p>
-    <h2 class="title sm"><span class="t1">SALLE </span><span class="t2" id="roomCode"></span></h2>
-    <p class="nline" id="roomCodeLine"></p>
+    <p class="eyebrow">EN LIGNE <span>//</span> <span id="roomRole">HÔTE</span></p>
+    <h2 class="title sm"><span class="t1" id="roomT1">SALLE </span><span class="t2" id="roomCode"></span></h2>
+    <p class="nline" id="roomCodeLine" hidden></p>
     <div class="camps" id="roomCamps"></div>
     <p class="nline" id="roomMsg"></p>
     <nav class="mlist" id="roomNav">
       <button class="mi" data-act="netStart" data-host><b>[01]</b>LANCER LA PARTIE</button>
-      <button class="mi" data-act="netInvite"><b>[02]</b>INVITER PAR LIEN</button>
-      <button class="mi" data-act="netFriends"><b>[03]</b>INVITER UN AMI</button>
+      <button class="mi" data-act="netInvite" data-priv><b>[02]</b>INVITER DES AMIS</button>
+      <button class="mi" data-act="netFriends" data-priv><b>[03]</b>JOUEURS RÉCENTS</button>
       <button class="mi" data-act="netCamp"><b>[04]</b>CHANGER DE CAMP</button>
       <button class="mi" data-act="netBalance" data-host><b>[05]</b>ÉQUILIBRER</button>
       <button class="mi" data-act="netLeave"><b>[06]</b>QUITTER LA SALLE</button>
+      <button class="mi small" data-act="netShowCode" data-priv id="roomShow">VOIR LE CODE</button>
     </nav>
   </section>
-  <section class="panel" id="pFriends" hidden aria-label="Amis">
-    <p class="eyebrow">EN LIGNE <span>//</span> AMIS</p>
-    <h2 class="title sm"><span class="t1">AM</span><span class="t2">IS</span></h2>
-    <p class="nline" id="myCodeLine"></p>
+  <section class="panel" id="pFriends" hidden aria-label="Joueurs récents">
+    <p class="eyebrow">EN LIGNE <span>//</span> JOUEURS RÉCENTS</p>
+    <h2 class="title sm"><span class="t1">RÉCE</span><span class="t2">NTS</span></h2>
     <div id="friendRows"></div>
     <nav class="mlist">
-      <button class="mi" data-act="netAddFriend"><b>[01]</b>AJOUTER UN AMI</button>
-      <button class="mi" data-act="netShareCode"><b>[02]</b>DONNER MON CODE</button>
-      <button class="mi" data-act="netRefresh"><b>[03]</b>ACTUALISER</button>
+      <button class="mi" data-act="netRefresh"><b>[01]</b>ACTUALISER</button>
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="friendMsg"></p>
@@ -716,11 +843,12 @@ body.short .nline{font-size:10px;line-height:1.5;}
 <script>
 /* avant le moteur : erreurs gardées pour le diagnostic, message clair si le jeu ne démarre pas, choix du moteur 3D */
 (function(){
-  var errs = window.nifoErrs = [];
+  var errs = window.nifoErrs || (window.nifoErrs = []);
   var shown = false, later = null;
-  function note(m){ errs.push({ t: Date.now(), m: String(m).slice(0, 300) }); if (errs.length > 20) errs.shift(); }
+  function note(m){ if (window.nifoNote) return; errs.push({ t: Date.now(), m: String(m).slice(0, 300) }); if (errs.length > 20) errs.shift(); }
   function fail(txt){
     if (window.__nifoStarted || window.__nifoBooting || shown) return;
+    if (window.nifoBootFail){ shown = true; window.nifoBootFail(txt); return; }
     var s = document.getElementById('ldSub'); if (!s) return;
     shown = true; s.hidden = false; s.textContent = txt; s.className = 'ld-sub err';
   }
@@ -755,6 +883,8 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
+window.nifoStage = 'moteur 3D chargé';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { Reflector } from 'three/addons/objects/Reflector.js';
 
@@ -802,6 +932,8 @@ const store = {
   get(k, d){ try { const v = localStorage.getItem('nifoweb.sentinelle.' + k); if (v !== null) return JSON.parse(v); } catch (e){} return Object.prototype.hasOwnProperty.call(memStore, k) ? memStore[k] : d; },
   set(k, v){ memStore[k] = v; try { localStorage.setItem('nifoweb.sentinelle.' + k, JSON.stringify(v)); } catch (e){} },
 };
+// téléphone : les qualités lourdes (route miroir, CINÉMA) ne sont pas proposées, elles font chauffer et perdre l'affichage
+const PHONE = isTouch && Math.min(screen.width || 9999, screen.height || 9999) < 600;
 const settings = {
   quality: store.get('quality', 'auto'),
   autofire: store.get('autofire', isTouch || PLAT.tv),
@@ -818,20 +950,22 @@ let best = store.get('best', 0);
 try { const hb = /[#&]best=(\d+)/.exec(location.hash); if (hb){ best = Math.max(best, +hb[1]); store.set('best', best); history.replaceState(null, '', location.pathname + location.search); } } catch (e){}
 
 const QUALITY = {
-  low:      { pr: 0.85, maxPr: 1.25, samples: 0, bloom: false, reflect: 0,    rain: 1400, chunks: 5, fly: 50,  ground: 36, peds: 0,   fog: 0.0038 },
-  mobile:   { pr: 1,    maxPr: 1.35, samples: 0, bloom: true,  reflect: 0,    rain: 1600, chunks: 5, fly: 50,  ground: 34, peds: 0,   fog: 0.0038 },
+  low:      { pr: 1,    maxPr: 1.5, samples: 0, bloom: false, reflect: 0,    rain: 1400, chunks: 5, fly: 50,  ground: 36, peds: 0,   fog: 0.0038 },
+  mobile:   { pr: 1,    maxPr: 1.75, samples: 0, bloom: true,  reflect: 0,    rain: 1600, chunks: 5, fly: 50,  ground: 34, peds: 0,   fog: 0.0038 },
   balanced: { pr: 1,    maxPr: 1.5,  samples: 0, bloom: true,  reflect: 0.34, rain: 3000, chunks: 6, fly: 90,  ground: 60, peds: 70,  fog: 0.0033 },
   high:     { pr: 1,    maxPr: 2,    samples: 4, bloom: true,  reflect: 0.5,  rain: 4800, chunks: 7, fly: 140, ground: 90, peds: 130, fog: 0.0031 },
 };
 if (!QUALITY[settings.quality] && settings.quality !== 'auto') settings.quality = 'auto';
+if (PHONE && (settings.quality === 'balanced' || settings.quality === 'high')) settings.quality = 'auto';
 // qualité automatique : un préréglage de départ selon l'appareil, puis des marches vers le bas (ou le haut)
 // d'après la cadence mesurée ; jamais au dessus d'un préréglage qui s'est montré trop lourd
 const QORDER = ['low', 'mobile', 'balanced', 'high'];
-const AUTOQ = { cur: PLAT.tv ? 'mobile' : isTouch ? 'mobile' : 'balanced', cap: isTouch || PLAT.tv ? 'balanced' : 'high', fail: 9, up: 0, lastStep: -1e9 };
+// iPhone : départ prudent sans bloom, montée à LÉGÈRE si les images restent fluides ; téléphones plafonnés à LÉGÈRE
+const AUTOQ = { cur: PLAT.tv ? 'mobile' : PHONE && PLAT.iOS ? 'low' : isTouch ? 'mobile' : 'balanced', cap: PHONE ? 'mobile' : isTouch || PLAT.tv ? 'balanced' : 'high', fail: 9, up: 0, lastStep: -1e9 };
 function qKey(){ return settings.quality === 'auto' ? AUTOQ.cur : settings.quality; }
 if (settings.screen === 'free') settings.screen = 'portrait';
 const SETS = {
-  quality: { label: 'QUALITÉ', values: ['auto', 'low', 'mobile', 'balanced', 'high'], names: ['AUTOMATIQUE', 'PERFORMANCE', 'LÉGÈRE', 'ÉQUILIBRÉE', 'CINÉMA'] },
+  quality: { label: 'QUALITÉ', values: PHONE ? ['auto', 'low', 'mobile'] : ['auto', 'low', 'mobile', 'balanced', 'high'], names: ['AUTOMATIQUE', 'PERFORMANCE', 'LÉGÈRE', 'ÉQUILIBRÉE', 'CINÉMA'] },
   autofire: { label: 'TIR AUTOMATIQUE', values: [true, false], names: ['ACTIVÉ', 'COUPÉ'] },
   sound: { label: 'EFFETS SONORES', values: [true, false], names: ['ACTIVÉS', 'COUPÉS'] },
   music: { label: 'MUSIQUE', values: [true, false], names: ['ACTIVÉE', 'COUPÉE'] },
@@ -881,7 +1015,7 @@ const ITEMS = {
 const EMPTY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#8497b6" stroke-width="1.4"><rect x="6" y="6" width="12" height="12" rx="2" stroke-dasharray="3 3"/></svg>';
 
 /* ============ moteur de rendu ============ */
-let renderer, scene, camera, composer, bloomPass, fxPass, hemi;
+let renderer, scene, camera, composer, bloomPass, fxPass, fxaaPass, hemi;
 const A = {};
 let baseFov = 68, pointScale = 600, perfScale = 1;
 
@@ -923,6 +1057,7 @@ function webgl2Ok(){
 }
 function onGlLost(){
   GPU.lost = true;
+  (window.nifoErrs || []).push({ t: Date.now(), m: 'affichage 3D perdu (mémoire), qualité ' + qKey() });
   if (game.state === 'playing' || game.state === 'countdown') pauseGame();
   showIncident('lost');
   if (SIM.restore) setTimeout(() => { try { if (GPU.loseExt) GPU.loseExt.restoreContext(); } catch (e){} }, 2500);
@@ -930,9 +1065,14 @@ function onGlLost(){
 function onGlRestored(){
   GPU.lost = false;
   try { scene.environment = buildEnvironment(); } catch (e){ diagError(e); }
+  // la mémoire a manqué : un cran de qualité en moins, puis la chaîne d'effets reconstruite
+  try { const i = QORDER.indexOf(AUTOQ.cur); if (i > 0){ AUTOQ.cur = QORDER[i - 1]; AUTOQ.cap = AUTOQ.cur; } applyQuality(); } catch (e){ diagError(e); }
   showIncident('restored');
 }
-function pixelRatio(){ const q = QUALITY[qKey()]; return Math.min(window.devicePixelRatio || 1, q.maxPr) * q.pr * perfScale; }
+// netteté d'abord : la résolution suit l'écran (1,5 au moins sur téléphone) ; quand ça rame, les effets baissent
+// avant elle, et elle ne descend jamais sous un plancher (1,25 sur téléphone, 1 ailleurs, ou la densité de l'écran)
+function prFloor(){ return Math.min(window.devicePixelRatio || 1, PHONE ? 1.25 : 1); }
+function pixelRatio(){ const q = QUALITY[qKey()]; return Math.max(prFloor(), Math.min(window.devicePixelRatio || 1, q.maxPr) * q.pr * perfScale); }
 function applyPixelRatio(doResize = true){ renderer.setPixelRatio(pixelRatio()); if (doResize) resize(); }
 
 const FinalShader = {
@@ -972,10 +1112,24 @@ const FinalShader = {
       col *= 1.0 - uVig * smoothstep(0.12, 0.8, d * 2.1);
       col += uFlashCol * uFlash;
       col = mix(col, col * vec3(1.45, 0.45, 0.55), uHit * 0.45);
-      gl_FragColor = vec4(col, 1.0);
+      gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
     }`,
 };
 
+// nettoyage de l'image avant le bloom : certains GPU d'iPhone laissent passer des NaN ou des infinis dans les cibles
+// en demi flottants ; le flou du bloom les étalerait alors sur tout l'écran, qui devient noir par moments
+const SanitizeShader = {
+  uniforms: { tDiffuse: { value: null } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D tDiffuse; varying vec2 vUv;
+    void main(){
+      vec4 c = texture2D(tDiffuse, vUv);
+      vec3 v = c.rgb;
+      if (any(isnan(v)) || any(isinf(v))) v = vec3(0.0);
+      gl_FragColor = vec4(min(max(v, vec3(0.0)), vec3(24.0)), 1.0);
+    }`,
+};
 function buildComposer(){
   const q = QUALITY[qKey()];
   if (composer){ try { composer.dispose(); } catch (e){} }
@@ -983,12 +1137,19 @@ function buildComposer(){
   const rt = new THREE.WebGLRenderTarget(Math.max(2, size.x), Math.max(2, size.y), { type: GPU.float ? THREE.HalfFloatType : THREE.UnsignedByteType, samples: GPU.float ? q.samples : 0 });
   composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
+  if (GPU.float) composer.addPass(new ShaderPass(SanitizeShader));
   bloomPass = new UnrealBloomPass(new THREE.Vector2(size.x, size.y), 0.72, 0.5, 0.9);
   bloomPass.enabled = q.bloom && GPU.float;
   composer.addPass(bloomPass);
   composer.addPass(new OutputPass());
   fxPass = new ShaderPass(FinalShader);
   composer.addPass(fxPass);
+  // anticrénelage FXAA quand l'image n'a pas de multiéchantillonnage : des bords nets sans mémoire en plus
+  fxaaPass = new ShaderPass(FXAAShader);
+  fxaaPass.enabled = !(GPU.float && q.samples > 0);
+  composer.addPass(fxaaPass);
+  const fpr = renderer.getPixelRatio();
+  fxaaPass.material.uniforms.resolution.value.set(1 / Math.max(1, VIEW.w * fpr), 1 / Math.max(1, VIEW.h * fpr));
   composer.setPixelRatio(renderer.getPixelRatio());
   composer.setSize(VIEW.w, VIEW.h);
 }
@@ -1021,6 +1182,9 @@ function computeView(){
   VIEW.w = rot ? h : w; VIEW.h = rot ? w : h;
   b.classList.toggle('short', VIEW.h < 520);
   b.classList.toggle('tall', VIEW.h > VIEW.w);
+  b.classList.toggle('narrow', VIEW.w < 600);
+  b.classList.toggle('xshort', VIEW.h < 300);
+  b.classList.toggle('cramped', VIEW.h < 360);
   // grands écrans (4K, ultralarges, téléviseurs vus de loin) : l'interface grandit avec la fenêtre
   let u = 1;
   if (!isTouch){ u = clamp(Math.min(VIEW.w / 1600, VIEW.h / 900), 1, 2.6); if (PLAT.tv) u = clamp(Math.min(u * 1.3, VIEW.h / 820), 1, 3); }
@@ -1098,6 +1262,7 @@ function resize(){
   const pr = renderer.getPixelRatio();
   if (composer){ composer.setPixelRatio(pr); composer.setSize(w, h); }
   if (fxPass) fxPass.uniforms.uRes.value.set(w * pr, h * pr);
+  if (fxaaPass) fxaaPass.material.uniforms.resolution.value.set(1 / (w * pr), 1 / (h * pr));
   if (road && road.reflector){
     const q = QUALITY[qKey()];
     road.reflector.getRenderTarget().setSize(Math.max(64, Math.round(w * pr * (q.reflect || 0.3))), Math.max(64, Math.round(h * pr * (q.reflect || 0.3))));
@@ -3386,7 +3551,7 @@ function autoQuality(dir, now){
   const i = QORDER.indexOf(AUTOQ.cur), cap = QORDER.indexOf(AUTOQ.cap);
   if (dir < 0){
     AUTOQ.up = 0;
-    if (i <= 0 || now - AUTOQ.lastStep < 6000) return;
+    if (i <= 0 || now - AUTOQ.lastStep < (PHONE ? 2500 : 6000)) return;
     AUTOQ.fail = Math.min(AUTOQ.fail, i);
     AUTOQ.cur = QORDER[i - 1];
   } else {
@@ -3563,8 +3728,9 @@ function loop(now){
   if (rawDt > 0 && rawDt < 0.25){ perfAcc += rawDt; perfN++; }
   if (perfAcc > 2.5){
     const avg = perfAcc / perfN;
-    if (avg > 1 / 40 && perfScale > 0.6){ perfScale = Math.max(0.6, perfScale - 0.1); applyPixelRatio(); AUTOQ.up = 0; }
-    else if (avg > 1 / 40) autoQuality(-1, now);
+    // trop lent : d'abord un cran d'effets en moins (qualité automatique) ; la résolution seulement au plus bas
+    if (avg > 1 / 40 && settings.quality === 'auto' && QORDER.indexOf(AUTOQ.cur) > 0) autoQuality(-1, now);
+    else if (avg > 1 / 40 && pixelRatio() > prFloor() + 0.01){ perfScale = Math.max(0.5, perfScale - 0.1); applyPixelRatio(); AUTOQ.up = 0; }
     else if (avg < 1 / 57 && perfScale < 1){ perfScale = Math.min(1, perfScale + 0.05); applyPixelRatio(); }
     else if (avg < 1 / 57) autoQuality(1, now);
     else AUTOQ.up = 0;
@@ -3833,7 +3999,7 @@ function bindEvents(){
 // L'hôte fait foi pour le chrono, les objets, les scores, les IA et la fin de partie. Chaque joueur pilote son
 // vaisseau, envoie son état 20 fois par seconde et signale lui même les touches qu'il subit ; l'hôte les valide.
 // Rien n'est gardé sur un serveur : pseudo, code ami et liste d'amis restent dans l'appareil.
-const NET_BUILD = '302a4c1501';   // remplacé à la construction du site par une empreinte du code : deux versions différentes ne jouent pas ensemble
+const NET_BUILD = '7d2b50490c';   // remplacé à la construction du site par une empreinte du code : deux versions différentes ne jouent pas ensemble
 const NET_PROTO = 1;
 const PEERJS_URL = 'https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';
 const PEERJS_SRI = 'sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu';
@@ -3919,14 +4085,29 @@ function checkName(raw){
   return { ok: true, name: s, why: '' };
 }
 const safeName = (raw, d) => { const r = checkName(raw); return r.ok ? r.name : d; };
+// pseudo tiré au hasard à la première visite : on joue tout de suite, on le change plus tard si on veut
+function autoName(){ return 'PILOTE ' + (1000 + randU32() % 9000); }
 function idLoad(){
   ID.name = safeName(store.get('netName', ''), '');
+  if (!ID.name){ ID.name = autoName(); store.set('netName', ID.name); }
   let fc = String(store.get('netFriend', '') || '');
   if (!friendOk(fc)){ fc = randCode(FRIEND_ABC, 8); store.set('netFriend', fc); }
   ID.fc = fc;
 }
-function friendsLoad(){ const l = store.get('netFriends', []); return Array.isArray(l) ? l.filter((f) => f && friendOk(f.fc) && f.fc !== ID.fc).slice(0, 50) : []; }
-function friendsSave(l){ store.set('netFriends', l.slice(0, 50).map((f) => ({ fc: f.fc, n: f.n || '' }))); }
+// joueurs récents : les pilotes croisés en ligne (et les codes ami ajoutés), le plus récent d'abord
+function friendsLoad(){ const l = store.get('netFriends', []); return Array.isArray(l) ? l.filter((f) => f && friendOk(f.fc) && f.fc !== ID.fc).sort((a, b) => (+b.t || 0) - (+a.t || 0)).slice(0, 30) : []; }
+function friendsSave(l){ store.set('netFriends', l.slice(0, 30).map((f) => ({ fc: f.fc, n: f.n || '', t: +f.t || 0 }))); }
+function recentsAdd(){
+  const l = friendsLoad(), now = Date.now();
+  let n = 0;
+  for (const p of NET.lobby){
+    if (!p || !friendOk(p.f) || p.f === ID.fc) continue;
+    const i = l.findIndex((x) => x.fc === p.f);
+    if (i >= 0) l.splice(i, 1);
+    l.unshift({ fc: p.f, n: p.n || '', t: now }); n++;
+  }
+  if (n) friendsSave(l);
+}
 function friendName(fc){ const st = NET.fstat[fc], f = friendsLoad().find((x) => x.fc === fc); return (st && st.n) || (f && f.n) || 'TON AMI ' + fcShow(fc); }
 
 /* ---------- disponibilité ---------- */
@@ -4043,14 +4224,14 @@ function netWarmup(){
   netStatus('CONNEXION AU SERVICE EN LIGNE…');
   presenceStart().then(() => {
     NET.libFail = false;
-    netStatus(NET.meAnon ? 'EN LIGNE · TON CODE AMI EST DÉJÀ OUVERT SUR UN AUTRE ÉCRAN' : 'EN LIGNE', 'ok');
+    if (!NET.busy) netStatus(NET.meAnon ? 'TON CODE AMI EST DÉJÀ OUVERT SUR UN AUTRE ÉCRAN' : '', 'ok');
   }).catch((e) => { NET.libFail = true; netStatus(netErrText(e), 'err'); });
 }
 function netStatus(txt, cls){ NET.status = txt || ''; NET.statusCls = cls || ''; if (UI.cur === 'online' && !$('menu').hidden) onlineRender(); }
 function netErrText(e){
   const t = e && e.type;
-  if (t === 'peer-unavailable') return 'SALLE INTROUVABLE : VÉRIFIE LE CODE';
-  if (t === 'refused') return e.why === 'full' ? 'SALLE PLEINE : 8 PILOTES AU PLUS' : e.why === 'version' ? 'VERSION DIFFÉRENTE DE CELLE DE L\'HÔTE : RECHARGEZ TOUS LES DEUX LA PAGE' : 'ENTRÉE REFUSÉE PAR LA SALLE';
+  if (t === 'peer-unavailable') return 'SALLE INTROUVABLE : ELLE EST FERMÉE OU LE CODE EST FAUX';
+  if (t === 'refused') return e.why === 'running' ? 'PARTIE EN COURS DANS CETTE SALLE' : e.why === 'full' ? 'SALLE PLEINE : 8 PILOTES AU PLUS' : e.why === 'version' ? 'VERSION DIFFÉRENTE DE CELLE DE L\'HÔTE : RECHARGEZ TOUS LES DEUX LA PAGE' : 'ENTRÉE REFUSÉE PAR LA SALLE';
   if (t === 'browser-incompatible') return 'CE NAVIGATEUR NE PERMET PAS LE JEU EN LIGNE';
   if (t === 'webrtc' || t === 'negotiation-failed') return 'LIAISON DIRECTE IMPOSSIBLE : LE RÉSEAU LA BLOQUE, ESSAIE UN AUTRE RÉSEAU';
   if (t === 'noanswer') return 'LA SALLE NE RÉPOND PAS, RÉESSAIE';
@@ -4114,12 +4295,12 @@ function friendMsgSet(t, cls){ NET.friendMsg = t || ''; NET.friendCls = cls || '
 let friendsHtml = '';
 function friendsRender(){
   if (UI.cur !== 'friends' || $('menu').hidden) return;
-  $('myCodeLine').innerHTML = 'TON CODE AMI <b>' + fcShow(ID.fc) + '</b>' + (ID.name ? ' · PILOTE <b>' + esc(ID.name) + '</b>' : '');
+  // les codes ami vivent dans J'AI UN CODE
   const l = friendsLoad();
-  const html = !l.length ? '<p class="nline">AUCUN AMI POUR L\'INSTANT : ÉCHANGEZ VOS CODES AMI.</p>' : l.map((f) => {
+  const html = !l.length ? '<p class="nline">PERSONNE POUR L\'INSTANT : LES PILOTES CROISÉS EN LIGNE APPARAÎTRONT ICI.</p>' : l.map((f) => {
     const st = NET.fstat[f.fc] || {}, on = st.st === 'on', wait = !!st.busy;
     const label = wait ? 'VÉRIFICATION' : on ? 'EN LIGNE' : st.st === 'off' ? 'HORS LIGNE' : 'ÉTAT INCONNU';
-    return `<div class="frow${on ? ' on' : ''}${wait ? ' wait' : ''}"><i class="dot"></i><div class="nm"><span>${esc(st.n || f.n || 'AMI')}</span><small>${fcShow(f.fc)} · ${label}</small></div><button class="mi fb" data-act="netInv" data-fc="${f.fc}"${on ? '' : ' hidden'}>INVITER</button><button class="mi fb del" data-act="netDel" data-fc="${f.fc}">${NET.delArm === f.fc ? 'CONFIRMER' : 'RETIRER'}</button></div>`;
+    return `<div class="frow${on ? ' on' : ''}${wait ? ' wait' : ''}"><i class="dot"></i><div class="nm"><span>${esc(st.n || f.n || 'AMI')}</span><small>${label}</small></div><button class="mi fb" data-act="netInv" data-fc="${f.fc}"${st.st === 'off' ? ' hidden' : ''}>INVITER</button><button class="mi fb del" data-act="netDel" data-fc="${f.fc}">${NET.delArm === f.fc ? 'CONFIRMER' : 'RETIRER'}</button></div>`;
   }).join('');
   // on ne reconstruit la liste que si elle change : un appui en cours n'est pas perdu
   if (html !== friendsHtml){ friendsHtml = html; $('friendRows').innerHTML = html; highlight(); }
@@ -4127,11 +4308,11 @@ function friendsRender(){
 }
 function addFriendEntry(){
   entryOpen({
-    title: 'AJOUTER UN AMI', ey: 'EN LIGNE · AMIS', value: '', max: 9, ph: 'CODE AMI', help: 'SON CODE AMI : HUIT SIGNES, AFFICHÉS DANS SON PANNEAU AMIS.',
+    title: 'AJOUTER UN AMI', ey: 'EN LIGNE · CODE AMI', value: '', max: 9, ph: 'CODE AMI', help: 'SON CODE AMI : HUIT SIGNES, AFFICHÉS DANS SON ÉCRAN J\'AI UN CODE.',
     live: (v) => { const c = cleanFriend(v); return c.length > 4 ? c.slice(0, 4) + ' ' + c.slice(4) : c; },
     filter: cleanFriend,
     check: (v) => !friendOk(v) ? 'IL FAUT HUIT SIGNES : LETTRES SANS I, L NI O, CHIFFRES DE 2 À 9' : v === ID.fc ? 'C\'EST TON PROPRE CODE' : friendsLoad().some((f) => f.fc === v) ? 'CET AMI EST DÉJÀ DANS TA LISTE' : friendsLoad().length >= 50 ? 'LISTE PLEINE : 50 AMIS AU PLUS' : '',
-    ok: (v) => { const l = friendsLoad(); l.push({ fc: v, n: '' }); friendsSave(l); friendMsgSet('AMI AJOUTÉ : ' + fcShow(v), 'ok'); friendsHtml = ''; friendsRender(); presenceStart().then(() => friendCheck(v)).catch(() => {}); },
+    ok: (v) => { const l = friendsLoad(); l.unshift({ fc: v, n: '', t: Date.now() }); friendsSave(l); friendMsgSet('AMI AJOUTÉ : ' + fcShow(v), 'ok'); friendsHtml = ''; friendsRender(); presenceStart().then(() => friendCheck(v)).catch(() => {}); },
   });
 }
 function friendDelete(fc){
@@ -4200,6 +4381,7 @@ function inviteAnswer(ok, expired){
 /* ---------- salle : ouverture, entrée, départ ---------- */
 function netSessionBegin(host, code){
   NET.on = true; NET.host = host; NET.code = code; NET.leaving = false; NET.running = false; NET.reco = null;
+  NET.hall = isHall(code); NET.autoK = 0; NET.autoHold = 0; NET.showCode = false;
   NET.pilots = new Map(); NET.links = new Set(); NET.lobby = []; NET.order = 0; NET.roomNote = '';
   NET.sync = []; NET.rtt = 0; NET.pingT = 0;
   if (host){ NET.epoch = performance.now(); NET.off = -NET.epoch; NET.synced = true; }
@@ -4207,38 +4389,110 @@ function netSessionBegin(host, code){
   clearInterval(NET.timer); NET.timer = setInterval(netWatch, 500);
   urlClean();
 }
+// salle privée : cinq lettres ; partie rapide : un des halls publics numérotés de 1 à HALLS, propres à chaque version
+const HALLS = 5, HALL_WAIT = 10;
+const isHall = (c) => /^[1-9]$/.test(c);
+function roomPeer(c){ return NET_PREFIX + (isHall(c) ? 'hall-' + NET_BUILD + '-' + c : 'salle-' + c); }
 function roomOpen(code){
   return new Promise((res, rej) => {
-    let p; try { p = makePeer(NET_PREFIX + 'salle-' + code); } catch (e){ rej(e); return; }
+    let p; try { p = makePeer(roomPeer(code)); } catch (e){ rej(e); return; }
     let done = false;
     const to = setTimeout(() => { if (done) return; done = true; try { p.destroy(); } catch (e){} rej(Object.assign(new Error('délai'), { type: 'network' })); }, 15000);
     p.on('open', () => { if (done) return; done = true; clearTimeout(to); res(p); });
     p.on('error', (e) => { if (e && e.type === 'peer-unavailable'){ netUnavailable(e); return; } if (done) return; done = true; clearTimeout(to); try { p.destroy(); } catch (x){} rej(e); });
   });
 }
-async function netCreate(){
+async function netCreate(want){
   if (NET.on || NET.busy) return;
-  if (!ID.name){ askName(() => netCreate()); return; }
   NET.busy = true;
   netStatus('OUVERTURE DE LA SALLE…');
   try {
     await presenceStart();
     let room = null, code = '';
     for (let i = 0; i < 5 && !room; i++){
-      code = randCode(ROOM_ABC, 5);
+      code = i === 0 && roomOk(want) ? want : randCode(ROOM_ABC, 5);
       try { room = await roomOpen(code); } catch (e){ if (!e || e.type !== 'unavailable-id') throw e; }
     }
     if (!room) throw Object.assign(new Error('codes pris'), { type: 'network' });
-    netSessionBegin(true, code);
-    NET.room = room;
-    room.on('connection', hostIncoming);
-    room.on('disconnected', () => { if (NET.room === room) peerRejoin(room); });
-    NET.pilots.set('h', { pid: 'h', tok: '', name: ID.name, fc: ID.fc, camp: 0, host: true, conn: true, order: NET.order++, link: null, ship: -1, leftK: 0 });
-    netStatus('');
-    UI.stack = [];
-    openPanel('room', false);
+    hostBegin(room, code);
+    // le lien déjà partagé portait un code pris entre temps : on donne le nouveau
+    if (roomOk(want) && code !== want) linkBox(inviteLink(), false, true);
   } catch (e){ netStatus(netErrText(e), 'err'); toast(netErrText(e), 3.5); }
   NET.busy = false;
+}
+function hostBegin(room, code){
+  netSessionBegin(true, code);
+  NET.room = room;
+  room.on('connection', hostIncoming);
+  room.on('disconnected', () => { if (NET.room === room) peerRejoin(room); });
+  NET.pilots.set('h', { pid: 'h', tok: '', name: ID.name, fc: ID.fc, camp: 0, host: true, conn: true, order: NET.order++, link: null, ship: -1, leftK: 0 });
+  netStatus('');
+  UI.stack = [];
+  openPanel('room', false);
+}
+// INVITER DES AMIS : un seul geste ouvre la salle et partage le lien (le code est tiré avant, le partage part dans le geste)
+function netInviteNew(){
+  if (NET.on){ netShareLink(); return; }
+  if (NET.busy) return;
+  const code = randCode(ROOM_ABC, 5);
+  inviteShare(location.origin + location.pathname + '?salle=' + code);
+  netCreate(code);
+}
+// PARTIE RAPIDE : une partie ouverte parmi les halls publics, sinon on ouvre le premier hall libre et on attend
+async function netQuick(){
+  if (NET.on || NET.busy) return;
+  NET.busy = true;
+  netStatus('RECHERCHE D\'UNE PARTIE…');
+  try {
+    await presenceStart();
+    const free = [];
+    for (let n = 1; n <= HALLS && !NET.on; n++){
+      try { quickJoined(String(n), await guestConnect(String(n), '', 6000, true)); }
+      catch (e){ if (e && e.type === 'peer-unavailable') free.push(n); }
+    }
+    for (let k = 0; k < free.length && !NET.on; k++){
+      const c = String(free[k]);
+      try { hostBegin(await roomOpen(c), c); }
+      catch (e){
+        if (!e || e.type !== 'unavailable-id') throw e;
+        // un autre pilote vient d'ouvrir ce hall à l'instant : on le rejoint
+        try { quickJoined(c, await guestConnect(c, '', 6000, true)); } catch (x){}
+      }
+    }
+    if (!NET.on) netStatus('TOUTES LES PARTIES RAPIDES SONT PLEINES : RÉESSAIE DANS UN INSTANT, OU INVITE DES AMIS', 'err');
+  } catch (e){ netStatus(netErrText(e), 'err'); }
+  NET.busy = false;
+}
+function quickJoined(code, res){
+  netSessionBegin(false, code);
+  guestAttach(res);
+  netStatus('');
+  UI.stack = [];
+  if (game.state === 'menu' || game.state === 'loading') openPanel('room', false);
+}
+// entrée par lien : la salle vient peut être de s'ouvrir chez l'ami, on insiste quelques secondes avant de conclure
+async function netJoinLink(code){
+  NET.joinCode = code;
+  netStatus('CONNEXION À LA PARTIE DE TON AMI…');
+  // deux essais : le second attend la salle si l'ami vient juste de l'ouvrir (le serveur garde la demande)
+  let gone = false;
+  for (let i = 0; i < 2 && !NET.on; i++){
+    if (i) await new Promise((r) => setTimeout(r, 2500));
+    if (NET.on || game.state !== 'menu') return;
+    NET.joinMsg = '';
+    await netJoin(code, 9000);
+    if (NET.on) return;
+    // premier essai sans réponse du serveur (deux amis qui touchent le même lien mort au même moment n'ont pas
+    // toujours tous les deux la réponse « introuvable ») : on réessaie aussi, un seul refus net arrête tout
+    if (i === 0){ gone = /INTROUVABLE/.test(NET.joinMsg); if (!gone && !/LIAISON DIRECTE|NE RÉPOND PAS/.test(NET.joinMsg)) break; }
+  }
+  if (NET.on) return;
+  netStatus('');
+  if (/INTROUVABLE/.test(NET.joinMsg) || (gone && /LIAISON DIRECTE|NE RÉPOND PAS/.test(NET.joinMsg))) NET.joinMsg = 'PARTIE INTROUVABLE : ELLE EST SANS DOUTE FERMÉE. DEMANDE UN NOUVEAU LIEN À TON AMI.';
+  if (!NET.joinMsg) NET.joinMsg = 'CONNEXION IMPOSSIBLE, RÉESSAIE';
+  NET.joinCls = 'err';
+  openPanel('join');
+  UI.sel = Math.max(0, items().indexOf($('joinGo'))); highlight();
 }
 function joinGo(){
   if (!ID.name){ askName(() => joinGo()); return; }
@@ -4254,7 +4508,7 @@ function codeEntry(then){
   });
 }
 function joinMsg(t, cls){ NET.joinMsg = t || ''; NET.joinCls = cls || ''; if (UI.cur === 'join' && !$('menu').hidden) joinRender(); }
-async function netJoin(code){
+async function netJoin(code, ms){
   if (NET.on || NET.busy) return;
   if (!roomOk(code)){ joinMsg('CODE INVALIDE : CINQ LETTRES', 'err'); return; }
   NET.busy = true;
@@ -4262,7 +4516,7 @@ async function netJoin(code){
   try {
     await presenceStart();
     joinMsg('CONNEXION À LA SALLE ' + code + '…');
-    const res = await guestConnect(code, '');
+    const res = await guestConnect(code, '', ms);
     netSessionBegin(false, code);
     guestAttach(res);
     joinMsg('');
@@ -4272,18 +4526,18 @@ async function netJoin(code){
   NET.busy = false;
 }
 // une tentative d'entrée : liaison, bonjour, puis bienvenue ou refus
-function guestConnect(code, rejoin){
+function guestConnect(code, rejoin, ms, quick){
   return new Promise((res, rej) => {
-    const id = NET_PREFIX + 'salle-' + code;
+    const id = roomPeer(code);
     let conn = null;
     try { if (NET.me) conn = NET.me.connect(id, { serialization: 'raw', reliable: true, metadata: { k: 'join' } }); } catch (e){}
     if (!conn){ rej(Object.assign(new Error('serveur'), { type: 'network' })); return; }
     const L = new Link(conn);
     let done = false;
     const fin = (err, val) => { if (done) return; done = true; clearTimeout(to); NET.pend.delete(id); if (err){ L.onclose = null; L.close(); rej(err); } else res(val); };
-    const to = setTimeout(() => fin(Object.assign(new Error('délai'), { type: L.open ? 'noanswer' : 'webrtc' })), 16000);
+    const to = setTimeout(() => fin(Object.assign(new Error('délai'), { type: L.open ? 'noanswer' : 'webrtc' })), ms || 16000);
     NET.pend.set(id, () => fin(Object.assign(new Error('introuvable'), { type: 'peer-unavailable' })));
-    L.onopen = () => L.send({ t: 'hello', v: NET_BUILD, p: NET_PROTO, n: ID.name, fc: ID.fc, rj: rejoin || '' });
+    L.onopen = () => L.send({ t: 'hello', v: NET_BUILD, p: NET_PROTO, n: ID.name, fc: ID.fc, rj: rejoin || '', q: quick ? 1 : 0 });
     L.onmsg = (m) => {
       if (m.t === 'welcome' && typeof m.pid === 'string' && typeof m.tok === 'string'){ L.hold(); fin(null, { link: L, pid: m.pid, tok: m.tok, h: +m.h }); }
       else if (m.t === 'no') fin(Object.assign(new Error('refus'), { type: 'refused', why: m.why }));
@@ -4303,13 +4557,22 @@ function guestAttach(res){
 // le code de salle quitte l'adresse une fois utilisé (les autres paramètres restent tels quels)
 function urlClean(){ try { if (/[?&]salle=/.test(location.search)){ let q = location.search.replace(/[?&]salle=[^&#]*/g, ''); if (q[0] === '&') q = '?' + q.slice(1); history.replaceState(history.state, '', location.pathname + q + location.hash); } } catch (e){} }
 function inviteLink(){ return location.origin + location.pathname + '?salle=' + NET.code; }
-function netShareLink(){
-  const url = inviteLink();
-  shareOrCopy('Sentinelle', 'Rejoins ma salle Sentinelle, code ' + NET.code, url, (r) => {
-    if (r === 'annule') return;
-    const t = r === 'partage' ? 'LIEN PARTAGÉ' : r === 'copie' ? 'LIEN COPIÉ : ' + url.replace(/^https?:\/\//, '') : 'COPIE IMPOSSIBLE : DONNE LE CODE ' + NET.code;
-    roomNote(t, r === 'echec' ? 'err' : 'ok'); toast(r === 'copie' ? 'LIEN COPIÉ' : t, 2.5);
-  });
+function netShareLink(){ inviteShare(inviteLink()); }
+// invitation : feuille de partage sur téléphone et tablette, sinon lien copié avec une confirmation bien visible
+function inviteShare(url){
+  const text = 'Viens jouer à Sentinelle avec moi : touche le lien pour rejoindre ma partie.';
+  if (isTouch && navigator.share){
+    try {
+      navigator.share({ title: 'Sentinelle', text, url }).then(() => { toast('INVITATION ENVOYÉE', 2.5); roomNote('INVITATION ENVOYÉE : TES AMIS ARRIVENT EN TOUCHANT LE LIEN', 'ok'); },
+        (e) => { if (!e || e.name !== 'AbortError') copyText(url, (ok) => linkBox(url, ok)); });
+      return;
+    } catch (e){}
+  }
+  copyText(url, (ok) => linkBox(url, ok));
+}
+function linkBox(url, ok, changed){
+  netbox(changed ? 'NOUVEAU LIEN' : ok ? 'LIEN COPIÉ' : 'TON LIEN D\'INVITATION',
+    (changed ? 'Le premier lien n\'est plus valable. ' : '') + (ok && !changed ? 'Colle le dans un message à tes amis.' : 'Copie ce lien et envoie le à tes amis.') + ' En le touchant, ils rejoignent ta partie directement.\n\n' + url.replace(/^https?:\/\//, ''));
 }
 // départ volontaire (QUITTER LA SALLE, accepter une autre invitation)
 function netLeave(silent){
@@ -4323,12 +4586,20 @@ function netLeave(silent){
 // fin subie : l'hôte est parti ou la liaison n'a pas pu être rétablie
 function netQuit(why){
   if (!NET.on) return;
+  const hall = NET.hall, rank = Math.max(0, NET.lobby.filter((p) => !p.h && p.o).findIndex((p) => p.p === NET.pid));
   NET.leaving = true;
   netSessionEnd();
   toMenu();
-  if (why === 'host') netbox('L\'HÔTE A QUITTÉ LA SALLE', 'La salle est fermée et la partie s\'arrête. Crée une salle ou rejoins tes amis dans une autre.');
-  else if (why === 'hostlost') netbox('L\'HÔTE NE RÉPOND PLUS', 'L\'hôte a quitté la salle ou perdu sa connexion, et la partie s\'arrête. Crée une salle ou rejoins tes amis dans une autre.');
-  else netbox('CONNEXION PERDUE', 'La liaison avec l\'hôte de la salle s\'est coupée et n\'a pas pu être rétablie. Vérifie ta connexion, puis rejoins la salle de nouveau.');
+  // partie rapide : l'hôte parti, ceux qui restent se regroupent seuls (le premier rouvre un hall, les autres le trouvent)
+  if (hall && why !== 'lost'){
+    toast('L\'HÔTE EST PARTI : ON SE REGROUPE…', 3);
+    UI.stack = ['main']; openPanel('online', false);
+    setTimeout(() => { if (!NET.on && !NET.busy && game.state === 'menu') netQuick(); }, 700 + Math.min(rank, 6) * 1500);
+    return;
+  }
+  if (why === 'host') netbox('L\'HÔTE A QUITTÉ LA SALLE', 'La salle est fermée et la partie s\'arrête. Dans EN LIGNE, invite tes amis ou lance une partie rapide.');
+  else if (why === 'hostlost') netbox('L\'HÔTE NE RÉPOND PLUS', 'L\'hôte a quitté la salle ou perdu sa connexion, et la partie s\'arrête. Dans EN LIGNE, invite tes amis ou lance une partie rapide.');
+  else netbox('CONNEXION PERDUE', 'La liaison avec l\'hôte de la salle s\'est coupée et n\'a pas pu être rétablie. Vérifie ta connexion, puis touche de nouveau le lien de ton ami, ou lance une partie rapide dans EN LIGNE.');
 }
 function netBye(){
   try {
@@ -4344,6 +4615,7 @@ function netSessionEnd(){
   NET.links = new Set(); NET.hc = null; NET.room = null; NET.reco = null;
   clearInterval(NET.timer); NET.timer = 0;
   NET.on = false; NET.host = false; NET.running = false; NET.code = ''; NET.pid = ''; NET.tok = ''; NET.pilots = new Map(); NET.lobby = []; NET.roomNote = '';
+  NET.hall = false; NET.autoK = 0; NET.autoHold = 0; NET.showCode = false;
   netUnload();
   $('onTag').textContent = '';
   urlClean();
@@ -4373,6 +4645,8 @@ function hostHello(L, m){
       return;
     }
   }
+  // partie rapide en cours : le nouveau venu cherche ailleurs plutôt que d'attendre la fin
+  if (NET.hall && m.q && (NET.running || NET.match)){ L.send({ t: 'no', why: 'running' }); setTimeout(() => L.close(), 800); return; }
   const cnt = campCount();
   if (cnt[0] + cnt[1] >= NET_MAX){ L.send({ t: 'no', why: 'full' }); setTimeout(() => L.close(), 800); return; }
   let camp = cnt[0] <= cnt[1] ? 0 : 1;
@@ -4419,11 +4693,11 @@ function hostDrop(L){
   lobbySend();
 }
 function lobbyList(){
-  return [...NET.pilots.values()].filter((P) => P.conn || P.leftK).sort((a, b) => a.order - b.order).map((P) => ({ p: P.pid, n: P.name, c: P.camp, h: P.host ? 1 : 0, o: P.conn ? 1 : 0 }));
+  return [...NET.pilots.values()].filter((P) => P.conn || P.leftK).sort((a, b) => a.order - b.order).map((P) => ({ p: P.pid, n: P.name, c: P.camp, h: P.host ? 1 : 0, o: P.conn ? 1 : 0, f: P.fc || '' }));
 }
 function lobbySend(){
   if (!NET.host) return;
-  const l = lobbyList(), s = JSON.stringify({ t: 'lobby', l, run: NET.running ? 1 : 0 });
+  const l = lobbyList(), s = JSON.stringify({ t: 'lobby', l, run: NET.running ? 1 : 0, ak: NET.autoK ? r1(NET.autoK) : 0 });
   for (const L of NET.links) if (L.pid) L.send(s);
   NET.lobby = l;
   if (UI.cur === 'room' && !$('menu').hidden) roomRender();
@@ -4457,8 +4731,8 @@ function guestMsg(m, raw){
   switch (m.t){
     case 'lobby':
       if (Array.isArray(m.l)){
-        NET.lobby = m.l.filter((p) => p && typeof p.p === 'string').slice(0, 12).map((p) => ({ p: p.p, n: safeName(p.n, 'PILOTE'), c: p.c ? 1 : 0, h: p.h ? 1 : 0, o: p.o ? 1 : 0 }));
-        NET.running = !!m.run;
+        NET.lobby = m.l.filter((p) => p && typeof p.p === 'string').slice(0, 12).map((p) => ({ p: p.p, n: safeName(p.n, 'PILOTE'), c: p.c ? 1 : 0, h: p.h ? 1 : 0, o: p.o ? 1 : 0, f: friendOk(p.f) ? p.f : '' }));
+        NET.running = !!m.run; NET.autoK = +m.ak > 0 ? +m.ak : 0;
         if (UI.cur === 'room' && !$('menu').hidden) roomRender();
       }
       break;
@@ -4530,6 +4804,7 @@ function netWatch(){
       if (!P.conn && P.leftK && netNow() - P.leftK > NET_GRACE){ NET.pilots.delete(P.pid); changed = true; }
     }
     if (changed) lobbySend();
+    if (NET.hall) hallTick();
   } else if (NET.hc){
     const L = NET.hc;
     if (now - L.rx > NET_SILENCE * 1000) L.lost();
@@ -4538,7 +4813,16 @@ function netWatch(){
       if (now - NET.pingT > (NET.sync.length < 5 ? 250 : 2000)){ NET.pingT = now; clockPing(); }
     }
   }
+  if (NET.autoK && UI.cur === 'room' && !$('menu').hidden) roomRender();   // compte à rebours de la partie rapide
   netWarnUpdate();
+}
+// partie rapide : dès que deux pilotes sont là, départ automatique après un court compte à rebours
+function hallTick(){
+  if (NET.running || NET.match){ NET.autoK = 0; return; }
+  const humans = [...NET.pilots.values()].filter((P) => P.conn).length, now = netNow();
+  if (humans < 2){ if (NET.autoK){ NET.autoK = 0; lobbySend(); } return; }
+  if (!NET.autoK){ NET.autoK = Math.max(now + HALL_WAIT, NET.autoHold || 0); lobbySend(); return; }
+  if (now >= NET.autoK){ NET.autoK = 0; hostStart(); }
 }
 function netWarnUpdate(){
   const el = $('netWarn'); if (!el) return;
@@ -4635,7 +4919,7 @@ function hostStart(){
     for (const P of byCamp[c]){ P.ship = list.length; list.push({ i: list.length, n: P.name, c, col: col++, bot: 0, pid: P.pid }); }
     for (let b = 0; col < T; b++) list.push({ i: list.length, n: CAMPS[c].bots[b], c, col: col++, bot: 1, pid: '' });
   }
-  NET.mid = randU32() || 1; NET.gone = []; NET.ended = false;
+  NET.mid = randU32() || 1; NET.gone = []; NET.ended = false; NET.autoK = 0;
   NET.playK = netNow() + 3.3; NET.endK = NET.playK + MATCH_TIME;
   const hp = NET.pilots.get('h');
   netLoad(randU32() | 1, list, hp.ship);
@@ -4647,9 +4931,11 @@ function hostStart(){
   NET.running = true;
   netStartUi();
   lobbySend();
+  recentsAdd();
 }
 function netBeginMatch(m){
   if (!Array.isArray(m.ships) || !m.ships.length || m.ships.length > NET_MAX) return;
+  recentsAdd();
   const list = [];
   for (let k = 0; k < m.ships.length; k++){
     const a = m.ships[k];
@@ -5246,7 +5532,7 @@ function netEndMatch(m){
     return;
   }
   NET.ended = true; NET.match = false; NET.pause = false; NET.provisional = !m;
-  if (NET.host){ NET.running = false; for (const P of NET.pilots.values()) P.ship = -1; lobbySend(); }
+  if (NET.host){ NET.running = false; if (NET.hall) NET.autoHold = netNow() + 12; for (const P of NET.pilots.values()) P.ship = -1; lobbySend(); }
   game.state = 'results';
   document.body.classList.remove('playing');
   $('touch').hidden = true; $('hud').hidden = true; $('netWarn').hidden = true;
@@ -5345,32 +5631,36 @@ function netPanel(name){
 function mainOnline(){
   const why = netWhyOff();
   $('onItem').classList.toggle('off', !!why);
-  $('onTag').textContent = why ? ' · INDISPONIBLE ICI' : NET.on ? ' · SALLE ' + NET.code : '';
+  $('onTag').textContent = why ? ' · INDISPONIBLE ICI' : NET.on ? (NET.hall ? ' · PARTIE RAPIDE' : ' · SALLE PRIVÉE') : '';
 }
 function onlineRender(){
   const why = netWhyOff();
   document.querySelectorAll('#onNav [data-need]').forEach((el) => { el.hidden = !!why; });
   $('onNote').hidden = !!why;   // dans l'aperçu, pas de jeu en ligne, donc pas de mention
   $('onRetry').hidden = !!why || !NET.libFail;
-  if (why === 'frame'){ $('onWho').textContent = ''; setLine('onState', 'LE JEU EN LIGNE MARCHE SUR LA PAGE PUBLIQUE DU JEU. DANS CET APERÇU, LES CONNEXIONS VERS L\'EXTÉRIEUR SONT BLOQUÉES.', 'err'); }
-  else if (why === 'browser'){ $('onWho').textContent = ''; setLine('onState', 'CE NAVIGATEUR NE PERMET PAS LE JEU EN LIGNE : ESSAIE UN NAVIGATEUR RÉCENT.', 'err'); }
-  else {
-    $('onWho').innerHTML = 'PILOTE <b>' + esc(ID.name || 'À CHOISIR') + '</b> · CODE AMI <b>' + fcShow(ID.fc) + '</b>';
-    setLine('onState', NET.status, NET.statusCls);
-  }
+  if (why === 'frame') setLine('onState', 'LE JEU EN LIGNE MARCHE SUR LA PAGE PUBLIQUE DU JEU. DANS CET APERÇU, LES CONNEXIONS VERS L\'EXTÉRIEUR SONT BLOQUÉES.', 'err');
+  else if (why === 'browser') setLine('onState', 'CE NAVIGATEUR NE PERMET PAS LE JEU EN LIGNE : ESSAIE UN NAVIGATEUR RÉCENT.', 'err');
+  else setLine('onState', NET.status, NET.statusCls);
+  $('onName').textContent = ID.name;
+  const nr = why ? 0 : friendsLoad().length;
+  $('onRecent').hidden = !nr; $('onRecent').textContent = 'JOUEURS RÉCENTS · ' + nr;
   renumber($('pOnline'));
   highlight();
 }
 function joinRender(){
   $('joinCode').textContent = NET.joinCode ? NET.joinCode.split('').join(' ') : '· · · · ·';
-  $('joinName').textContent = ID.name || 'À CHOISIR';
   setLine('joinMsg', NET.joinMsg, NET.joinCls);
+  $('joinMine').innerHTML = 'TON CODE AMI <b>' + fcShow(ID.fc) + '</b>';
 }
 function roomRender(){
   if (!NET.on){ return; }
-  $('roomCode').textContent = NET.code;
+  $('roomT1').textContent = NET.hall ? 'PARTIE ' : 'SALLE ';
+  $('roomCode').textContent = NET.hall ? 'RAPIDE' : 'PRIVÉE';
   $('roomRole').textContent = NET.host ? 'HÔTE' : 'INVITÉ';
-  $('roomCodeLine').innerHTML = 'SALLE <b>' + NET.code + '</b> · ' + (NET.host ? 'HÔTE' : 'INVITÉ');
+  $('roomCodeLine').hidden = !!NET.hall || !NET.showCode;
+  $('roomCodeLine').innerHTML = 'CODE DE LA SALLE <b>' + NET.code + '</b>';
+  document.querySelectorAll('#roomNav [data-priv]').forEach((el) => { el.hidden = !!NET.hall; });
+  $('roomShow').textContent = NET.showCode ? 'MASQUER LE CODE' : 'VOIR LE CODE';
   const l = NET.host ? lobbyList() : NET.lobby, myPid = NET.host ? 'h' : NET.pid;
   const me = l.find((p) => p.p === myPid);
   const cols = [[], []];
@@ -5387,7 +5677,8 @@ function roomRender(){
   if (NET.roomNote){ msg = NET.roomNote; cls = NET.roomNoteCls; }
   else if (NET.reco) { msg = 'CONNEXION PERDUE, NOUVEL ESSAI…'; cls = 'err'; }
   else if (NET.running) msg = NET.host ? 'PARTIE EN COURS' : 'PARTIE EN COURS : TU JOUERAS LA SUIVANTE';
-  else if (humans < 2) msg = 'EN ATTENTE D\'UN AUTRE PILOTE : DONNE LE CODE ' + NET.code + ' OU INVITE PAR LIEN';
+  else if (NET.hall && NET.autoK) msg = 'DÉPART DANS ' + Math.max(0, Math.ceil(NET.autoK - netNow())) + ' S' + (NET.host ? ' · OU LANCE LA PARTIE TOUT DE SUITE' : '');
+  else if (humans < 2) msg = NET.hall ? 'RECHERCHE D\'AUTRES PILOTES : LA PARTIE PART DÈS QU\'UN PILOTE ARRIVE' : 'EN ATTENTE DE TES AMIS : ILS ARRIVENT EN TOUCHANT TON LIEN';
   else msg = NET.host ? 'PRÊTS : LANCE LA PARTIE QUAND TU VEUX' : 'EN ATTENTE DU LANCEMENT PAR L\'HÔTE';
   setLine('roomMsg', msg, cls);
   renumber($('pRoom'));
@@ -5432,6 +5723,9 @@ function entryFit(){
   const vv = window.visualViewport;
   if (vv && vv.width > 0 && vv.height > 0){ e.style.left = Math.round(vv.offsetLeft) + 'px'; e.style.top = Math.round(vv.offsetTop) + 'px'; e.style.width = Math.round(vv.width) + 'px'; e.style.height = Math.round(vv.height) + 'px'; }
   else { e.style.left = e.style.top = '0px'; e.style.width = '100%'; e.style.height = '100%'; }
+  // peu de place (clavier ouvert, téléphone en paysage) : fenêtre resserrée, puis sans titre
+  const h = vv && vv.height > 0 ? vv.height : innerHeight;
+  e.classList.toggle('low', h < 420); e.classList.toggle('low2', h < 150);
 }
 function askName(then){
   entryOpen({
@@ -5448,13 +5742,15 @@ function netOpenHub(){
   if (NET.on){ UI.stack = []; openPanel('room', false); return; }
   openPanel('online');
   if (netWhyOff()) return;
-  if (!ID.name) askName(() => { onlineRender(); netWarmup(); });
-  else netWarmup();
+  netWarmup();
 }
 function netAct(act, el){
   switch (act){
     case 'online': netOpenHub(); break;
     case 'netCreate': netCreate(); break;
+    case 'netInviteNew': netInviteNew(); break;
+    case 'netQuick': netQuick(); break;
+    case 'netShowCode': NET.showCode = !NET.showCode; roomRender(); break;
     case 'netJoinPanel': NET.joinMsg = ''; openPanel('join'); break;
     case 'netFriends': openPanel('friends'); friendsRefresh(); break;
     case 'netName': askName(null); break;
@@ -5501,16 +5797,14 @@ function netInit(){
 }
 // après l'écran d'entrée : un lien d'invitation mène droit au panneau REJOINDRE
 function netAfterIntro(){
+  if (QS.has('diag')) openDiag();   // ?diag : le diagnostic s'ouvre tout seul, prêt à être copié
   if (NET.linkCode){
     const code = NET.linkCode;
     NET.linkCode = '';
     if (game.state !== 'menu') return;
     openPanel('online');
     if (netWhyOff()) return;
-    NET.joinCode = code; NET.joinMsg = 'CODE REÇU PAR LIEN : TOUCHE REJOINDRE LA SALLE';
-    openPanel('join');
-    UI.sel = Math.max(0, items().indexOf($('joinGo'))); highlight();
-    netWarmup();
+    netJoinLink(code);   // lien d'invitation : droit dans la partie de l'ami, sans rien taper
     return;
   }
   // des amis enregistrés : la présence s'inscrit pour que leurs invitations arrivent
@@ -5518,8 +5812,16 @@ function netAfterIntro(){
 }
 
 /* ============ démarrage ============ */
+// l'écran d'entrée doit être vraiment à l'écran : sinon l'écran de secours reste et explique (rapport compris)
+function nifoShown(){
+  const el = $('introGo'), r = el.getBoundingClientRect();
+  if (r.width > 0 && r.height > 0 && r.right > 0 && r.bottom > 0 && r.left < innerWidth && r.top < innerHeight){ window.nifoStage = 'écran d\'entrée'; if (window.nifoReady) window.nifoReady(); return; }
+  (window.nifoErrs || []).push({ t: Date.now(), m: 'entrée hors écran ' + Math.round(r.left) + ', ' + Math.round(r.top) + ', ' + Math.round(r.width) + 'x' + Math.round(r.height) });
+  scheduleLayout(); setTimeout(nifoShown, 600);
+}
 function bootFail(text){
   window.__nifoStarted = true;
+  if (window.nifoBootFail) window.nifoBootFail(text + ' Pour nous aider : ouvre l\'adresse du jeu avec ?diag à la fin, puis envoie le rapport.');
   $('ldBar').hidden = true;
   const s = $('ldSub'); s.hidden = false; s.className = 'ld-sub err'; s.textContent = text;
 }
@@ -5535,11 +5837,13 @@ async function boot(data){
     if (isTouch) document.body.classList.add('touch');
     startSensor(false);
     computeView();
-    // écran de montre ou fenêtre minuscule : un message clair ; le jeu repart seul si la fenêtre s'agrandit
-    if (Math.min(innerWidth, innerHeight) < 280){
+    // écran de montre ou fenêtre minuscule : un message clair ; le jeu repart seul si la fenêtre s'agrandit.
+    // Un iPhone SE tenu en paysage dans Safari n'a que 270 px de haut : sa largeur le fait accepter
+    const tinyWin = () => Math.min(innerWidth, innerHeight) < 280 && Math.max(innerWidth, innerHeight) < 480;
+    if (tinyWin()){
       document.body.classList.remove('rot', 'r1', 'r2'); document.body.classList.add('tiny');
       bootFail("Écran trop petit pour Sentinelle : il faut au moins 280 pixels de côté. Agrandis la fenêtre, ou ouvre le jeu sur un téléphone, une tablette ou un ordinateur.");
-      addEventListener('resize', () => { if (Math.min(innerWidth, innerHeight) >= 280) location.reload(); });
+      addEventListener('resize', () => { if (!tinyWin()) location.reload(); });
       return;
     }
     if (!webgl2Ok()){ bootFail("Ton appareil ou ton navigateur est trop ancien pour Sentinelle : le jeu a besoin de WebGL 2, présent à partir d'iOS 15 et dans les navigateurs récents. Mets à jour le système ou essaie un autre appareil."); return; }
@@ -5594,7 +5898,8 @@ function introReady(){
   const wait = Math.max(0, 2800 - (performance.now() - intro.t0));
   setTimeout(() => {
     $('ldBar').hidden = true; $('ldSub').hidden = true;
-    const b = $('introGo'); b.textContent = isTouch ? 'TOUCHE POUR ENTRER' : 'CLIQUE OU APPUIE SUR ENTRÉE'; b.hidden = false;
+    const b = $('introGo'); b.textContent = NET.linkCode ? (isTouch ? 'TOUCHE POUR REJOINDRE TES AMIS' : 'CLIQUE POUR REJOINDRE TES AMIS') : isTouch ? 'TOUCHE POUR ENTRER' : 'CLIQUE OU APPUIE SUR ENTRÉE'; b.hidden = false;
+    nifoShown();
     if (intro.want) enterGame();
   }, wait);
 }

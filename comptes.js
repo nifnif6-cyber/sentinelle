@@ -111,13 +111,23 @@ export function verifierPseudo(pseudo) {
   return '';
 }
 export function anneeCourante() { return new Date().getFullYear(); }
-// Âge minimum 15 ans (majorité numérique en France). L'année seule ne suffit pas pour le jour exact :
-// l'interface demande en plus de certifier avoir 15 ans révolus.
+// Vérifie seulement que l'année est plausible (le seuil de 15 ans est géré à part : voir estMineur ci
+// dessous, car en dessous de 15 ans l'inscription reste possible avec un accord parental).
 export function verifierAge(annee) {
   const a = Number(annee);
   if (!Number.isInteger(a) || a < 1900 || a > anneeCourante()) return 'Année de naissance invalide.';
-  if (anneeCourante() - a < CONFIG.ageMinimum) return 'Il faut avoir 15 ans ou plus pour créer un compte.';
   return '';
+}
+// Âge minimum 15 ans (majorité numérique en France) : en dessous, la loi demande l'accord conjoint du
+// mineur et d'un titulaire de l'autorité parentale (voir verifierAccordParental). L'année seule ne
+// suffit pas pour le jour exact : au dessus, l'interface demande en plus de certifier avoir 15 ans révolus.
+export function estMineur(annee) {
+  const a = Number(annee);
+  if (!Number.isInteger(a) || a < 1900 || a > anneeCourante()) return false;
+  return anneeCourante() - a < CONFIG.ageMinimum;
+}
+export function verifierAccordParental(annee, accorde) {
+  return estMineur(annee) && !accorde ? "Accord d'un parent ou tuteur requis en dessous de 15 ans." : '';
 }
 export function verifierMail(mail) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(mail || '').trim()) ? '' : 'Adresse mail invalide.';
@@ -132,35 +142,57 @@ export function verifierMotDePasse(mdp) {
 export function adresseRetour() { return location.origin + location.pathname; }
 
 /* ---------- compte : inscription, connexion, lien magique, déconnexion, session ---------- */
-export async function inscrire({ pseudo, email, motDePasse, anneeNaissance, couleur, pays, ageCertifie, conditionsAcceptees }) {
-  const p = normaliserPseudo(pseudo);
-  const probleme = verifierPseudo(p) || verifierAge(anneeNaissance)
-    || (ageCertifie ? '' : "Coche la case : j'ai 15 ans ou plus.")
-    || verifierMail(email) || verifierMotDePasse(motDePasse)
+// Contrôles communs à l'inscription par mot de passe et par lien magique : pseudo, âge (avec l'accord
+// parental en dessous de 15 ans), mail, conditions. motDePasse est contrôlé à part (absent pour un lien magique).
+function controlerInscription({ pseudo, anneeNaissance, ageCertifie, accordParental, email, conditionsAcceptees }) {
+  const p = normaliserPseudo(pseudo), mineur = estMineur(anneeNaissance);
+  return verifierPseudo(p) || verifierAge(anneeNaissance)
+    || (mineur ? verifierAccordParental(anneeNaissance, accordParental) : (ageCertifie ? '' : "Coche la case : j'ai 15 ans ou plus."))
+    || verifierMail(email)
     || (conditionsAcceptees ? '' : "Accepte les conditions d'utilisation et la politique de confidentialité.");
+}
+function metadonneesInscription({ pseudo, anneeNaissance, couleur, pays, accordParental }) {
+  const mineur = estMineur(anneeNaissance);
+  return {
+    pseudo: normaliserPseudo(pseudo),
+    birth_year: Number(anneeNaissance),
+    avatar_color: /^#[0-9a-fA-F]{6}$/.test(couleur || '') ? couleur.toLowerCase() : '#27e4ff',
+    country: /^[A-Za-z]{2}$/.test(pays || '') ? pays.toUpperCase() : null,
+    age_certifie: !mineur,
+    parental_consent: mineur ? !!accordParental : false,
+    conditions_version: CONFIG.versionConditions,
+    conditions_acceptees_le: new Date().toISOString(),
+  };
+}
+export async function inscrire({ pseudo, email, motDePasse, anneeNaissance, couleur, pays, ageCertifie, accordParental, conditionsAcceptees }) {
+  const p = normaliserPseudo(pseudo);
+  const probleme = controlerInscription({ pseudo, anneeNaissance, ageCertifie, accordParental, email, conditionsAcceptees }) || verifierMotDePasse(motDePasse);
   if (probleme) throw erreur('VALIDATION', probleme);
   const sb = await init();
   if (!(await pseudoDisponible(p))) throw erreur('PSEUDO_PRIS', 'Ce pseudo est déjà pris : choisis en un autre.');
   const r = await sb.auth.signUp({
     email: String(email).trim(),
     password: motDePasse,
-    options: {
-      emailRedirectTo: adresseRetour(),
-      data: {
-        pseudo: p,
-        birth_year: Number(anneeNaissance),
-        avatar_color: /^#[0-9a-fA-F]{6}$/.test(couleur || '') ? couleur.toLowerCase() : '#27e4ff',
-        country: /^[A-Za-z]{2}$/.test(pays || '') ? pays.toUpperCase() : null,
-        age_certifie: true,
-        conditions_version: CONFIG.versionConditions,
-        conditions_acceptees_le: new Date().toISOString(),
-      },
-    },
+    options: { emailRedirectTo: adresseRetour(), data: metadonneesInscription({ pseudo, anneeNaissance, couleur, pays, accordParental }) },
   });
   const data = verifierReponse(r);
   // mail déjà inscrit et confirmé : le service répond sans erreur mais sans identité
   if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) throw erreur('email_exists', MESSAGES.email_exists);
   return { session: data.session, utilisateur: data.user, confirmationEnvoyee: !data.session };
+}
+// Inscription par lien magique (sans mot de passe) : même contrôles et mêmes métadonnées que l'inscription
+// par mot de passe, mais shouldCreateUser laisse le service créer le compte s'il n'existe pas encore. Le
+// joueur reçoit un mail avec un lien : ouvrir ce lien crée la session, exactement comme lienMagique().
+export async function inscrireLienMagique({ pseudo, email, anneeNaissance, couleur, pays, ageCertifie, accordParental, conditionsAcceptees }) {
+  const probleme = controlerInscription({ pseudo, anneeNaissance, ageCertifie, accordParental, email, conditionsAcceptees });
+  if (probleme) throw erreur('VALIDATION', probleme);
+  const sb = await init();
+  if (!(await pseudoDisponible(pseudo))) throw erreur('PSEUDO_PRIS', 'Ce pseudo est déjà pris : choisis en un autre.');
+  verifierReponse(await sb.auth.signInWithOtp({
+    email: String(email).trim(),
+    options: { shouldCreateUser: true, emailRedirectTo: adresseRetour(), data: metadonneesInscription({ pseudo, anneeNaissance, couleur, pays, accordParental }) },
+  }));
+  return true;
 }
 
 export async function connecter(email, motDePasse) {
@@ -216,14 +248,21 @@ export async function monProfil() {
   const id = await exigerId();
   return verifierReponse(await sb.from('profiles').select(COLONNES_PROFIL).eq('id', id).maybeSingle());
 }
-// Pour un compte créé sans pseudo : même contrôle d'âge que l'inscription.
-export async function creerProfil({ pseudo, anneeNaissance, couleur, pays }) {
-  const p = normaliserPseudo(pseudo);
-  const probleme = verifierPseudo(p) || verifierAge(anneeNaissance);
+// Pour un compte créé sans pseudo : même contrôle d'âge (et d'accord parental en dessous de 15 ans) que
+// l'inscription. Insère aussi parental_consent : sans effet à 15 ans ou plus, indispensable en dessous
+// (colonne ajoutée par classement.sql ; sans elle, ce chemin reste bloqué par l'ancien verrou de schema.sql
+// tant que classement.sql n'a pas été lancé, comme avant).
+export async function creerProfil({ pseudo, anneeNaissance, couleur, pays, accordParental }) {
+  const p = normaliserPseudo(pseudo), mineur = estMineur(anneeNaissance);
+  const probleme = verifierPseudo(p) || verifierAge(anneeNaissance) || (mineur ? verifierAccordParental(anneeNaissance, accordParental) : '');
   if (probleme) throw erreur('VALIDATION', probleme);
   const sb = await init();
   const id = await exigerId();
   const ligne = { id, pseudo: p, birth_year: Number(anneeNaissance), avatar_color: couleur || '#27e4ff', country: pays || null };
+  // parental_consent : colonne ajoutée par classement.sql, avec son propre droit d'écriture. Envoyée
+  // seulement pour un mineur (jamais pour 15 ans ou plus), pour ne rien changer au chemin existant tant
+  // que classement.sql n'a pas été lancé (une valeur sur une colonne non accordée ferait échouer tout l'insert).
+  if (mineur) ligne.parental_consent = !!accordParental;
   return verifierReponse(await sb.from('profiles').insert(ligne).select(COLONNES_PROFIL).single());
 }
 export async function modifierProfil({ pseudo, couleur, pays } = {}) {
@@ -434,6 +473,201 @@ export async function noterJoueursRecents(ids) {
   return lignes.length;
 }
 
+/* ---------- record et classement hebdomadaire (classement.sql, écrit à part, pas encore lancé partout) ----------
+   Tant que classement.sql n'a pas été lancé par le propriétaire, la table et les fonctions ci dessous
+   n'existent pas encore côté serveur : indisponible(e) le reconnaît et chaque fonction rend un simple
+   { dispo: false } au lieu de lever une erreur, pour que l'interface affiche BIENTÔT sans jamais planter. */
+function indisponible(e) {
+  const code = String((e && e.code) || '');
+  const texte = String((e && e.message) || '');
+  return code === '42P01' || code === '42703' || code === 'PGRST202' || code === 'PGRST204' || code === 'PGRST205'
+    || /schema cache|does not exist|could not find/i.test(texte);
+}
+// Envoie le score d'une partie terminée (score : touches marquées ; dureeMs : durée réelle de la partie).
+// Sans compte, le score reste seulement local (voir best sur l'appareil) : cette fonction suppose déjà
+// une session (comme les autres fonctions qui exigent un identifiant).
+export async function enregistrerScore(score, dureeMs) {
+  const sb = await init();
+  const id = await exigerId();
+  try {
+    verifierReponse(await sb.from('match_scores').insert({ player: id, score: Math.round(Number(score) || 0), duration_ms: Math.round(Number(dureeMs) || 0) }));
+    return { ok: true, dispo: true };
+  } catch (e) {
+    if (indisponible(e)) return { ok: false, dispo: false };
+    throw traduire(e);
+  }
+}
+// Meilleur score de toujours du joueur connecté, gardé entre appareils (dispo:false : classement.sql pas
+// encore lancé, ou pas de score envoyé pour l'instant).
+export async function monRecord() {
+  const id = await monId();
+  if (!id) return { dispo: false, meilleur: 0, quand: null };
+  const sb = await init();
+  try {
+    const lignes = verifierReponse(await sb.rpc('mon_record'));
+    const l = (lignes || [])[0];
+    return { dispo: true, meilleur: l ? Number(l.meilleur) : 0, quand: l ? l.le : null };
+  } catch (e) {
+    if (indisponible(e)) return { dispo: false, meilleur: 0, quand: null };
+    throw traduire(e);
+  }
+}
+// Classement de la semaine en cours (reset chaque lundi), du plus haut score au plus bas ; ouvert sans
+// compte (dispo:false : classement.sql pas encore lancé). { dispo, lignes: [{ rang, pseudo, couleur, score }] }
+export async function classementSemaine(limite = 20) {
+  const sb = await init();
+  try {
+    const lignes = verifierReponse(await sb.rpc('classement_semaine', { limite }));
+    return { dispo: true, lignes: (lignes || []).map((l) => ({ rang: Number(l.rang), pseudo: l.pseudo, couleur: l.avatar_color, score: Number(l.score) })) };
+  } catch (e) {
+    if (indisponible(e)) return { dispo: false, lignes: [] };
+    throw traduire(e);
+  }
+}
+// Rang du joueur connecté dans le classement de la semaine, même hors du haut du tableau (rang:null s'il
+// n'a pas encore de score cette semaine ; dispo:false : classement.sql pas encore lancé).
+export async function monRangSemaine() {
+  const id = await monId();
+  if (!id) return { dispo: false, rang: null, score: 0 };
+  const sb = await init();
+  try {
+    const lignes = verifierReponse(await sb.rpc('mon_rang_semaine'));
+    const l = (lignes || [])[0];
+    return { dispo: true, rang: l ? Number(l.rang) : null, score: l ? Number(l.score) : 0 };
+  } catch (e) {
+    if (indisponible(e)) return { dispo: false, rang: null, score: 0 };
+    throw traduire(e);
+  }
+}
+
+/* ---------- zone d'âge et signalement (mineurs.sql, écrit à part, pas encore lancé) ----------
+   Même principe que le bloc précédent : tant que mineurs.sql n'a pas été lancé, ma_zone() et
+   la table signalements n'existent pas encore côté serveur ; indisponible(e) le reconnaît et
+   chaque fonction rend { dispo: false } au lieu de lever une erreur. Le jeu garde en attendant
+   une zone calculée localement (voir nifo-web-sentinelle.html) : ce module ne fait ici que
+   préparer l'appel futur, il n'est branché sur aucune table réelle pour l'instant. */
+const uuidOk = (u) => typeof u === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(u);
+// Zone d'âge du joueur connecté (moins_13, 13_15, 16_17, adulte), calculée côté serveur à
+// partir de sa date de naissance, jamais transmise elle même. dispo:false : mineurs.sql pas
+// encore lancé, ou joueur non connecté.
+export async function maZone() {
+  const id = await monId();
+  if (!id) return { dispo: false, zone: null };
+  const sb = await init();
+  try {
+    const zone = verifierReponse(await sb.rpc('ma_zone'));
+    return { dispo: true, zone: zone || null };
+  } catch (e) {
+    if (indisponible(e)) return { dispo: false, zone: null };
+    throw traduire(e);
+  }
+}
+// Signalement d'un message ou d'un comportement pendant une partie en ligne. signaleId : le
+// compte visé si connu (vide pour un joueur sans compte relié) ; signalePseudo : son pseudo
+// affiché dans la salle, gardé même sans compte pour qu'une personne puisse instruire le
+// signalement. dispo:false : mineurs.sql pas encore lancé (voir l'appel, côté jeu, qui montre
+// alors quand même une confirmation « envoyé » au joueur et garde le signalement en attente
+// localement, jamais d'erreur affichée pour cette seule raison).
+export async function signaler({ signaleId, signalePseudo, salleCode, zone, contenuSignale, motif }) {
+  const sb = await init();
+  const moi = await exigerId();
+  const ligne = {
+    signale_par: moi,
+    signale: signaleId && uuidOk(String(signaleId)) ? signaleId : null,
+    signale_pseudo: signalePseudo ? String(signalePseudo).slice(0, 32) : null,
+    salle_code: salleCode ? String(salleCode).slice(0, 24) : null,
+    zone: zone && ['moins_13', '13_15', '16_17', 'adulte'].includes(zone) ? zone : null,
+    contenu_signale: String(contenuSignale || '').slice(0, 500) || '[contenu non précisé]',
+    motif: String(motif || '').slice(0, 200) || 'Non précisé',
+  };
+  try {
+    verifierReponse(await sb.from('signalements').insert(ligne));
+    return { ok: true, dispo: true };
+  } catch (e) {
+    if (indisponible(e)) return { ok: false, dispo: false };
+    throw traduire(e);
+  }
+}
+
+/* ---------- mission quotidienne (missions.sql, écrit à part, pas encore lancé) ----------
+   Même principe que les deux blocs précédents : tant que missions.sql n'a pas été lancé, la table
+   daily_missions n'existe pas encore côté serveur ; indisponible(e) le reconnaît et la fonction rend
+   { dispo: false } au lieu de lever une erreur. Le contenu de la mission (texte, personnage, objectif)
+   reste entièrement calculé côté jeu (nifo-web-sentinelle.html) : ce module ne fait que déposer le
+   résultat pour le joueur connecté, jamais pour une partie en ligne (mission solo seulement, voir le
+   jeu). dateAAAAMMJJ : date calendaire de la mission (AAAA-MM-JJ) ; missionId : le type d'objectif
+   (survie, destruction, traversee, survolteur) ; cibleTexte : son paramètre du jour, en texte, pour
+   information seulement ; score : touches marquées pendant cette partie, si pertinent (facultatif).
+   Rejouer et réussir la même mission le même jour n'ajoute rien (ignoreDuplicates : la ligne déjà
+   présente reste telle quelle, aucune erreur montrée au joueur). */
+export async function enregistrerMission(dateAAAAMMJJ, missionId, cibleTexte, score) {
+  const sb = await init();
+  const id = await exigerId();
+  try {
+    verifierReponse(await sb.from('daily_missions').upsert({
+      player: id,
+      mission_date: String(dateAAAAMMJJ || ''),
+      mission_id: String(missionId || ''),
+      target_value: String(cibleTexte || '').slice(0, 40),
+      score: Number.isFinite(score) ? Math.round(score) : null,
+    }, { onConflict: 'player,mission_date', ignoreDuplicates: true }));
+    return { ok: true, dispo: true };
+  } catch (e) {
+    if (indisponible(e)) return { ok: false, dispo: false };
+    throw traduire(e);
+  }
+}
+
+/* ---------- billet de zone signé, pour le tchat et le vocal (billet-zone.sql, écrit à part, pas encore
+   lancé) ----------
+   Même principe que les blocs précédents : tant que billet-zone.sql n'a pas été lancé, les deux
+   fonctions ci dessous n'existent pas encore côté serveur ; indisponible(e) le reconnaît et chaque
+   fonction rend { dispo: false } au lieu de lever une erreur. Un billet certifie la zone RÉELLE d'un
+   joueur (calculée côté serveur depuis sa date de naissance, jamais transmise elle même), signée par une
+   clé que seul le serveur connaît : aucun appareil ne peut en fabriquer un valide pour une zone qui n'est
+   pas la sienne (voir billet-zone.sql pour le mécanisme complet). Ce module ne vérifie jamais lui même la
+   signature d'un billet (il n'a pas la clé, et ne doit jamais l'avoir) : verifierBilletZone() demande au
+   serveur de le faire, à chaque fois qu'un pilote reçoit le billet d'un autre. */
+// Billet pour SA PROPRE zone, valable pour une salle précise (le jeu appelle avec son code de salle
+// courant), quelques minutes seulement. dispo:false : billet-zone.sql pas encore lancé, ou joueur non
+// connecté ou sans zone connue (compte banni, ou profil pas encore créé) : le jeu garde alors le tchat
+// et le vocal fermés avec lui même, exactement comme une zone inconnue aujourd'hui.
+export async function demanderBilletZone(salleCode) {
+  const id = await monId();
+  if (!id) return { dispo: false, billet: '', zone: null, expireDansMs: 0 };
+  const sb = await init();
+  try {
+    const lignes = verifierReponse(await sb.rpc('demander_billet_zone', { p_salle: String(salleCode || '').slice(0, 40) }));
+    const l = Array.isArray(lignes) ? lignes[0] : lignes;
+    if (!l || !l.billet) return { dispo: false, billet: '', zone: null, expireDansMs: 0 };
+    const expireLe = l.expire_le ? new Date(l.expire_le).getTime() : 0;
+    return { dispo: true, billet: l.billet, zone: l.zone || null, expireDansMs: expireLe ? Math.max(0, expireLe - Date.now()) : 0 };
+  } catch (e) {
+    if (indisponible(e)) return { dispo: false, billet: '', zone: null, expireDansMs: 0 };
+    throw traduire(e);
+  }
+}
+// Vérifie le billet reçu D'UN AUTRE pilote (jamais le sien : voir demanderBilletZone ci dessus) pour une
+// salle donnée. Ne fait confiance à rien d'autre que le résultat de cet appel : la zone rendue vient
+// uniquement d'une signature vérifiée côté serveur, jamais du billet lui même relu en clair. dispo:false :
+// billet-zone.sql pas encore lancé (le tchat et le vocal restent alors fermés avec ce pilote, exactement
+// comme un billet absent ou invalide : voir valide:false, rendu tout de suite sans appel réseau si le
+// billet est vide).
+export async function verifierBilletZone(billet, salleCode) {
+  if (!billet) return { dispo: true, valide: false, zone: null };
+  const id = await monId();
+  if (!id) return { dispo: true, valide: false, zone: null };
+  const sb = await init();
+  try {
+    const lignes = verifierReponse(await sb.rpc('verifier_billet_zone', { p_billet: String(billet).slice(0, 2000), p_salle: String(salleCode || '').slice(0, 40) }));
+    const l = Array.isArray(lignes) ? lignes[0] : lignes;
+    return { dispo: true, valide: !!(l && l.valide), zone: (l && l.valide) ? (l.zone || null) : null };
+  } catch (e) {
+    if (indisponible(e)) return { dispo: false, valide: false, zone: null };
+    throw traduire(e);
+  }
+}
+
 /* ---------- QR code du lien de partage ---------- */
 // Rend un SVG sous forme de texte : modules sombres sur fond blanc, lu par tous les téléphones.
 export async function qrCodeSvg(texte, taille = 220) {
@@ -450,10 +684,14 @@ export async function qrCodeSvg(texte, taille = 220) {
 }
 
 export default {
-  CONFIG, init, inscrire, connecter, lienMagique, renvoyerConfirmation, deconnecter, session, monId, surChangement,
+  CONFIG, init, inscrire, inscrireLienMagique, connecter, lienMagique, renvoyerConfirmation, deconnecter, session, monId, surChangement,
   monProfil, creerProfil, modifierProfil, pseudoDisponible, rechercher,
   amis, demanderAmi, demanderAmiParPseudo, accepterAmi, refuserAmi, retirerAmi,
   lienInvitation, inviter, invitationsRecues, repondreInvitation, annulerInvitation, ecouterInvitations,
   presence, joueursRecents, noterJoueursRecents, qrCodeSvg,
-  normaliserPseudo, verifierPseudo, verifierAge, verifierMail, verifierMotDePasse, adresseRetour,
+  enregistrerScore, monRecord, classementSemaine, monRangSemaine,
+  maZone, signaler,
+  enregistrerMission,
+  demanderBilletZone, verifierBilletZone,
+  normaliserPseudo, verifierPseudo, verifierAge, estMineur, verifierAccordParental, verifierMail, verifierMotDePasse, adresseRetour,
 };

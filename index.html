@@ -172,6 +172,9 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 .res i{display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:1px;vertical-align:1px;}
 .stats{margin:4px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim);line-height:1.9;}
 .stats b{color:var(--ink);font-weight:500;}
+.rescta{margin:10px 0 0;padding:12px 14px;border:1px solid rgba(93,255,176,.35);border-radius:8px;background:rgba(93,255,176,.06);display:grid;gap:10px;max-width:52ch;}
+.rescta .atext{margin:0;}
+.rescta .atext b{color:var(--ok);}
 .hintp{margin:0;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--trojan);}
 @media (max-width:760px){
   #menu{background:linear-gradient(180deg,rgba(3,5,10,0) 18%,rgba(3,5,10,.62) 52%,rgba(3,5,10,.9));}
@@ -221,6 +224,9 @@ body.short #pSettings .title,body.short #pSettings .eyebrow{display:none;}
 .mk.off .dia{border-style:dashed;opacity:.55;}
 .mk.edge .nm,.mk.edge .ds{display:none;}
 .mk.edge .dia{border:0;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid currentColor;}
+/* intrus hostile le plus proche, hors champ : même flèche, agrandie et animée, jamais sur un allié ni à l'écran */
+.mk.edge.near .dia{border-left-width:10px;border-right-width:10px;border-bottom-width:17px;filter:drop-shadow(0 0 5px currentColor);animation:nearpulse 1.1s ease-in-out infinite;}
+@keyframes nearpulse{0%,100%{opacity:1;}50%{opacity:.6;}}
 #cross{position:absolute;left:0;top:0;width:24px;height:24px;will-change:transform;}
 #cross::before,#cross::after{content:"";position:absolute;background:rgba(170,235,255,.9);box-shadow:0 0 6px rgba(39,228,255,.8);}
 #cross::before{left:11px;top:0;width:2px;height:24px;}
@@ -351,7 +357,7 @@ body.short .res th{padding:3px 10px;}
 body.short .res td{padding:4px 10px;}
 body.short .stats{line-height:1.5;font-size:10px;}
 body.short .foot{bottom:calc(8px + var(--sa-b));}
-@media (prefers-reduced-motion:reduce){ .pop,#item.pulse,.ld-bar i{animation:none;} }
+@media (prefers-reduced-motion:reduce){ .pop,#item.pulse,.ld-bar i,.mk.edge.near .dia{animation:none;} }
 /* clavier seul, télécommande, manette : anneau de sélection bien visible */
 body.kbnav .mi.sel{outline:2px solid var(--nifo);outline-offset:4px;border-radius:4px;}
 body.kbnav .mi.set.sel{outline-offset:2px;}
@@ -406,6 +412,7 @@ body:not(.short) #setRows{max-height:calc((var(--lh,100vh) - 200px - var(--sa-t)
 }
 @media (max-width:760px) and (max-height:700px){
   body.tall #pOnline .eyebrow{display:none;}
+  body.tall #pShop .eyebrow{display:none;}
   body.tall .nnote{font-size:9.5px;line-height:1.4;letter-spacing:0;}
 }
 @media (max-width:380px){ .res{font-size:11px;letter-spacing:.06em;} .res th{letter-spacing:.1em;padding:6px 5px;} .res td{padding:7px 5px;} .res i{margin-right:6px;} }
@@ -465,6 +472,23 @@ body.touch .mi.small{padding:6px 0;}
 .camp .pl i{width:7px;height:7px;border-radius:1px;flex:none;background:currentColor;}
 .camp.c0 .pl i{color:var(--nifo);}
 .camp.c1 .pl i{color:var(--rootkit);}
+/* boutique : catalogue (toujours visible) et mécanique légale de test (?debug seulement) */
+.camps.shop{grid-template-columns:minmax(0,1fr);width:min(420px,100%);gap:8px;max-height:min(40vh,320px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;}
+.shopcard{display:grid;gap:4px;text-align:left;}
+.shopcard p{margin:0;font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--dim);}
+.shopcard .shopprice{color:var(--ink);font-size:12px;letter-spacing:.08em;}
+.shopcard .shopoffer{color:var(--ok);font-size:11px;letter-spacing:.06em;}
+.shopcard .mbtn{width:100%;box-sizing:border-box;text-align:center;margin-top:2px;}
+.mbtn[disabled]{opacity:.45;cursor:not-allowed;}
+#shopTest .mbox{text-align:left;}
+#shopTest .ck{display:flex;gap:10px;align-items:flex-start;margin-top:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;line-height:1.55;color:var(--dim);cursor:pointer;text-align:left;}
+#shopTest .ck input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--nifo);cursor:pointer;}
+#shopTest .stTable{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;}
+#shopTest .stTable th{text-align:left;color:var(--faint);font-weight:400;padding:4px 10px 4px 0;white-space:nowrap;vertical-align:top;}
+#shopTest .stTable td{text-align:left;color:var(--ink);padding:4px 0;}
+#shopTest .stRow{border:1px solid rgba(140,190,255,.14);border-radius:6px;padding:8px 10px;margin-bottom:6px;text-align:left;font-family:var(--mono);font-size:11px;color:var(--dim);}
+#shopTest .stRow b{color:var(--ink);}
+#shopTest .stpick{display:grid;gap:8px;}
 #roomNav{margin-top:4px;}
 #friendRows,#roomCamps{touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
 #friendRows{display:grid;gap:6px;width:min(470px,100%);max-height:min(34vh,250px);overflow-y:auto;align-content:start;}
@@ -546,7 +570,7 @@ body.touch.cramped #feed li:nth-child(n+3){display:none;}
 #entry.low2{padding-top:calc(4px + var(--env-t));}
 #entry.low2 h2{display:none;}
 #entry.low2 .ebox{padding:8px 12px;}
-@media (max-width:760px){ .camps{gap:8px;} .camp .pl{font-size:10.5px;} .camp h3{font-size:12px;letter-spacing:.12em;} #pRoom,#pFriends,#pJoin,#pOnline,#pCompte,#pAmis{grid-template-columns:minmax(0,1fr);} }
+@media (max-width:760px){ .camps{gap:8px;} .camp .pl{font-size:10.5px;} .camp h3{font-size:12px;letter-spacing:.12em;} #pRoom,#pFriends,#pJoin,#pOnline,#pCompte,#pAmis,#pShop,#pClassement{grid-template-columns:minmax(0,1fr);} }
 /* comptes joueurs : panneaux MON COMPTE et AMIS, QR code du lien, fenêtre des formulaires hors du cadre tourné */
 .nnote a{color:var(--dim);text-decoration:underline;text-underline-offset:2px;}
 .nnote a:hover{color:var(--ink);}
@@ -559,6 +583,7 @@ body.short #amisRows{max-height:calc(var(--lh,375px) - 200px - var(--sa-t) - var
 .fhead{margin:6px 0 0;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--faint);text-align:left;}
 .fhead:first-child{margin-top:0;}
 body.short #pCompte .title,body.short #pCompte .eyebrow,body.short #pAmis .title,body.short #pAmis .eyebrow{display:none;}
+body.short #pShop .title,body.short #pShop .eyebrow{display:none;}
 body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data-panel="amis"] .panel{top:calc(52px + var(--sa-t));transform:none;}
 #netboxQr{display:grid;justify-items:center;gap:8px;}
 #netboxQr svg{display:block;width:min(200px,calc(var(--lh,100vh) * .36));height:auto;border-radius:6px;box-shadow:0 0 0 5px rgba(39,228,255,.16);}
@@ -568,7 +593,9 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
 .abox h2{margin:0;font-weight:600;font-size:20px;letter-spacing:.14em;color:var(--ink);}
 .abox form,.abox .af{display:grid;gap:6px;}
 .abox .fl{margin-top:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--dim);}
-.abox input[type=text],.abox input[type=email],.abox input[type=password]{display:block;width:100%;box-sizing:border-box;min-height:44px;font:500 16px var(--mono);letter-spacing:.04em;color:var(--ink);background:rgba(39,228,255,.08);border:1px solid rgba(39,228,255,.55);border-radius:6px;padding:10px 12px;outline:none;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default;touch-action:manipulation;}
+.abox input[type=text],.abox input[type=email],.abox input[type=password],.abox input[type=date]{display:block;width:100%;box-sizing:border-box;min-height:44px;font:500 16px var(--mono);letter-spacing:.04em;color:var(--ink);background:rgba(39,228,255,.08);border:1px solid rgba(39,228,255,.55);border-radius:6px;padding:10px 12px;outline:none;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default;touch-action:manipulation;}
+.abox input[type=date]{color-scheme:dark;}
+.abox input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1) brightness(1.6);cursor:pointer;}
 .abox input.up{text-transform:uppercase;letter-spacing:.18em;}
 .abox input:focus{border-color:var(--nifo);box-shadow:0 0 14px rgba(39,228,255,.3);}
 .abox input::placeholder{color:var(--faint);opacity:1;text-transform:none;letter-spacing:0;}
@@ -587,6 +614,38 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
 #acct.low .abox{margin-top:0;max-height:100%;gap:6px;padding:12px 14px;}
 #acct.low .eyebrow{display:none;}
 #acct.low h2{font-size:16px;}
+/* mineurs : discussion à phrases toutes faites et emojis */
+#pChat{text-align:left;justify-items:stretch;width:min(460px,calc(100% - 32px));}
+#chatBody{display:grid;gap:10px;text-align:left;}
+#pChat .ck{display:flex;gap:10px;align-items:flex-start;font-family:var(--mono);font-size:11px;letter-spacing:.06em;line-height:1.55;color:var(--dim);cursor:pointer;}
+#pChat .ck input{width:22px;height:22px;flex:none;margin:0;accent-color:var(--nifo);cursor:pointer;}
+#chatLog{display:grid;gap:6px;max-height:min(26vh,220px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-right:2px;}
+.chatMsg{margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--ink);background:rgba(140,190,255,.06);border:1px solid var(--line);border-radius:8px;padding:6px 10px;overflow-wrap:anywhere;}
+.chatMsg b{color:var(--dim);font-weight:600;letter-spacing:.08em;margin-right:8px;font-size:10px;}
+.chatMsg.me{border-color:rgba(39,228,255,.5);background:rgba(39,228,255,.08);}
+.chatMsg.me b{color:var(--nifo);}
+#chatCatalog{display:grid;gap:8px;max-height:min(30vh,260px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-right:2px;}
+.chatGroup{display:flex;flex-wrap:wrap;gap:6px;}
+.chatChip{font:500 11px/1.3 var(--mono);letter-spacing:.03em;color:var(--ink);background:rgba(39,228,255,.08);border:1px solid rgba(39,228,255,.4);border-radius:14px;padding:6px 12px;cursor:pointer;}
+.chatChip:hover,.chatChip:active{background:rgba(39,228,255,.22);border-color:var(--nifo);}
+.chatChip[disabled]{opacity:.4;cursor:not-allowed;}
+.chatChip.emoji{font-size:17px;line-height:1;padding:5px 10px;}
+.chatReasons{width:100%;}
+#chatReportBtn{color:var(--rootkit);}
+/* vocal : appel entre pilotes de la même zone */
+#pVoice{text-align:left;justify-items:stretch;width:min(460px,calc(100% - 32px));}
+#voiceBody{display:grid;gap:10px;text-align:left;}
+.voicePeer{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;color:var(--ink);background:rgba(140,190,255,.06);border:1px solid var(--line);border-radius:8px;padding:8px 10px;}
+.voicePeer.talking{border-color:var(--ok);background:rgba(93,255,176,.1);}
+.voicePeer .vName{flex:1;overflow-wrap:anywhere;}
+.voicePeer .vDot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:none;}
+.voicePeer.talking .vDot{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+.vMute{flex:none;font:500 10px var(--mono);letter-spacing:.06em;color:var(--ink);background:rgba(39,228,255,.08);border:1px solid rgba(39,228,255,.4);border-radius:10px;padding:6px 10px;cursor:pointer;}
+.vMute.on{color:var(--rootkit);border-color:rgba(255,45,149,.5);background:rgba(255,45,149,.1);}
+#vPtt{width:100%;min-height:56px;font:600 13px var(--mono);letter-spacing:.14em;color:var(--ink);background:rgba(39,228,255,.1);border:1px solid rgba(39,228,255,.5);border-radius:10px;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;}
+#vPtt.on{background:rgba(93,255,176,.28);border-color:var(--ok);color:var(--ok);}
+#vPtt[disabled]{opacity:.4;cursor:not-allowed;}
+#voiceReportBtn{color:var(--rootkit);}
 </style>
 
 </head>
@@ -704,11 +763,16 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <nav class="mlist">
       <button class="mi" data-act="play"><b>[01]</b>ENGAGER</button>
       <button class="mi" data-act="online" id="onItem"><b>[02]</b>EN LIGNE<small id="onTag"></small></button>
-      <button class="mi" data-act="controls"><b>[03]</b>COMMANDES</button>
-      <button class="mi" data-act="settings"><b>[04]</b>RÉGLAGES</button>
-      <button class="mi" data-act="fullscreen" id="fsItem" hidden><b>[05]</b><span id="fsLbl">PLEIN ÉCRAN</span></button>
+      <button class="mi" data-act="missionDay"><b>[03]</b>MISSION DU JOUR<small id="missionTag"></small></button>
+      <button class="mi" data-act="shop"><b>[04]</b>BOUTIQUE</button>
+      <button class="mi" data-act="controls"><b>[05]</b>COMMANDES</button>
+      <button class="mi" data-act="settings"><b>[06]</b>RÉGLAGES</button>
+      <button class="mi" data-act="install" id="installItem" hidden><b>[07]</b>INSTALLER LE JEU</button>
+      <button class="mi" data-act="share" id="shareItem"><b>[08]</b>PARTAGER</button>
+      <button class="mi" data-act="fullscreen" id="fsItem" hidden><b>[09]</b><span id="fsLbl">PLEIN ÉCRAN</span></button>
     </nav>
     <p class="record" id="recordLbl"></p>
+    <p class="record" id="challengeLbl" hidden></p>
     <p class="hintp" id="rotHint" hidden>TOURNE TON TÉLÉPHONE POUR UN ÉCRAN PLUS LARGE</p>
   </section>
   <section class="panel" id="pControls" hidden aria-label="Commandes">
@@ -722,6 +786,19 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <h2 class="title sm"><span class="t1">RÉGLA</span><span class="t2">GES</span></h2>
     <nav class="mlist wide" id="setRows"></nav>
     <p class="hintp" id="setNote" hidden>INCLINAISON INDISPONIBLE SUR CE NAVIGATEUR, LA MANETTE RESTE ACTIVE</p>
+  </section>
+  <section class="panel" id="pMission" hidden aria-label="Mission du jour">
+    <p class="eyebrow">SENTINELLE <span>//</span> MISSION DU JOUR</p>
+    <h2 class="title sm"><span class="t1">MISSI</span><span class="t2">ON</span></h2>
+    <p class="stats" id="missionObj"></p>
+    <p class="tagline" id="missionChar"></p>
+    <p class="nline" id="missionState"></p>
+    <p class="hintp" id="missionTotal"></p>
+    <nav class="mlist">
+      <button class="mi" data-act="play"><b>[01]</b>ENGAGER</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
+    <p class="nnote">Une mission par jour, la même pour tous les pilotes. Jouable hors ligne en solo ; connecté, une réussite compte aussi pour ton compte.</p>
   </section>
   <section class="panel" id="pPause" hidden aria-label="Pause">
     <p class="eyebrow">ENGAGEMENT SUSPENDU</p>
@@ -739,12 +816,21 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <p class="tagline" id="resSub"></p>
     <table class="res"><thead><tr><th>#</th><th>PILOTE</th><th>TOUCHES</th><th>SUBIES</th><th>CRASHS</th></tr></thead><tbody id="resBody"></tbody></table>
     <p class="stats" id="resStats"></p>
+    <p class="nline" id="resMission" data-solo hidden></p>
+    <div class="rescta" id="resCta" hidden>
+      <p class="atext" id="resCtaTxt"></p>
+      <div class="mbtns">
+        <button type="button" class="mbtn" id="resCtaYes">CRÉER MON COMPTE GRATUIT</button>
+        <button type="button" class="mbtn alt" id="resCtaLater">PLUS TARD</button>
+      </div>
+    </div>
     <nav class="mlist row">
       <button class="mi" data-act="again" data-solo><b>[01]</b>REJOUER</button>
       <button class="mi" data-act="menu" data-solo><b>[02]</b>MENU</button>
       <button class="mi" data-act="netAgain" data-net data-host hidden><b>[01]</b>NOUVELLE PARTIE</button>
       <button class="mi" data-act="netLobby" data-net hidden><b>[02]</b>SALLE</button>
       <button class="mi" data-act="netLeave" data-net hidden><b>[03]</b>QUITTER LA SALLE</button>
+      <button class="mi" data-act="challenge"><b>[04]</b>DÉFIER UN AMI</button>
     </nav>
     <p class="nline" id="resNet" hidden></p>
   </section>
@@ -759,12 +845,52 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
         <button class="mi small" data-act="netJoinPanel" data-need>J'AI UN CODE</button>
         <button class="mi small" data-act="netName" data-need>PSEUDO&nbsp;<span id="onName"></span></button>
         <button class="mi small" data-act="netAccount" data-need id="onAcct">MON COMPTE<small id="onAcctTag"></small></button>
+        <button class="mi small" data-act="netClassement" data-need id="onClassement">CLASSEMENT</button>
+        <button class="mi small" data-act="netChat" data-need id="onChat">DISCUSSION</button>
+        <button class="mi small" data-act="netVoice" data-voice-nav hidden id="onVoice">VOCAL</button>
       </div>
       <button class="mi" data-act="netRetry" id="onRetry" hidden><b>[01]</b>RÉESSAYER</button>
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="onState"></p>
     <p class="nnote" id="onNote">En ligne, la mise en relation passe par un service externe (PeerJS), qui voit ton adresse IP le temps de la connexion ; les joueurs de ta salle aussi, car la liaison entre vous est directe. Sans compte, rien n'est enregistré chez nous. Avec un compte, ton mail, ton pseudo, tes amis et tes invitations sont gardés chez notre hébergeur (Supabase, Londres). <a href="legal/conditions.html" target="_blank" rel="noopener">Conditions</a> · <a href="legal/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="legal/mentions.html" target="_blank" rel="noopener">Mentions légales</a></p>
+  </section>
+  <section class="panel" id="pShop" hidden aria-label="Boutique">
+    <p class="eyebrow">SENTINELLE <span>//</span> BOUTIQUE</p>
+    <h2 class="title sm"><span class="t1">BOUTI</span><span class="t2">QUE</span></h2>
+    <p class="nline" id="shopState">LA BOUTIQUE N'EST PAS ENCORE OUVERTE. AUCUN PAIEMENT N'EST POSSIBLE POUR L'INSTANT.</p>
+    <div class="camps shop">
+      <div class="camp shopcard">
+        <h3>TEINTES &amp; TRAÎNÉES</h3>
+        <p>Personnalisation visuelle du vaisseau. Aucun avantage de jeu.</p>
+        <p class="shopoffer" id="shopOfferTxt">Teinte SIGNAL offerte avec ton compte gratuit.</p>
+        <p class="shopprice">Prix à définir</p>
+        <button type="button" class="mbtn alt shopbuy" disabled title="La boutique n'est pas encore ouverte">BIENTÔT DISPONIBLE</button>
+      </div>
+      <div class="camp shopcard">
+        <h3>PASS DE SAISON</h3>
+        <p>Cosmétiques de la saison en cours. Aucun avantage de jeu.</p>
+        <p class="shopprice">4,99 € TTC</p>
+        <button type="button" class="mbtn alt shopbuy" disabled title="La boutique n'est pas encore ouverte">BIENTÔT DISPONIBLE</button>
+      </div>
+      <div class="camp shopcard">
+        <h3>PACK FONDATEUR</h3>
+        <p>Teinte et insigne exclusifs pour les premiers soutiens. Aucun avantage de jeu.</p>
+        <p class="shopprice">9,99 € TTC</p>
+        <button type="button" class="mbtn alt shopbuy" disabled title="La boutique n'est pas encore ouverte">BIENTÔT DISPONIBLE</button>
+      </div>
+      <div class="camp shopcard">
+        <h3>PANNEAUX PUBLICITAIRES</h3>
+        <p>Espace publicitaire dans la ville, pour les entreprises. Sur devis, contact seulement.</p>
+        <p class="shopprice">Sur devis</p>
+        <button type="button" class="mbtn alt shopbuy" disabled title="La boutique n'est pas encore ouverte">BIENTÔT DISPONIBLE</button>
+      </div>
+    </div>
+    <nav class="mlist">
+      <button class="mi small" data-act="shopDebug" id="shopDebugBtn" hidden>MÉCANIQUE LÉGALE (TEST)</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
+    <p class="nnote">Sentinelle ne vend et ne vendra jamais d'avantage de jeu : seulement des apparences, un pass de saison, un pack fondateur, et des panneaux publicitaires pour les entreprises. Quand la boutique ouvrira, chaque achat sera encadré par les <a href="legal/conditions-vente.html" target="_blank" rel="noopener">conditions de vente</a>.</p>
   </section>
   <section class="panel" id="pJoin" hidden aria-label="J'ai un code">
     <p class="eyebrow">EN LIGNE <span>//</span> J'AI UN CODE</p>
@@ -791,7 +917,9 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
       <button class="mi" data-act="netFriends" data-priv><b>[03]</b>JOUEURS RÉCENTS</button>
       <button class="mi" data-act="acFriends" data-priv data-acct hidden><b>[04]</b>MES AMIS</button>
       <button class="mi" data-act="netCamp"><b>[04]</b>CHANGER DE CAMP</button>
-      <button class="mi" data-act="netBalance" data-host><b>[05]</b>ÉQUILIBRER</button>
+      <button class="mi" data-act="netChat"><b>[05]</b>DISCUSSION</button>
+      <button class="mi" data-act="netVoice" data-voice-nav hidden><b>[05]</b>VOCAL</button>
+      <button class="mi" data-act="netBalance" data-host><b>[06]</b>ÉQUILIBRER</button>
       <button class="mi" data-act="netLeave"><b>[06]</b>QUITTER LA SALLE</button>
       <button class="mi small" data-act="netShowCode" data-priv id="roomShow">VOIR LE CODE</button>
     </nav>
@@ -802,9 +930,23 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <div id="friendRows"></div>
     <nav class="mlist">
       <button class="mi" data-act="netRefresh"><b>[01]</b>ACTUALISER</button>
+      <button class="mi" data-act="netChat"><b>[02]</b>DISCUSSION</button>
+      <button class="mi" data-act="netVoice" data-voice-nav hidden><b>[02]</b>VOCAL</button>
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="friendMsg"></p>
+  </section>
+  <section class="panel" id="pClassement" hidden aria-label="Classement">
+    <p class="eyebrow">EN LIGNE <span>//</span> CLASSEMENT DE LA SEMAINE</p>
+    <h2 class="title sm"><span class="t1">CLASSE</span><span class="t2">MENT</span></h2>
+    <p class="nline" id="clsState"></p>
+    <div id="clsRows"></div>
+    <p class="nline" id="clsMe" hidden></p>
+    <nav class="mlist">
+      <button class="mi" data-act="netClassementRefresh"><b>[01]</b>ACTUALISER</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
+    <p class="nnote">Meilleur score de chaque pilote depuis lundi 0 h, remis à zéro chaque semaine. Sans compte, ton propre score n'y figure pas, mais rien n'empêche de regarder.</p>
   </section>
   <section class="panel" id="pCompte" hidden aria-label="Mon compte">
     <p class="eyebrow">EN LIGNE <span>//</span> MON COMPTE</p>
@@ -833,6 +975,25 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
       <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
     </nav>
     <p class="nline" id="amisMsg"></p>
+  </section>
+  <section class="panel" id="pChat" hidden aria-label="Discussion">
+    <p class="eyebrow">EN LIGNE <span>//</span> DISCUSSION</p>
+    <h2 class="title sm"><span class="t1">DISCUS</span><span class="t2">SION</span></h2>
+    <div id="chatBody"></div>
+    <nav class="mlist wide">
+      <button class="mi small" id="chatReportBtn" data-cact="toggleReport">SIGNALER</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
+  </section>
+  <section class="panel" id="pVoice" hidden aria-label="Vocal">
+    <p class="eyebrow">EN LIGNE <span>//</span> VOCAL</p>
+    <h2 class="title sm"><span class="t1">VO</span><span class="t2">CAL</span></h2>
+    <div id="voiceBody"></div>
+    <button type="button" id="vPtt" hidden>MAINTIENS POUR PARLER</button>
+    <nav class="mlist wide">
+      <button class="mi small" id="voiceReportBtn" data-vact="toggleReport">SIGNALER</button>
+      <button class="mi back" data-act="back"><span class="bk" aria-hidden="true">‹</span>RETOUR</button>
+    </nav>
   </section>
   <footer class="foot"><span id="footKeys">↑↓ CHOISIR · ENTRÉE VALIDER · ÉCHAP RETOUR</span><span class="brand">UN JEU NIFO WEB · CYBERSÉCURITÉ · SITES WEB · APPLICATIONS · <button class="ver" id="ver" aria-label="Version du jeu">V2.0</button></span></footer>
 </div>
@@ -898,6 +1059,49 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <div class="mbtns"><button class="mbtn" id="netboxOk">COMPRIS</button></div>
   </div>
 </div>
+<div id="shopTest" class="layer modal" hidden role="dialog" aria-modal="true" aria-labelledby="shopTestT">
+  <div class="mbox" id="shopTestBox">
+    <p class="eyebrow">BOUTIQUE · TEST (DEBUG), RIEN DE RÉEL</p>
+    <h2 id="shopTestT">MÉCANIQUE LÉGALE</h2>
+    <div id="stPick">
+      <p class="atext">Choisis un article pour dérouler, sans aucun paiement réel, le récapitulatif, les cases obligatoires, la question d'âge et le reçu local.</p>
+      <div class="stpick">
+        <button type="button" class="mbtn" id="stPickPass">PASS DE SAISON · 4,99 €</button>
+        <button type="button" class="mbtn" id="stPickFounder">PACK FONDATEUR · 9,99 €</button>
+      </div>
+      <button type="button" class="mbtn alt" id="stListBtn">MES ACHATS (TEST)<small id="stListTag"></small></button>
+    </div>
+    <div id="stOrder" hidden>
+      <p class="atext">Récapitulatif</p>
+      <table class="stTable">
+        <tr><th>Article</th><td id="stName"></td></tr>
+        <tr><th>Prix</th><td id="stPrice"></td></tr>
+        <tr><th>Durée</th><td id="stDuree"></td></tr>
+        <tr><th>TVA</th><td id="stTva"></td></tr>
+      </table>
+      <button type="button" class="mbtn alt" id="stAgeBtn">ANNÉE DE NAISSANCE <span id="stAgeVal">NON RENSEIGNÉE</span></button>
+      <p class="ahelp" id="stAgeMsg"></p>
+      <label class="ck" id="stParentRow" hidden><input type="checkbox" id="stParent"><span>Un parent ou responsable légal autorise cet achat, obligatoire de 15 à 17 ans.</span></label>
+      <label class="ck"><input type="checkbox" id="stWaiver"><span>Je demande la fourniture immédiate de ce contenu numérique et je renonce à mon droit de rétractation dès qu'il me sera fourni, article L221-28 13°.</span></label>
+      <label class="ck"><input type="checkbox" id="stTerms"><span>J'accepte les <a href="legal/conditions-vente.html" target="_blank" rel="noopener">conditions de vente</a>.</span></label>
+      <p class="ahelp" id="stMsg"></p>
+      <div class="mbtns">
+        <button type="button" class="mbtn alt" id="stCancel">ANNULER</button>
+        <button type="button" class="mbtn" id="stConfirm" disabled>CONFIRMER (TEST)</button>
+      </div>
+    </div>
+    <div id="stDone" hidden>
+      <p class="atext" id="stDoneTxt"></p>
+      <div class="mbtns"><button type="button" class="mbtn" id="stDoneOk">COMPRIS</button></div>
+    </div>
+    <div id="stList" hidden>
+      <p class="atext">Reçus locaux de test, rien de réel, jamais envoyés. Rétractation prévue aux articles L221-21 et D221-5 du code de la consommation.</p>
+      <div id="stRows"></div>
+      <div class="mbtns"><button type="button" class="mbtn alt" id="stListBack">RETOUR</button></div>
+    </div>
+    <div class="mbtns"><button type="button" class="mbtn alt" id="shopTestClose">FERMER</button></div>
+  </div>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 </div>
 <div id="entry" hidden role="dialog" aria-modal="true" aria-labelledby="entryT">
@@ -914,17 +1118,19 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <p class="eyebrow">EN LIGNE · MON COMPTE</p>
     <h2 id="acctT"></h2>
     <form id="afSignup" novalidate autocomplete="on" hidden>
-      <p class="atext">Facultatif, dès 15 ans : ton pseudo devient unique, et tu retrouves tes amis et leurs invitations sur tous tes appareils.</p>
+      <p class="atext">Facultatif, dès 15 ans (accord d'un parent en dessous) : ton pseudo devient unique, tu retrouves tes amis sur tous tes appareils, ton record te suit et te classe, et tu reçois la teinte SIGNAL, offerte à l'inscription.</p>
       <label class="fl" for="asPseudo">PSEUDO</label>
       <input id="asPseudo" class="up" name="nickname" type="text" autocomplete="nickname" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="32" enterkeyhint="next">
       <p class="ahelp" id="asPseudoMsg" aria-live="polite"></p>
       <label class="fl" for="asMail">ADRESSE MAIL</label>
       <input id="asMail" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="254" enterkeyhint="next">
-      <label class="fl" for="asPass">MOT DE PASSE</label>
-      <input id="asPass" name="new-password" type="password" autocomplete="new-password" placeholder="8 signes, lettres et chiffres" enterkeyhint="next">
-      <label class="fl" for="asYear">ANNÉE DE NAISSANCE</label>
-      <input id="asYear" name="bday-year" type="text" inputmode="numeric" autocomplete="bday-year" maxlength="4" placeholder="AAAA" enterkeyhint="done">
-      <label class="ck"><input id="asAge" type="checkbox"><span>J'ai 15 ans ou plus.</span></label>
+      <label class="fl" for="asYear">DATE DE NAISSANCE</label>
+      <input id="asYear" name="bday" type="date" autocomplete="bday" enterkeyhint="next">
+      <label class="ck" id="asAgeRow"><input id="asAge" type="checkbox"><span>J'ai 15 ans ou plus.</span></label>
+      <label class="ck" id="asParentRow" hidden><input id="asParent" type="checkbox"><span>Un parent ou tuteur est d'accord pour la création de ce compte (en dessous de 15 ans, la loi demande l'accord du mineur et d'un parent ou tuteur).</span></label>
+      <label class="fl" for="asPass">MOT DE PASSE (FACULTATIF)</label>
+      <input id="asPass" name="new-password" type="password" autocomplete="new-password" placeholder="Laisse vide pour recevoir un lien par mail" enterkeyhint="next">
+      <p class="atext">Avec un mot de passe : connexion immédiate. Champ laissé vide : un lien de connexion part par mail, sans mot de passe à retenir.</p>
       <label class="ck"><input id="asTerms" type="checkbox"><span>J'accepte les <a href="legal/conditions.html" target="_blank" rel="noopener">conditions d'utilisation</a> et j'ai lu la <a href="legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span></label>
       <button type="submit" class="mbtn">CRÉER MON COMPTE</button>
     </form>
@@ -943,9 +1149,10 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
       <input id="apPseudo" class="up" name="nickname" type="text" autocomplete="nickname" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="32" enterkeyhint="done">
       <p class="ahelp" id="apPseudoMsg" aria-live="polite"></p>
       <div class="af" id="apNew" hidden>
-        <label class="fl" for="apYear">ANNÉE DE NAISSANCE</label>
-        <input id="apYear" name="bday-year" type="text" inputmode="numeric" autocomplete="bday-year" maxlength="4" placeholder="AAAA" enterkeyhint="done">
-        <label class="ck"><input id="apAge" type="checkbox"><span>J'ai 15 ans ou plus.</span></label>
+        <label class="fl" for="apYear">DATE DE NAISSANCE</label>
+        <input id="apYear" name="bday" type="date" autocomplete="bday" enterkeyhint="done">
+        <label class="ck" id="apAgeRow"><input id="apAge" type="checkbox"><span>J'ai 15 ans ou plus.</span></label>
+        <label class="ck" id="apParentRow" hidden><input id="apParent" type="checkbox"><span>Un parent ou tuteur est d'accord pour la création de ce compte (en dessous de 15 ans, la loi demande l'accord du mineur et d'un parent ou tuteur).</span></label>
       </div>
       <button type="submit" class="mbtn">ENREGISTRER</button>
       <p class="atext">Pour supprimer ton compte ou tes données, suis la <a href="legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</p>
@@ -953,6 +1160,7 @@ body.short.narrow #menu[data-panel="compte"] .panel,body.short.narrow #menu[data
     <div class="af" id="afSent" hidden>
       <p class="atext" id="afSentTxt"></p>
       <button type="button" class="mbtn alt" id="afResend">RENVOYER LE MAIL</button>
+      <p class="atext">Rien reçu : regarde dans les indésirables, ou vérifie l'adresse et réessaie.</p>
     </div>
     <p class="ahelp" id="acctMsg" role="status" aria-live="polite"></p>
     <div class="mbtns"><button type="button" class="mbtn alt" id="acctNo">FERMER</button></div>
@@ -1022,11 +1230,31 @@ const rr = (a, b, r = R) => a + (b - a) * r();
 const pick = (arr, r = R) => arr[Math.floor(r() * arr.length) % arr.length];
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FORCE_MOBILE = false;
+// boutique : entièrement coupée. Un seul drapeau décide de tout, aucun code de paiement tant qu'il reste à false
+const BOUTIQUE_ACTIVE = false;
 // plateforme : iPhone, iPad (qui se présente comme un Mac tactile), Android. Drapeaux de test dans Chromium :
 // ?simios (iPhone Safari), ?simios=standalone (app installée), ?simios=ipad, ?simios=old (moteur 0.183),
 // &simaudio (son interrompu), &simlost=5 (perte du contexte 3D après 5 s), &simrestore, &simnogl2, &simnofloat, &simsafe
 const QS = new URLSearchParams(location.search);
 const SIM = { ios: QS.has('simios'), mode: QS.get('simios') || '', audio: QS.has('simaudio'), lost: +(QS.get('simlost') || 0), restore: QS.has('simrestore'), nogl2: QS.has('simnogl2'), nofloat: QS.has('simnofloat'), safe: QS.has('simsafe'), nonet: QS.has('simnonet'), tv: QS.has('simtv') };
+// défi reçu par lien (bouton DÉFIER UN AMI des résultats) : ?defi=score&nom=PSEUDO, nettoyé de l'adresse après lecture
+// nom : lu ici en brut seulement (tronqué), jamais passé par safeName/checkName qui n'existent pas encore à cet
+// endroit du fichier (const plus bas) ; le nettoyage complet (mots interdits compris) se fait dans
+// challengeLblRender(), appelée bien plus tard, au premier affichage du menu.
+const CHALLENGE = (() => {
+  const s = parseInt(QS.get('defi'), 10);
+  if (!(Number.isFinite(s) && s > 0 && s <= 999)) return null;
+  return { score: s, nom: String(QS.get('nom') || '').slice(0, 32), seen: false };
+})();
+function challengeUrlClean(){
+  try {
+    if (/[?&](defi|nom)=/.test(location.search)){
+      let q = location.search.replace(/[?&](defi|nom)=[^&#]*/g, '');
+      if (q[0] === '&') q = '?' + q.slice(1);
+      history.replaceState(history.state, '', location.pathname + q + location.hash);
+    }
+  } catch (e){}
+}
 const UA = navigator.userAgent || '';
 const PLAT = (() => {
   const iPad = SIM.ios ? SIM.mode === 'ipad' : (/iPad/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1));
@@ -1056,9 +1284,13 @@ const store = {
 const PHONE = isTouch && Math.min(screen.width || 9999, screen.height || 9999) < 600;
 const settings = {
   quality: store.get('quality', 'auto'),
+  ambiance: store.get('ambiance', 'nuit'),
   autofire: store.get('autofire', isTouch || PLAT.tv),
   sound: store.get('sound', true),
   music: store.get('music', true),
+  // vocal entre pilotes de la même zone (13 ans et plus) : activé par défaut, indépendant de la touche à
+  // maintenir pour parler (voir le bloc VOCAL) ; un joueur qui ne veut jamais parler ni entendre le coupe ici
+  voice: store.get('voice', true),
   difficulty: store.get('difficulty', 'normal'),
   sensitivity: store.get('sensitivity', 1),
   invertY: store.get('invertY', false),
@@ -1075,6 +1307,26 @@ const QUALITY = {
   balanced: { pr: 1,    maxPr: 1.5,  samples: 0, bloom: true,  reflect: 0.34, rain: 3000, chunks: 6, fly: 90,  ground: 60, peds: 70,  fog: 0.0033 },
   high:     { pr: 1,    maxPr: 2,    samples: 4, bloom: true,  reflect: 0.5,  rain: 4800, chunks: 7, fly: 140, ground: 90, peds: 130, fog: 0.0031 },
 };
+// deux ambiances pour la map : NUIT (par défaut, valeurs identiques à l'existant, zéro changement visuel) et
+// JOUR (nouvelle). Seuls le ciel, le brouillard, les deux lumières, l'intensité émissive des façades et le
+// poids météo (pluie/orage) changent ; jamais la ville, les rues, la collision, l'IA des drones ni le score.
+const AMBIANCE = {
+  nuit: {
+    bg: 0x0e1a33, fog: 0x0e1a33, fogMul: 1,
+    hemiSky: 0x7f9fe0, hemiGround: 0x0c0c18, hemiI: 0.95,
+    sunColor: 0x9db8ff, sunI: 0.35,
+    skyTop: 0x03060f, skyHorizon: 0x1d2c4d, skyGlow: 0x4a1f5c,
+    bld: 1.15, wx: 1,
+  },
+  jour: {
+    bg: 0x86b3d6, fog: 0x86b3d6, fogMul: 0.75,
+    hemiSky: 0xeaf2ff, hemiGround: 0x9c8f76, hemiI: 1.3,
+    sunColor: 0xfff2d9, sunI: 1.1,
+    skyTop: 0x2f7fc4, skyHorizon: 0xa9cfe8, skyGlow: 0xfff1c2,
+    bld: 2.1, wx: 0,
+  },
+};
+if (!AMBIANCE[settings.ambiance]) settings.ambiance = 'nuit';
 if (!QUALITY[settings.quality] && settings.quality !== 'auto') settings.quality = 'auto';
 if (PHONE && (settings.quality === 'balanced' || settings.quality === 'high')) settings.quality = 'auto';
 // qualité automatique : un préréglage de départ selon l'appareil, puis des marches vers le bas (ou le haut)
@@ -1086,9 +1338,11 @@ function qKey(){ return settings.quality === 'auto' ? AUTOQ.cur : settings.quali
 if (settings.screen === 'free') settings.screen = 'portrait';
 const SETS = {
   quality: { label: 'QUALITÉ', values: PHONE ? ['auto', 'low', 'mobile'] : ['auto', 'low', 'mobile', 'balanced', 'high'], names: ['AUTOMATIQUE', 'PERFORMANCE', 'LÉGÈRE', 'ÉQUILIBRÉE', 'CINÉMA'] },
+  ambiance: { label: 'AMBIANCE', values: ['nuit', 'jour'], names: ['NUIT', 'JOUR'] },
   autofire: { label: 'TIR AUTOMATIQUE', values: [true, false], names: ['ACTIVÉ', 'COUPÉ'] },
   sound: { label: 'EFFETS SONORES', values: [true, false], names: ['ACTIVÉS', 'COUPÉS'] },
   music: { label: 'MUSIQUE', values: [true, false], names: ['ACTIVÉE', 'COUPÉE'] },
+  voice: { label: 'DISCUSSION VOCALE', values: [true, false], names: ['ACTIVÉE', 'COUPÉE'] },
   difficulty: { label: 'DIFFICULTÉ', values: ['normal', 'hard'], names: ['NORMALE', 'EXPERTE'] },
   sensitivity: { label: 'SENSIBILITÉ', values: [0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6], names: (v) => Math.round(v * 100) + ' %' },
   invertY: { label: 'AXE VERTICAL', values: [false, true], names: ['NORMAL', 'INVERSÉ'] },
@@ -1097,14 +1351,20 @@ const SETS = {
 };
 
 /* ============ constantes du monde ============ */
-const CH = 120, ROAD = 20, FRONT = 26, CEIL = 150;
+const CH = 120, ROAD = 20, FRONT = 26, CEIL = 300;
 const SPEED_MIN = 28, SPEED_MAX = 62, SPEED_DEF = 42;
 const BOLT_SPEED = 260, MATCH_TIME = 180, OFFLINE_T = 2.0;
+// protection après une touche (retour en ligne) ou une résurrection : invulnérable avec les commandes revenues ;
+// pendant ce temps les intrus qui visaient ce vaisseau lâchent leur cible et ne peuvent pas le reprendre pour
+// cible avant RETARGET_T secondes (annulée tout de suite si ce vaisseau tire ou utilise un objet)
+const PROTECT_T = 3.0, RETARGET_T = 1.0;
 const HIT_R = 2.6, BODY_R = 1.5;
 // ville ouverte : une allée de service longe le canyon derrière les façades, un mur de tours la ferme
 const LANE_IN = 56, LANE_OUT = 84;
 // arène des parties en ligne : le canyon y est fermé par deux pare feu, à ARENA.z mètres de part et d'autre de 0
-const ARENA = { on: false, z: 480, k0: -5, k1: 4 };
+// carte agrandie le 27/09 (+50 % : 480 -> 720) pour laisser plus de place aux grues, barrières et échafaudages ;
+// k0/k1 gardent la même règle qu'avant (un seul bloc tampon au delà de chaque pare feu, CH=120 par bloc)
+const ARENA = { on: false, z: 720, k0: -7, k1: 6 };
 // manoeuvres (toutes en secondes et mètres, indépendantes de la cadence d'images)
 const BRAKE_DEC = 50, REV_MAX = 11, REV_ACC = 9, REV_WAIT = 0.3;
 const TURN_T = 0.95, TURN_CD = 4;
@@ -1121,6 +1381,15 @@ const PILOTS = [
   { id: 'trojan', name: 'TROJAN', hex: '#ffb52e' },
   { id: 'botnet', name: 'BOTNET', hex: '#a77bff' },
 ];
+// teinte offerte à la création d'un compte (cosmétique seulement, jamais un avantage de jeu) : dernière
+// valeur connue mise en cache sur cet appareil (acctSession la met à jour), appliquée dès ce lancement.
+// La couleur en direct depuis Supabase arrive après la construction du vaisseau (voir acctSession) : trop
+// tard pour ce lancement, d'où le cache, repris au lancement suivant.
+const OFFER_COLOR_HEX = '#5dffb0', OFFER_COLOR_NAME = 'SIGNAL';
+{
+  const c = store.get('acctColor', '');
+  if (/^#[0-9a-fA-F]{6}$/.test(c)){ const moi = PILOTS.find((p) => p.player); if (moi) moi.hex = c; }
+}
 PILOTS.forEach((p) => { p.color = new THREE.Color(p.hex); p.rgb = [p.color.r, p.color.g, p.color.b]; p.ghost = [p.color.r * 2.2, p.color.g * 2.2, p.color.b * 2.2]; });
 
 const NEON = [[0.1, 0.85, 1.0], [1.0, 0.12, 0.55], [1.0, 0.62, 0.12], [0.6, 0.42, 1.0], [0.3, 1.0, 0.6], [1.0, 0.3, 0.2], [0.85, 0.92, 1.0]];
@@ -1135,7 +1404,7 @@ const ITEMS = {
 const EMPTY_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#8497b6" stroke-width="1.4"><rect x="6" y="6" width="12" height="12" rx="2" stroke-dasharray="3 3"/></svg>';
 
 /* ============ moteur de rendu ============ */
-let renderer, scene, camera, composer, bloomPass, fxPass, fxaaPass, hemi;
+let renderer, scene, camera, composer, bloomPass, fxPass, fxaaPass, hemi, sunLight;
 const A = {};
 let baseFov = 68, pointScale = 600, perfScale = 1;
 
@@ -1151,9 +1420,11 @@ function initRenderer(){
   camera.position.set(0, 32, 0);
   hemi = new THREE.HemisphereLight(0x7f9fe0, 0x0c0c18, 0.95);
   scene.add(hemi);
-  const moon = new THREE.DirectionalLight(0x9db8ff, 0.35);
-  moon.position.set(-0.4, 1, 0.25);
-  scene.add(moon);
+  // directionnelle "lune" la nuit, "soleil" le jour (voir AMBIANCE/tickAmbiance) : variable globale pour pouvoir
+  // la retoucher à chaud depuis tickAmbiance, gardée locale à l'initialisation sinon
+  sunLight = new THREE.DirectionalLight(0x9db8ff, 0.35);
+  sunLight.position.set(-0.4, 1, 0.25);
+  scene.add(sunLight);
   // rendu flottant indispensable au bloom et au reflet ; sans lui, préréglage PERFORMANCE (voir boot)
   GPU.float = !SIM.nofloat && (renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float'));
   // Firefox : l'extension est dépréciée (avertissement en console) et RENDERER y donne la même chose
@@ -1373,6 +1644,13 @@ function toGame(cx, cy){ if (VIEW.rot === 1) return [cy, VIEW.W - cx]; if (VIEW.
 // le jeu ignore tout toucher qui y commence (manette, balayage d'esquive, coup de doigt sur TIR)
 const EDGE_PX = 24;
 function nearEdge(cx){ const w = VIEW.W || innerWidth; return cx < EDGE_PX || cx > w - EDGE_PX; }
+// filet de sécurité seulement, non prouvé faute de vrai WebKit ici : si la manette tactile ne reçoit plus aucun
+// signal (ni glissement ni fin de toucher) pendant STICK_WATCHDOG_T alors qu'un doigt reste enregistré, on
+// considère qu'il est parti sans le dire (geste système, bascule d'arrière plan mal remontée) et on relâche la
+// manette nous mêmes. Seuil volontairement large : les manoeuvres de ce jeu se comptent en dixièmes de seconde
+// (esquive 0,34 s, demi tour 0,95 s), un virage tenu plusieurs secondes sans le moindre pixel de glissement est
+// déjà rare, et si ce filet se déclenche à tort, il suffit de relâcher puis retoucher la manette pour la reprendre
+const STICK_WATCHDOG_T = 6.0;
 function resize(){
   const w = Math.max(1, VIEW.w), h = Math.max(1, VIEW.h);
   renderer.setSize(w, h, false);
@@ -1848,7 +2126,7 @@ function buildRain(){
   g.setAttribute('aSpeed', new THREE.InstancedBufferAttribute(spd, 1));
   g.instanceCount = QUALITY[qKey()].rain;
   const mat = new THREE.ShaderMaterial({
-    uniforms: fogUniforms({ uTime: { value: 0 }, uCam: { value: new V3() }, uVel: { value: new V3() }, uBox: { value: BOX }, uFlash: { value: 0 } }),
+    uniforms: fogUniforms({ uTime: { value: 0 }, uCam: { value: new V3() }, uVel: { value: new V3() }, uBox: { value: BOX }, uFlash: { value: 0 }, uAmb: { value: 1 } }),
     vertexShader: `
       #include <common>
       #include <fog_pars_vertex>
@@ -1877,10 +2155,11 @@ function buildRain(){
     fragmentShader: `
       #include <common>
       #include <fog_pars_fragment>
-      uniform float uFlash;
+      uniform float uFlash, uAmb;
       varying float vT; varying float vNear;
       void main(){
-        vec3 c = vec3(0.5, 0.62, 0.85) * (0.34 + uFlash * 0.8) * (1.0 - vT * 0.85) * vNear;
+        // uAmb : poids météo (1 la nuit, 0 le jour, voir AMB.wx dans tickAmbiance), jamais exposé au joueur
+        vec3 c = vec3(0.5, 0.62, 0.85) * (0.34 + uFlash * 0.8) * (1.0 - vT * 0.85) * vNear * uAmb;
         gl_FragColor = vec4(c, 1.0);
         ${fogFade}
       }`,
@@ -2133,6 +2412,79 @@ function genChunk(k){
     }
   }
 
+  // obstacles ajoutés le 27/09 (grues, barrières, échafaudages) : ajoutés en tout dernier, après tout ce qui
+  // précède, pour ne réordonner aucun appel r() existant (façades, trouées, passerelle, réverbères, hologramme
+  // restent à l'octet près ce qu'ils étaient avant cet ajout, à graine égale). Même collision que le reste (boîtes
+  // dans "boxes", lues telles quelles par world.sphereHit/segHit) et même géométrie fusionnée que le décor
+  // (deco/glow : un seul maillage de plus par bloc, jamais un appel de dessin supplémentaire par image). t:4 grue,
+  // t:5 barrière, t:6 échafaudage (0 immeuble, 1 passerelle, 2 pilier, 3 enseigne déjà existants, jamais réutilisés
+  // ici). Tout ne lit que r() : jamais Math.random, pour que la ville reste identique pour tous en ligne. Brain
+  // (drones) n'est pas modifié : t:4 et t:6 tombent dans son évitement vertical déjà générique (comme la
+  // passerelle t:1 aujourd'hui) ; t:5, bas et court, n'attire cet évitement qu'en vol bas, sinon ignoré sans
+  // conséquence puisque hors de portée de la sonde.
+  const OB_AMBER = [2.3, 1.7, 0.25], OB_RED = [2.4, 0.15, 0.1], OB_WHITE = [2.2, 2.2, 2.2];
+  // grue de chantier : mât près d'un trottoir (jamais dans la façade, marge calculée) + flèche horizontale haute
+  // (88 à 135 m, bien sous le plafond de vol, relevé à 300 m le 27/09 pour laisser une vraie marge) : dégagée dans le bas et le milieu du couloir, à éviter
+  // seulement en vol haut.
+  if (r() < 0.3){
+    const gs = r() < 0.5 ? -1 : 1;
+    const gz = z0 + 18 + r() * (CH - 36);
+    const mastX = gs * (ROAD + 3 + r() * 1.5), mastW = 1.5;
+    const clear = FRONT - Math.abs(mastX), tailLen = Math.max(0.4, clear * 0.5);
+    const armY = 88 + r() * 44, armH = 3;
+    const ax0 = mastX - gs * (26 + r() * 20), ax1 = mastX + gs * tailLen;
+    const axMin = Math.min(ax0, ax1), axMax = Math.max(ax0, ax1);
+    deco.box(mastX - mastW / 2, mastX + mastW / 2, 0, armY + armH, gz - mastW / 2, gz + mastW / 2);
+    boxes.push({ minX: mastX - mastW / 2, maxX: mastX + mastW / 2, minY: 0, maxY: armY + armH, minZ: gz - mastW / 2, maxZ: gz + mastW / 2, t: 4 });
+    deco.box(axMin, axMax, armY, armY + armH, gz - 1.3, gz + 1.3);
+    boxes.push({ minX: axMin, maxX: axMax, minY: armY, maxY: armY + armH, minZ: gz - 1.3, maxZ: gz + 1.3, t: 4 });
+    glow.box(mastX - mastW / 2 - 0.05, mastX + mastW / 2 + 0.05, armY - 3.4, armY - 2.6, gz - mastW / 2 - 0.05, gz + mastW / 2 + 0.05, { col: OB_AMBER });
+    glow.box(axMin, axMin + 1, armY - 0.05, armY + armH + 0.05, gz - 1.35, gz + 1.35, { col: OB_AMBER });
+    halos.push({ x: mastX, y: armY + armH + 1.2, z: gz, c: [2.6, 0.35, 0.15], s: 3.6, b: 0.85 });
+  }
+  // barrière de chantier : rétrécit une partie de la largeur du couloir près d'un trottoir (10 à 19 m fermés sur
+  // 40 m de large entre les deux trottoirs), jamais fermée en entier ; chevrons rouge et blanc côté passage libre.
+  if (r() < 0.32){
+    const bside = r() < 0.5 ? -1 : 1;
+    const bz0 = z0 + 14 + r() * (CH - 28), blen = 10 + r() * 9;
+    const bz1 = Math.min(z1 - 1, bz0 + blen);   // jamais au delà du bloc suivant, même si bz0 et blen tirent tous deux au maximum
+    const closeW = 10 + r() * 9, edgeX = bside * ROAD, innerX = edgeX - bside * closeW;
+    const x0 = Math.min(edgeX, innerX), x1 = Math.max(edgeX, innerX), bh = 1.6 + r() * 0.5;
+    deco.box(x0, x1, 0, bh, bz0, bz1);
+    boxes.push({ minX: x0, maxX: x1, minY: 0, maxY: bh, minZ: bz0, maxZ: bz1, t: 5 });
+    const faceX = bside > 0 ? x0 : x1;
+    for (let za = bz0, q = 0; za < bz1 - 0.3; za += 2, q++){
+      const zb = Math.min(bz1, za + 1.1);
+      glow.box(faceX - 0.06, faceX + 0.06, bh * 0.25, bh * 0.9, za, zb, { col: q % 2 ? OB_RED : OB_WHITE });
+    }
+  }
+  // échafaudage : accroché à une façade pleine (jamais devant une trouée, même garde holeIn que le reste de la
+  // ville), profondeur modeste dans le couloir (3 à 4,6 m) ; quatre poteaux reliés par deux plateaux.
+  if (r() < 0.3){
+    const sside = r() < 0.5 ? -1 : 1;
+    const sz0 = z0 + 10 + r() * (CH - 20), sz1 = Math.min(z1 - 2, sz0 + 12 + r() * 14);
+    if (sz1 - sz0 > 8 && !holeIn(sside, sz0 - 1, sz1 + 1)){
+      const poleW = 0.5;
+      // 0,45 = 0,2 de jeu contre la façade + la moitié de la largeur du poteau (0,25) : le poteau ne mord jamais
+      // dans le bâtiment, même à la marge la plus juste (vérifié par échantillon après coup)
+      const faceX = sside * (FRONT - 0.45), outX = sside * (FRONT - 0.45 - (3 + r() * 1.6));
+      const sTop = 12 + r() * 16;
+      const xa = Math.min(faceX, outX), xb = Math.max(faceX, outX);
+      for (const pz of [sz0 + 0.3, sz1 - 0.3]){
+        for (const px of [faceX, outX]){
+          deco.box(px - poleW / 2, px + poleW / 2, 0, sTop, pz - poleW / 2, pz + poleW / 2);
+          boxes.push({ minX: px - poleW / 2, maxX: px + poleW / 2, minY: 0, maxY: sTop, minZ: pz - poleW / 2, maxZ: pz + poleW / 2, t: 6 });
+        }
+      }
+      for (const ly of [sTop * 0.5, sTop * 0.95]){
+        deco.box(xa, xb, ly, ly + 0.35, sz0, sz1);
+        boxes.push({ minX: xa, maxX: xb, minY: ly, maxY: ly + 0.35, minZ: sz0, maxZ: sz1, t: 6 });
+      }
+      glow.box(xa, xb, sTop - 0.35, sTop - 0.05, sz0, sz0 + 0.15, { col: OB_WHITE });
+      glow.box(xa, xb, sTop - 0.35, sTop - 0.05, sz1 - 0.15, sz1, { col: OB_WHITE });
+    }
+  }
+
   const group = new THREE.Group();
   B.forEach((b, i) => { if (b.n) group.add(new THREE.Mesh(b.build(), A.bld[i])); });
   if (deco.n) group.add(new THREE.Mesh(deco.build(), A.deco));
@@ -2175,7 +2527,9 @@ const world = {
     }
     return null;
   },
-  // premier impact du segment a → b (fraction 0..1) ou null ; bld : seulement les immeubles
+  // premier impact du segment a → b (fraction 0..1) ou null ; bld===true : seulement les immeubles (t===0) ;
+  // bld==='obst' : seulement les nouveaux obstacles du 27/09 (grues, barrières, échafaudages, t>=4), jamais les
+  // immeubles ni la passerelle/ses piliers/les enseignes (t 0 à 3, comportement inchangé)
   segHit(a, b, bld){
     const ka = Math.floor(Math.min(a.z, b.z) / CH), kb = Math.floor(Math.max(a.z, b.z) / CH);
     const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
@@ -2185,7 +2539,8 @@ const world = {
       const bx = c.boxes;
       for (let i = 0; i < bx.length; i++){
         const o = bx[i];
-        if (bld && o.t !== 0) continue;
+        if (bld === true && o.t !== 0) continue;
+        if (bld === 'obst' && o.t < 4) continue;
         const t0 = slabHit(a.x, dx, o.minX, o.maxX, a.y, dy, o.minY, o.maxY, a.z, dz, o.minZ, o.maxZ);
         if (t0 >= 0 && (best === null || t0 < best)) best = t0;
       }
@@ -2353,6 +2708,13 @@ function buildShipModel(pilot){
   const prof = [[0, -2.3], [0.42, -2.15], [0.78, -1.4], [0.9, -0.3], [0.84, 0.8], [0.6, 1.7], [0.28, 2.3], [0, 2.45]].map((p) => new THREE.Vector2(p[0], p[1]));
   const fg = new THREE.LatheGeometry(prof, 24); fg.rotateX(Math.PI / 2); fg.scale(1, 0.58, 1);
   body.add(new THREE.Mesh(fg, hull));
+  // intrus plus visibles sur le canyon : fine coque de contour (même géométrie que la coque, agrandie et vue de
+  // l'intérieur, technique de contour classique), teinte d'identité, sans toucher au matériau ni à l'éclairage
+  // de la coque ; suit le clignotement de body pendant l'invulnérabilité (sync() bascule body.visible)
+  if (!pilot.player){
+    const rimMat = new THREE.MeshBasicMaterial({ color: accent, transparent: true, opacity: 0.55, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending, fog: true });
+    const rim = new THREE.Mesh(fg, rimMat); rim.scale.setScalar(1.07); body.add(rim);
+  }
   const cg = new THREE.SphereGeometry(0.62, 24, 12, 0, TAU, 0, Math.PI / 2); cg.scale(0.95, 0.78, 1.7);
   const can = new THREE.Mesh(cg, glass); can.position.set(0, 0.26, 0.5); body.add(can);
   const st = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 2.4), glowM); st.position.set(0, 0.52, -1.0); body.add(st);
@@ -2402,7 +2764,7 @@ class Ship {
   clearScore(){ this.hits = 0; this.taken = 0; this.crashes = 0; this.shots = 0; this.landed = 0; this.maxSpeed = 0; }
   place(x, y, z, yaw){
     this.pos.set(x, y, z); this.yaw = yaw; this.pitch = 0; this.roll = 0; this.speed = SPEED_DEF; this.target = SPEED_DEF;
-    this.heat = 0; this.overheat = false; this.boost = false; this.vy = 0; this.burnCd = 0; this.offline = 0; this.invuln = 0;
+    this.heat = 0; this.overheat = false; this.boost = false; this.vy = 0; this.burnCd = 0; this.offline = 0; this.invuln = 0; this.retargetLock = 0;
     this.dead = false; this.respawn = 0; this.item = null; this.shield = 0; this.overdrive = 0; this.fireCd = 0; this.gun = 1; this.wob = R() * 10; this.minSpd = SPEED_MIN;
     this.fwd.set(Math.sin(yaw), 0, Math.cos(yaw)); this.vel.copy(this.fwd).multiplyScalar(this.speed);
     this.resetMoves();
@@ -2466,12 +2828,12 @@ class Ship {
   }
   step(dt, inp){
     if (this.dead){ this.respawn -= dt; if (this.respawn <= 0) this.revive(); return; }
-    this.invuln = Math.max(0, this.invuln - dt); this.burnCd = Math.max(0, this.burnCd - dt);
+    this.invuln = Math.max(0, this.invuln - dt); this.burnCd = Math.max(0, this.burnCd - dt); this.retargetLock = Math.max(0, this.retargetLock - dt);
     this.turnCd = Math.max(0, this.turnCd - dt); this.dodgeCd = Math.max(0, this.dodgeCd - dt); this.dodgeInv = Math.max(0, this.dodgeInv - dt);
     if (this.shield > 0) this.shield = Math.max(0, this.shield - dt);
     if (this.overdrive > 0) this.overdrive = Math.max(0, this.overdrive - dt);
     let off = this.offline > 0;
-    if (off){ this.offline -= dt; if (this.offline <= 0){ this.offline = 0; this.invuln = 1.0; this.vy = Math.max(this.vy, 0); off = false; if (this.p.player){ flash('EN LIGNE', '', 0.7); } } }
+    if (off){ this.offline -= dt; if (this.offline <= 0){ this.offline = 0; this.invuln = PROTECT_T; protectShip(this); this.vy = Math.max(this.vy, 0); off = false; if (this.p.player){ flash('EN LIGNE', '', 0.7); } } }
     const sx = off ? 0 : clamp(inp.x, -1, 1), sy = off ? 0 : clamp(inp.y, -1, 1);
     // manoeuvres : demi tour et esquive ne se chevauchent pas
     if (!off && inp.uturn && this.turnT <= 0 && this.turnCd <= 0 && this.dodgeT <= 0) this.startTurn(sx);
@@ -2557,7 +2919,7 @@ class Ship {
     let y = 45;
     for (let t = 0; t < 14; t++){ if (!world.sphereHit(T1.set(0, y, z), 7) && !world.sphereHit(T1.set(0, y, z + axis * 25), 7)) break; y = 20 + ((t * 37) % 110); }
     this.pos.set(0, y, z); this.yaw = axis > 0 ? 0 : Math.PI; this.pitch = 0; this.roll = 0; this.speed = SPEED_DEF; this.target = SPEED_DEF; this.vy = 0;
-    this.heat = 0; this.overheat = false; this.boost = false; this.invuln = 2.2; this.dead = false; this.fwd.set(0, 0, axis);
+    this.heat = 0; this.overheat = false; this.boost = false; this.invuln = PROTECT_T; protectShip(this); this.dead = false; this.fwd.set(0, 0, axis);
     this.resetMoves(); this.vel.copy(this.fwd).multiplyScalar(this.speed);
     this.m.root.visible = game.state !== 'menu';
     if (this.p.player) flash('EN LIGNE', '', 0.8);
@@ -2583,6 +2945,14 @@ class Ship {
     if (this.shield > 0){ m.shieldMat.uniforms.uTime.value = t; m.shieldMat.uniforms.uAlpha.value = this.shield < 2 ? ((t * 8) % 1 < 0.5 ? 0.35 : 1) : 1; }
   }
 }
+// protection de 3 s (retour de touche ou résurrection) : les intrus qui visaient ce vaisseau lâchent tout de
+// suite leur cible ; le verrou retargetLock (posé ici) empêche pickTarget de le reprendre pour cible pendant
+// RETARGET_T secondes, même s'il redevient le plus proche. Sert aussi bien localement (solo, IA de l'hôte en
+// ligne) que pour un vaisseau distant (voir netSample, qui appelle ceci sur le même geste vu par le réseau).
+function protectShip(v){
+  v.retargetLock = RETARGET_T;
+  for (const o of game.ships) if (o.brain && o.brain.t === v) o.brain.t = null;
+}
 
 /* ============ pilotes adverses ============ */
 class Brain {
@@ -2591,7 +2961,7 @@ class Brain {
     const s = this.s, hard = settings.difficulty === 'hard';
     let bestT = null, bs = Infinity;
     for (const o of game.ships){
-      if (o === s || o.dead || (s.camp !== undefined && (o.camp === s.camp || o.away))) continue;
+      if (o === s || o.dead || o.retargetLock > 0 || (s.camp !== undefined && (o.camp === s.camp || o.away))) continue;
       T1.subVectors(o.pos, s.pos); const d = T1.length();
       let sc = d + (T1.dot(s.fwd) > 0 ? 0 : 60) + R() * 60;
       if (o.p.player || o.human) sc -= hard ? 130 : 90;
@@ -2626,7 +2996,12 @@ class Brain {
     if (t && ahead && dist < 280) des.copy(t.pos).addScaledVector(t.vel, clamp(dist / 300, 0.1, 0.6));
     else {
       this.jinkT -= dt;
-      if (this.jinkT <= 0){ this.jinkT = pursued ? rr(0.6, 1.3) : rr(1.2, 2.6); this.lane.set(rr(-13, 13), pursued ? clamp(s.pos.y + rr(-28, 28), 16, 110) : rr(18, 95), 0); }
+      // bande de patrouille/repositionnement à l'échelle du plafond de vol (proportions d'origine gardées à
+      // l'octet près pour CEIL=150 : 110 et 95 déjà utilisés avant le 27/09) : un drone qui n'est pas en
+      // interception directe (branche ci dessus, qui vise déjà la vraie position de la cible sans plafond bas)
+      // reste crédible même si le plafond de vol est relevé plus tard, au lieu de stagner à une hauteur fixe
+      // bien en dessous d'un joueur parti très haut.
+      if (this.jinkT <= 0){ this.jinkT = pursued ? rr(0.6, 1.3) : rr(1.2, 2.6); this.lane.set(rr(-13, 13), pursued ? clamp(s.pos.y + rr(-28, 28), 16, Math.round(CEIL * 110 / 150)) : rr(18, Math.round(CEIL * 95 / 150)), 0); }
       des.set(this.lane.x, this.lane.y, s.pos.z + axis * (pursued ? 60 : 90));
     }
     if ((des.z - s.pos.z) * axis < 30) des.z = s.pos.z + axis * 30;
@@ -3080,6 +3455,7 @@ const aimDir = new V3(), muzzle = new V3();
 function tryFire(s, dt, wants){
   s.fireCd -= dt;
   if (!wants || s.dead || s.offline > 0 || s.fireCd > 0) return;
+  if (s.invuln > 0) s.invuln = 0;   // tirer met fin tout de suite à la protection : jamais de camping invulnérable
   s.fireCd = 1 / (s.overdrive > 0 ? 13 : 8);
   aimAssist(s, s.p.player ? 0.13 : 0.09, aimDir);
   if (!s.p.player){
@@ -3099,6 +3475,7 @@ function tryFire(s, dt, wants){
 function useItem(s){
   const it = s.item; if (!it) return;
   s.item = null;
+  if (s.invuln > 0) s.invuln = 0;   // utiliser un objet met fin tout de suite à la protection, comme un tir
   if (it === 'shield'){ s.shield = 12; if (s.p.player){ flash('BOUCLIER ACTIF', '', 1); audio.shieldUp(); } }
   else if (it === 'overdrive'){ s.overdrive = 5; s.heat = 0; s.overheat = false; if (s.p.player){ flash('SURVOLTEUR', '5 S DE PUISSANCE', 1); audio.overdrive(); } }
   else if (it === 'emp'){
@@ -3125,7 +3502,9 @@ function useItem(s){
 /* ============ commandes ============ */
 const keys = {};
 const mouse = { x: innerWidth / 2, y: innerHeight / 2, down: false, seen: false };
-const touch = { id: null, ox: 0, oy: 0, x: 0, y: 0, fire: false, boost: false, burnEdge: false, useEdge: false, brake: false, turnEdge: false, dodge: 0 };
+// t : date de jeu (game.t) du dernier signal reçu pour ce doigt (pointerdown ou pointermove), pour le filet de
+// sécurité STICK_WATCHDOG_T qui relâche la manette si plus rien n'arrive alors qu'un doigt reste enregistré
+const touch = { id: null, ox: 0, oy: 0, x: 0, y: 0, t: 0, fire: false, boost: false, burnEdge: false, useEdge: false, brake: false, turnEdge: false, dodge: 0 };
 let burnEdge = false, useEdge = false, turnEdge = false, dodgeEdge = 0;
 const isFr = !!(navigator.language && navigator.language.toLowerCase().startsWith('fr'));
 let thrLabel = isFr ? 'Z / S' : 'W / S';
@@ -3227,6 +3606,11 @@ function shapeAxis(v){ const a = Math.abs(v); if (a < 0.05) return 0; return Mat
 function playerInput(){
   const i = pInp, g = GP.on ? GP.game : null;
   let x = 0, y = 0;
+  // voir STICK_WATCHDOG_T : plus aucun signal pour ce doigt depuis trop longtemps, on relâche nous mêmes
+  if (touch.id !== null && game.t - touch.t > STICK_WATCHDOG_T){
+    touch.id = null; touch.x = 0; touch.y = 0;
+    const stickEl = $('stick'); if (stickEl) stickEl.classList.remove('on');
+  }
   if (touch.id !== null){ x = touch.x; y = touch.y; }
   else if (isTouch && settings.pilot === 'tilt' && sensor.ok){ const ta = tiltAngles(); x = ta.phi / 0.42; y = (ta.th - sensor.th0) / 0.33; }
   else if (mouse.seen){ x = (mouse.x - innerWidth / 2) / (innerWidth * 0.3); y = (mouse.y - innerHeight / 2) / (innerHeight * 0.3); }
@@ -3345,6 +3729,14 @@ function hudFrame(dt){
   if (lockT){ T1.copy(lockT.pos).project(camera); H.lock.style.transform = `translate(${(T1.x * 0.5 + 0.5) * W - 23 * cu}px, ${(-T1.y * 0.5 + 0.5) * Hh - 23 * cu}px)`; }
   H.lock.classList.toggle('on', !!lockT);
   if (mouse.seen){ H.steer.style.transform = `translate(${mouse.x - 4}px, ${mouse.y - 4}px)`; H.steer.style.opacity = 0.8; } else H.steer.style.opacity = 0;
+  // intrus hostile le plus proche : quand son repère est hors champ, une flèche agrandie et animée le désigne
+  // (voir .mk.edge.near), sur le même repère et le même calcul de position que les autres, jamais sur un allié
+  let nearFoe = null, nearFoeD = Infinity;
+  for (const s of game.ships){
+    if (!s.mk || s.dead || s.ally) continue;
+    const d = s.pos.distanceToSquared(p.pos);
+    if (d < nearFoeD){ nearFoeD = d; nearFoe = s; }
+  }
   // repères des adversaires
   for (const s of game.ships){
     if (!s.mk) continue;
@@ -3363,7 +3755,7 @@ function hudFrame(dt){
       if (behind){ dx = -dx; dy = -dy; }
       const len = Math.hypot(dx, dy) || 1; dx /= len; dy /= len;
       const k = Math.min((W / 2 - 34) / Math.max(Math.abs(dx), 1e-3), (Hh / 2 - 64) / Math.max(Math.abs(dy), 1e-3));
-      s.mk.className = 'mk edge' + (s.ally ? ' ally' : '');
+      s.mk.className = 'mk edge' + (s.ally ? ' ally' : '') + (s === nearFoe ? ' near' : '');
       s.mk.style.transform = `translate(${W / 2 + dx * k}px, ${Hh / 2 + dy * k}px) translate(-50%, -50%)`;
       s.mkDia.style.transform = `rotate(${Math.atan2(dy, dx) + Math.PI / 2}rad)`;
     }
@@ -3383,7 +3775,7 @@ function wallReset(){
 function wallOp(el, v, key){ const q = Math.round(v * 40) / 40; if (q !== wallFx[key]){ wallFx[key] = q; el.style.opacity = q; } }
 function wallScan(dt){
   const p = game.player;
-  let L = 0, Rt = 0, Tp = 0, Bt = 0, lvl = 0, front = 0, edgeF = 0;
+  let L = 0, Rt = 0, Tp = 0, Bt = 0, lvl = 0, front = 0, edgeF = 0, obstF = 0;
   if (p && !p.dead && game.state === 'playing'){
     const e = camera.matrixWorld.elements, px = p.pos.x, py = p.pos.y, pz = p.pos.z, k = Math.floor(pz / CH);
     for (let kk = k - 1; kk <= k + 1; kk++){
@@ -3409,11 +3801,16 @@ function wallScan(dt){
       T2.copy(p.pos).addScaledVector(p.vel, WALL_TTC);
       const hit = world.segHit(p.pos, T2, true);
       if (hit !== null){ const f = clamp((WALL_TTC - hit * WALL_TTC) / (WALL_TTC - 0.2), 0, 1); if (f > front) front = f; }
+      // grues, barrières, échafaudages (27/09) : même prédiction qu'un mur, mais alerte séparée (jamais la lueur
+      // latérale MUR PROCHE, réservée aux façades, pour ne pas multiplier les alertes en combat)
+      const hitO = world.segHit(p.pos, T2, 'obst');
+      if (hitO !== null){ const fo = clamp((WALL_TTC - hitO * WALL_TTC) / (WALL_TTC - 0.2), 0, 1); if (fo > obstF) obstF = fo; }
     }
     // pare feu de l'arène (en ligne) : même alerte qu'un mur devant
     if (ARENA.on && p.vel.z * pz > 0){ const dz = ARENA.z - Math.abs(pz); if (dz < 45) edgeF = clamp(1 - dz / 45, 0, 1); }
   }
   if (edgeF > front) front = edgeF;
+  if (obstF > front) front = obstF;
   const lv = Math.max(lvl, front);
   if (lv > 0.5 && wallFx.armed && game.t - wallFx.beepT > WALL_BEEP){ wallFx.armed = false; wallFx.beepT = game.t; audio.wall(); buzz(10); }
   if (lv < 0.15) wallFx.armed = true;
@@ -3425,7 +3822,7 @@ function wallScan(dt){
   let tag = '';
   if (lv > 0.3){
     const m = Math.max(L, Rt, Tp, Bt);
-    tag = front >= m ? (edgeF > 0 && edgeF >= front ? 'LIMITE DE ZONE' : 'MUR DEVANT') : m === L ? '◂ MUR PROCHE' : m === Rt ? 'MUR PROCHE ▸' : m === Tp ? 'MUR PROCHE ▴' : 'MUR PROCHE ▾';
+    tag = front >= m ? (edgeF > 0 && edgeF >= front ? 'LIMITE DE ZONE' : obstF > 0 && obstF >= front ? 'OBSTACLE' : 'MUR DEVANT') : m === L ? '◂ MUR PROCHE' : m === Rt ? 'MUR PROCHE ▸' : m === Tp ? 'MUR PROCHE ▴' : 'MUR PROCHE ▾';
   }
   if (tag !== wallFx.tag){ wallFx.tag = tag; if (tag) H.wallTag.textContent = tag; H.wallTag.classList.toggle('on', !!tag); }
 }
@@ -3498,6 +3895,16 @@ function guideAllowed(){ return PLAT.iOS && !PLAT.standalone && installable(); }
 function openGuide(){ $('guide').hidden = false; }
 function closeGuide(){ if ($('guide').hidden) return; $('guide').hidden = true; store.set('guideSeen', true); }
 function maybeGuide(){ if (PLAT.iPhone && guideAllowed() && !store.get('guideSeen', false)) openGuide(); }
+// installation : beforeinstallprompt sur Android et ordinateur (Chrome, Edge) ; iPhone et iPad passent par le guide existant
+const INSTALL = { evt: null };
+function installAllowed(){ return !PLAT.standalone && (guideAllowed() || !!INSTALL.evt); }
+function updateInstallUi(){ const b = $('installItem'); if (b) b.hidden = !installAllowed(); }
+async function doInstall(){
+  if (PLAT.iOS){ openGuide(); return; }
+  const evt = INSTALL.evt; if (!evt) return;
+  INSTALL.evt = null; updateInstallUi();
+  try { evt.prompt(); await evt.userChoice; } catch (e){}
+}
 
 const DIAG = { taps: 0, tapT: 0, timer: 0, fps: 0, n: 0, t0: 0 };
 function diagError(err){
@@ -3579,7 +3986,7 @@ function historyGuard(){
     else if (!$('acct').hidden) acctClose();
     else if (game.state === 'playing' || game.state === 'countdown'){ if (NET.match && NET.pause){ if (UI.cur === 'settings') back(); } else pauseGame(); }
     else if (!$('diag').hidden || !$('guide').hidden){ closeDiag(); closeGuide(); }
-    else if (!$('menu').hidden && (UI.cur === 'settings' || UI.cur === 'controls' || UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends' || UI.cur === 'compte' || UI.cur === 'amis')) back();
+    else if (!$('menu').hidden && (UI.cur === 'settings' || UI.cur === 'controls' || UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends' || UI.cur === 'compte' || UI.cur === 'amis' || UI.cur === 'shop' || UI.cur === 'classement' || UI.cur === 'mission')) back();
   });
 }
 
@@ -3592,6 +3999,21 @@ function highlight(){
   const el = items()[UI.sel], c = el && document.body.classList.contains('kbnav') && el.closest('#setRows,#friendRows,#amisRows');
   if (c && c.scrollHeight > c.clientHeight){ const top = el.offsetTop, bot = top + el.offsetHeight; if (top < c.scrollTop) c.scrollTop = top; else if (bot > c.scrollTop + c.clientHeight) c.scrollTop = bot - c.clientHeight; }
 }
+function recordLblRender(){ $('recordLbl').innerHTML = best > 0 ? `RECORD <b>${best}</b> TOUCHE${best > 1 ? 'S' : ''}` : 'AUCUN RECORD POUR L\'INSTANT'; }
+// défi reçu par lien (voir CHALLENGE, lu depuis ?defi= au tout début du fichier) : affiché une fois au menu
+// principal, jamais par dessus une partie ; l'adresse est nettoyée dès qu'il est lu.
+function challengeLblRender(){
+  const el = $('challengeLbl');
+  if (!CHALLENGE){ el.hidden = true; return; }
+  el.hidden = false;
+  // nom sanitisé ici seulement (safeName applique checkName : mots interdits, longueur, signes autorisés) ;
+  // vide ou refusé : message générique, comme avant
+  const nom = CHALLENGE.nom ? safeName(CHALLENGE.nom, '') : '';
+  el.innerHTML = nom
+    ? `<b>${esc(nom)}</b> TE DÉFIE : BATS <b>${CHALLENGE.score}</b> TOUCHE${CHALLENGE.score > 1 ? 'S' : ''}`
+    : `DÉFI REÇU : BATS <b>${CHALLENGE.score}</b> TOUCHE${CHALLENGE.score > 1 ? 'S' : ''}`;
+  if (!CHALLENGE.seen){ CHALLENGE.seen = true; challengeUrlClean(); }
+}
 function openPanel(name, push = true){
   if (push && UI.cur && UI.cur !== name && !$('menu').hidden) UI.stack.push(UI.cur);
   for (const k in UI.panels) UI.panels[k].hidden = k !== name;
@@ -3599,11 +4021,12 @@ function openPanel(name, push = true){
   const m = $('menu'); m.hidden = false;
   m.classList.toggle('center', game.state === 'paused' || game.state === 'results');
   m.dataset.panel = name;
-  $('backTop').hidden = !(name === 'controls' || name === 'settings' || name === 'online' || name === 'join' || name === 'friends' || name === 'compte' || name === 'amis');
+  $('backTop').hidden = !(name === 'controls' || name === 'settings' || name === 'online' || name === 'join' || name === 'friends' || name === 'compte' || name === 'amis' || name === 'shop' || name === 'classement' || name === 'chat' || name === 'voice' || name === 'mission');
   if (name === 'settings') renderSettings();
   if (name === 'controls') renderControls();
-  if (name === 'main'){ $('fsItem').hidden = !(isTouch && FS.can() && !PLAT.standalone); fsLabel(); }
-  if (name === 'main') $('recordLbl').innerHTML = best > 0 ? `RECORD <b>${best}</b> TOUCHE${best > 1 ? 'S' : ''}` : 'AUCUN RECORD POUR L\'INSTANT';
+  if (name === 'mission') missionPanelRender();
+  if (name === 'main'){ $('fsItem').hidden = !(isTouch && FS.can() && !PLAT.standalone); fsLabel(); updateInstallUi(); }
+  if (name === 'main'){ recordLblRender(); challengeLblRender(); missionMainTagRender(); }
   netPanel(name);
   highlight();
 }
@@ -3612,10 +4035,12 @@ function back(){
   const prev = UI.stack.pop();
   if (prev) openPanel(prev, false);
   else if (game.state === 'paused' || (NET.match && NET.pause)) resume();
-  else if (!NET.on && (UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends' || UI.cur === 'compte' || UI.cur === 'amis')) openPanel('main', false);
+  else if (!NET.on && (UI.cur === 'online' || UI.cur === 'join' || UI.cur === 'friends' || UI.cur === 'compte' || UI.cur === 'amis' || UI.cur === 'shop' || UI.cur === 'classement' || UI.cur === 'chat' || UI.cur === 'mission')) openPanel('main', false);
 }
 function renderSettings(){
-  const keysS = Object.keys(SETS).filter((k) => (k !== 'screen' && k !== 'pilot') || isTouch);
+  // vocal : ligne de réglage totalement absente en dessous de 13 ans ou zone inconnue, comme le reste de son
+  // interface (voir voiceNavSync) ; jamais un bouton visible mais coupé
+  const keysS = Object.keys(SETS).filter((k) => ((k !== 'screen' && k !== 'pilot') || isTouch) && (k !== 'voice' || voiceZoneOk(monZoneLocale())));
   $('setRows').innerHTML = keysS.map((k, n) => {
     const d = SETS[k], v = settings[k], i = Math.max(0, d.values.indexOf(v));
     const name = typeof d.names === 'function' ? d.names(v) : d.names[i];
@@ -3636,6 +4061,7 @@ function renderControls(){
     ['DEMI TOUR', 'RETOURNEMENT EXPRESS EN UNE SECONDE, RECHARGE 4 S'],
     ['BALAYER À DROITE', 'ESQUIVE : UN COUP DE DOIGT VERS LA GAUCHE OU LA DROITE, INVULNÉRABLE UN INSTANT, RECHARGE 2,5 S'],
     ['MUR PROCHE', 'LE BORD DE L\'ÉCRAN ROUGIT DU CÔTÉ DU MUR, UN BIP PRÉVIENT'],
+    ['OBSTACLE', 'GRUES, BARRIÈRES ET ÉCHAFAUDAGES DANS LA VILLE, UNE ALERTE DÉDIÉE PRÉVIENT AVANT LE CHOC'],
     ['RUES', 'RUES ET PASSAGES ENTRE LES FAÇADES MÈNENT À UNE ALLÉE QUI LONGE LE CANYON'],
     ['TOUCHÉ', 'HORS LIGNE 2 S, SEULE LA GRILLE TUE'],
   ] : [
@@ -3651,6 +4077,7 @@ function renderControls(){
     ['FLÈCHES', 'PILOTER AU CLAVIER'],
     ['ÉCHAP / P', 'PAUSE'],
     ['MUR PROCHE', 'LE BORD DE L\'ÉCRAN ROUGIT DU CÔTÉ DU MUR, UN BIP PRÉVIENT'],
+    ['OBSTACLE', 'GRUES, BARRIÈRES ET ÉCHAFAUDAGES DANS LA VILLE, UNE ALERTE DÉDIÉE PRÉVIENT AVANT LE CHOC'],
     ['RUES', 'RUES ET PASSAGES ENTRE LES FAÇADES MÈNENT À UNE ALLÉE QUI LONGE LE CANYON'],
     ['TOUCHÉ', 'HORS LIGNE 2 S, SEULE LA GRILLE TUE'],
   ];
@@ -3664,6 +4091,7 @@ function changeSetting(key, dir){
   if (key === 'quality') applyQuality();
   if (key === 'screen' || key === 'pilot'){ startSensor(true); layout(true); }
   if (key === 'sound' || key === 'music') audio.apply();
+  if (key === 'voice') voiceSettingChanged();
   renderSettings();
 }
 // qualité automatique : une marche vers le bas si la cadence reste sous 40 images par seconde malgré la
@@ -3687,12 +4115,48 @@ function autoQuality(dir, now){
 function applyQuality(){
   const q = QUALITY[qKey()];
   perfScale = 1;
-  scene.fog.density = q.fog;
+  // densité du brouillard : celle de la qualité, modulée par l'ambiance en cours (voir AMBIANCE/tickAmbiance),
+  // pour qu'un changement de qualité en plein jour ne réinitialise pas le brouillard sur la valeur de nuit
+  scene.fog.density = q.fog * (AMBIANCE[settings.ambiance] || AMBIANCE.nuit).fogMul;
   applyPixelRatio(false);
   buildComposer();
   setupReflector();
   rain.geometry.instanceCount = q.rain;
   resize();
+}
+// ambiance NUIT/JOUR (voir SETS.ambiance) : transition douce (jamais de coupure nette) à chaque image, pilotée
+// par tickAmbiance depuis update() — donc aussi figée pendant la pause, comme le reste de la scène à ce moment
+// là, pour rester cohérente avec elle. AMB garde les valeurs qui ne vivent pas déjà sur un objet three.js
+// (intensité de base de hemi, hors sursaut d'éclair ; intensité émissive courante des façades ; poids météo).
+const AMB = (() => { const r0 = AMBIANCE[settings.ambiance] || AMBIANCE.nuit; return { hemiI: r0.hemiI, bldE: r0.bld, wx: r0.wx }; })();
+const AMB_TMP = new THREE.Color();
+function tickAmbiance(dt, snap){
+  const r = AMBIANCE[settings.ambiance] || AMBIANCE.nuit;
+  const a = snap ? 1 : 1 - Math.exp(-2.4 * dt);
+  scene.fog.color.lerp(AMB_TMP.setHex(r.fog), a);
+  scene.fog.density = lerp(scene.fog.density, QUALITY[qKey()].fog * r.fogMul, a);
+  scene.background.lerp(AMB_TMP.setHex(r.bg), a);
+  hemi.color.lerp(AMB_TMP.setHex(r.hemiSky), a);
+  hemi.groundColor.lerp(AMB_TMP.setHex(r.hemiGround), a);
+  AMB.hemiI = lerp(AMB.hemiI, r.hemiI, a);
+  // valeur de base tout de suite sur l'objet three.js (avant même le tout premier update()) : le sursaut d'éclair
+  // (voir update(), juste après le calcul de fl) l'ajoute par dessus à chaque image suivante, jamais avant
+  hemi.intensity = AMB.hemiI;
+  sunLight.color.lerp(AMB_TMP.setHex(r.sunColor), a);
+  sunLight.intensity = lerp(sunLight.intensity, r.sunI, a);
+  const su = sky.material.uniforms;
+  su.uTop.value.lerp(AMB_TMP.setHex(r.skyTop), a);
+  su.uHorizon.value.lerp(AMB_TMP.setHex(r.skyHorizon), a);
+  su.uGlow.value.lerp(AMB_TMP.setHex(r.skyGlow), a);
+  // A.bld : matériaux PARTAGÉS par tous les bâtiments d'un même style (voir buildCity) : les retoucher ici les
+  // retouche tous d'un coup, sans reconstruire la ville ni ses rues
+  AMB.bldE = lerp(AMB.bldE, r.bld, a);
+  for (const m of A.bld) m.emissiveIntensity = AMB.bldE;
+  // poids météo : fait disparaître/apparaître la pluie (uniforme uAmb, jamais exposé au joueur) et, avec elle,
+  // l'intensité des éclairs (voir update(), juste après le calcul de fl) ; jamais le minuteur de l'orage lui même
+  AMB.wx = lerp(AMB.wx, r.wx, a);
+  rain.material.uniforms.uAmb.value = AMB.wx;
+  rain.visible = AMB.wx > 0.003;
 }
 function activate(el, dir = 1){
   audio.init(); audio.ui();
@@ -3708,6 +4172,12 @@ function activate(el, dir = 1){
   else if (act === 'guide') openGuide();
   else if (act === 'online' || (act && act.startsWith('net'))) netAct(act, el);
   else if (act && act.startsWith('ac')) acctAct(act, el);
+  else if (act === 'shop') openPanel('shop');
+  else if (act === 'missionDay') openPanel('mission');
+  else if (act === 'shopDebug') shopTestOpen();
+  else if (act === 'install') doInstall();
+  else if (act === 'share') shareGame();
+  else if (act === 'challenge') challengeShare();
 }
 
 /* ============ déroulé ============ */
@@ -3747,6 +4217,7 @@ function startMatch(){
   turnEdge = false; dodgeEdge = 0; touch.turnEdge = false; touch.dodge = 0;
   H.hint.style.opacity = 1;
   audio.musicMode('game');
+  missionRunStart();
 }
 function endMatch(){
   game.state = 'results';
@@ -3762,7 +4233,9 @@ function endMatch(){
   else { title = '<span class="t1">DÉFA</span><span class="t2">ITE</span>'; cls = 'warn'; }
   $('resTitle').className = 'title sm ' + cls; $('resTitle').innerHTML = title;
   const w = list[0];
-  $('resSub').textContent = tied ? `Égalité en tête à ${top} touche${top > 1 ? 's' : ''}.` : `${w.p.name} remporte le canyon avec ${top} touche${top > 1 ? 's' : ''}.`;
+  let sub = tied ? `Égalité en tête à ${top} touche${top > 1 ? 's' : ''}.` : `${w.p.name} remporte le canyon avec ${top} touche${top > 1 ? 's' : ''}.`;
+  if (CHALLENGE) sub += p.hits > CHALLENGE.score ? ' Défi relevé !' : ` Défi non relevé (à battre : ${CHALLENGE.score}).`;
+  $('resSub').textContent = sub;
   $('resBody').innerHTML = list.map((s, i) => `<tr${s.p.player ? ' class="me"' : ''}><td>${i + 1}</td><td><i style="background:${s.p.hex}"></i>${s.p.name}</td><td>${s.hits}</td><td>${s.taken}</td><td>${s.crashes}</td></tr>`).join('');
   const newBest = p.hits > best;
   if (newBest){ best = p.hits; store.set('best', best); }
@@ -3770,7 +4243,199 @@ function endMatch(){
   $('resStats').innerHTML = `PRÉCISION <b>${acc} %</b> · VITESSE MAX <b>${Math.round(p.maxSpeed * 3.6)} KM/H</b> · RECORD <b>${best}</b>${newBest && best > 0 ? ' · <b style="color:var(--trojan)">NOUVEAU RECORD</b>' : ''}`;
   UI.stack = [];
   openPanel('results', false);
+  resCtaRender(p.hits);
+  matchScoreSubmit(p.hits);
+  missionFinish(p);
 }
+// compte facultatif, proposé une fois par session après la première partie terminée sans compte
+let acctPromptShown = false;
+function resCtaRender(score){
+  const show = !ACCT.id && !acctPromptShown;
+  if (show) acctPromptShown = true;
+  $('resCta').hidden = !show;
+  if (show) $('resCtaTxt').innerHTML = `Ton score : <b>${score}</b> touche${score > 1 ? 's' : ''}. Crée ton compte gratuit pour le garder et entrer au classement.`;
+}
+// envoie le score au compte (record entre appareils et classement hebdomadaire) ; sans compte, rien ne
+// part, le record reste seulement local (voir best). Une partie solo dure toujours MATCH_TIME secondes.
+function matchScoreSubmit(score){
+  if (!ACCT.id) return;
+  comptes().then((C) => C.enregistrerScore(score, MATCH_TIME * 1000)).catch(() => {});
+}
+// « Défier un ami » : partage le lien du jeu avec le score à battre (?defi=), comme shareGame() pour le
+// lien seul ; reprend shareOrCopy (feuille de partage du système, sinon presse papiers).
+function challengeShare(){
+  const score = game.player.hits;
+  const url = location.origin + location.pathname + '?defi=' + score + '&nom=' + encodeURIComponent(ID.name || '');
+  const text = `Je viens de faire ${score} touche${score > 1 ? 's' : ''} sur Sentinelle. Bats mon score !`;
+  shareOrCopy('Sentinelle', text, url, (r) => { if (r === 'copie') toast('LIEN COPIÉ', 2.5); else if (r === 'echec') toast('COPIE IMPOSSIBLE', 2.5); else if (r === 'partage') toast('DÉFI ENVOYÉ', 2.5); });
+}
+
+/* ============ mission quotidienne ============ */
+// Une mission par jour calendaire, la même pour tous les pilotes : choisie de façon déterministe à partir
+// de la seule date (hash pur de la chaîne AAAA-MM-JJ), jamais de Date.now()/Math.random() dans les fonctions
+// pures ci dessous (missionForDate, missionHash) ; seule missionDateStr() lit l'horloge réelle, une fois, au
+// moment de l'usage (ouverture du panneau, lancement d'une partie), jamais mise en cache au delà d'un appel.
+// Contenu entièrement local (texte, personnages, objectifs) : rien ne dépend du compte ni du réseau pour
+// jouer la mission. Suivi uniquement pendant une partie SOLO (jamais NET.match, qui a sa propre boucle
+// updateNetMatch séparée) : aucune ligne de hitShip/tryFire/crash/revive touchée, seulement une lecture des
+// compteurs déjà existants du vaisseau du joueur (hits, taken, overdrive, pos) une fois par image.
+function missionDateStr(){ const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+// FNV-1a 32 bits : hash pur, aucun état, jamais d'horloge ni de hasard dedans.
+function missionHash(s){ let h = 0x811c9dc5; for (let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; }
+// Personnages recurrents : repris tels quels du roster des alliés déjà utilisé pour compléter le camp
+// SENTINELLES en ligne (CAMPS[0].bots) plutôt que des noms inventés : même univers, aucune nouvelle lore.
+const MISSION_CHARS = [{ id: 'vigie', name: 'VIGIE' }, { id: 'gardien', name: 'GARDIEN' }];
+// Pool de missions : un identifiant, trois paliers de difficulté et un texte d'objectif. « detruire » et
+// « toucher » se lisent tous deux sur le seul compteur de touches du jeu (hits) : Sentinelle n'a qu'une seule
+// mécanique de combat notée (voir TOUCHES au tableau des résultats), aucune n'étant réellement distincte.
+const MISSION_TYPES = [
+  { id: 'survie', targets: [45, 60, 90], label: (n) => `SURVIVRE ${n} S SANS ÊTRE TOUCHÉ` },
+  { id: 'destruction', targets: [6, 8, 11], label: (n) => `DÉTRUIRE ${n} INTRUS` },
+  { id: 'traversee', targets: [[900, 20], [1150, 24], [1400, 27]], label: ([d, t]) => `PARCOURIR ${d} M EN MOINS DE ${t} S` },
+  { id: 'survolteur', targets: [3, 5, 7], label: (n) => `TOUCHER ${n} INTRUS AVEC LE SURVOLTEUR` },
+];
+// Deux ou trois lignes par personnage et par type : intro (annonce), ok (réussite), ko (échec). Gabarits
+// réutilisables, jamais de texte à écrire à la main pour chaque date : les chiffres viennent de MISSION_TYPES.
+const MISSION_LINES = {
+  vigie: {
+    survie: {
+      intro: (n) => `Reste sous mes radars ${n} secondes sans une touche. Je surveille chaque angle.`,
+      ok: (n) => `${n} secondes sans une touche. Ton signal est resté propre tout du long.`,
+      ko: (n) => `Touché avant ${n} secondes. Recommence, je surveille encore.`,
+    },
+    destruction: {
+      intro: (n) => `${n} intrus signalés sur le réseau. Neutralise les tous ce vol.`,
+      ok: (n) => `${n} intrus détruits. Le réseau est plus sûr grâce à toi.`,
+      ko: (n) => `Il restait des intrus à détruire. Objectif ${n}, essaie encore.`,
+    },
+    traversee: {
+      intro: ([d, t]) => `File droit sur ${d} mètres de canyon. Chronomètre en marche : ${t} secondes, pas une de plus.`,
+      ok: ([d, t]) => `${d} mètres parcourus en moins de ${t} secondes. Le canyon n'a plus de secret pour toi.`,
+      ko: ([d, t]) => `Pas assez rapide sur ${d} mètres. Il te fallait moins de ${t} secondes.`,
+    },
+    survolteur: {
+      intro: (n) => `Ramasse un survolteur et marque ${n} touches pendant qu'il chauffe encore.`,
+      ok: (n) => `${n} touches sous survolteur. Belle maîtrise de la puissance.`,
+      ko: (n) => `Pas assez de touches sous survolteur. Il t'en fallait ${n}.`,
+    },
+  },
+  gardien: {
+    survie: {
+      intro: (n) => `Tiens la position ${n} secondes sans prendre une seule touche. Je veille sur toi.`,
+      ok: (n) => `${n} secondes intact. Solide vol, pilote.`,
+      ko: (n) => `Touché trop tôt. Il fallait tenir ${n} secondes, retente ta chance.`,
+    },
+    destruction: {
+      intro: (n) => `${n} intrus rôdent dans le canyon ce soir. Nettoie moi ça.`,
+      ok: (n) => `${n} intrus détruits. Le canyon respire enfin.`,
+      ko: (n) => `Encore des intrus dans le secteur. Il t'en fallait ${n} au sol.`,
+    },
+    traversee: {
+      intro: ([d, t]) => `Traverse ${d} mètres de canyon en ${t} secondes. Pousse les réacteurs, je chronomètre.`,
+      ok: ([d, t]) => `${d} mètres bouclés en ${t} secondes. Tu voles vite, pilote.`,
+      ko: ([d, t]) => `Trop lent sur ${d} mètres. ${t} secondes, ça se joue au réacteur.`,
+    },
+    survolteur: {
+      intro: (n) => `Prends un survolteur et marque ${n} touches avant qu'il ne retombe.`,
+      ok: (n) => `${n} touches sous survolteur. Le réseau s'en souviendra.`,
+      ko: (n) => `Le survolteur est retombé trop tôt. Il t'en fallait ${n} touches.`,
+    },
+  },
+};
+// Fonction pure : même date en entrée, même mission en sortie, à toute heure, sur tout appareil.
+function missionForDate(dateStr){
+  const h = missionHash('sentinelle-mission-v1-' + dateStr);
+  const typeIdx = h % MISSION_TYPES.length;
+  const type = MISSION_TYPES[typeIdx];
+  const tierIdx = Math.floor(h / MISSION_TYPES.length) % type.targets.length;
+  const charIdx = Math.floor(h / (MISSION_TYPES.length * type.targets.length)) % MISSION_CHARS.length;
+  return { date: dateStr, typeId: type.id, target: type.targets[tierIdx], characterId: MISSION_CHARS[charIdx].id };
+}
+const MISSION = { today: null, run: null };
+// Relit l'horloge réelle à chaque appel (jamais de cache au delà) : une nouvelle mission apparaît donc toute
+// seule au changement de jour calendaire, sans logique de détection dédiée.
+function missionRefreshToday(){
+  const d = missionDateStr();
+  if (!MISSION.today || MISSION.today.date !== d) MISSION.today = missionForDate(d);
+  return MISSION.today;
+}
+function missionSpec(t){ return MISSION_TYPES.find((m) => m.id === t.typeId); }
+function missionChar(t){ return MISSION_CHARS.find((c) => c.id === t.characterId) || MISSION_CHARS[0]; }
+// Lancement d'une partie solo (voir startMatch) : aucune remise à zéro d'un compteur existant, seulement de
+// nouveaux compteurs à nous, lus une fois par image (missionTick) sans jamais modifier le vaisseau.
+function missionRunStart(){
+  missionRefreshToday();
+  MISSION.run = { t0: game.t, takenSeen: 0, cleanSince: game.t, bestClean: 0, odSeen: 0, odHits: 0, lastPos: game.player.pos.clone(), dist: 0, travelDone: false };
+}
+function missionTick(){
+  const r = MISSION.run, t = MISSION.today;
+  if (!r || !t) return;
+  const p = game.player;
+  if (p.taken > r.takenSeen){ r.takenSeen = p.taken; r.cleanSince = game.t; }
+  const clean = game.t - r.cleanSince;
+  if (clean > r.bestClean) r.bestClean = clean;
+  if (p.hits > r.odSeen){ if (p.overdrive > 0) r.odHits += p.hits - r.odSeen; r.odSeen = p.hits; }
+  r.dist += p.pos.distanceTo(r.lastPos); r.lastPos.copy(p.pos);
+  if (!r.travelDone && t.typeId === 'traversee' && r.dist >= t.target[0] && game.t - r.t0 <= t.target[1]) r.travelDone = true;
+}
+// Fin de partie (voir endMatch, appelé seulement en solo) : évalue une fois, jamais rejoué avant la partie suivante.
+function missionFinish(p){
+  const run = MISSION.run, t = MISSION.today;
+  MISSION.run = null;
+  if (!run || !t) return;
+  let success = false;
+  if (t.typeId === 'survie') success = run.bestClean >= t.target;
+  else if (t.typeId === 'destruction') success = p.hits >= t.target;
+  else if (t.typeId === 'traversee') success = run.travelDone;
+  else if (t.typeId === 'survolteur') success = run.odHits >= t.target;
+  missionRecordResult(t, success, p.hits);
+}
+// Compte en ligne (missions.sql, écrit à part, pas encore lancé) : même dégradé que matchScoreSubmit avant
+// classement.sql, jamais d'erreur montrée au joueur pour cette seule raison.
+function missionSubmitOnline(t, score){
+  if (!ACCT.id) return;
+  const cible = Array.isArray(t.target) ? t.target.join('/') : String(t.target);
+  comptes().then((C) => C.enregistrerMission(t.date, t.typeId, cible, score)).catch(() => {});
+}
+function missionRecordResult(t, success, score){
+  const prev = store.get('missionResult', null);
+  const dejaReussie = !!(prev && prev.date === t.date && prev.success);
+  // une réussite déjà acquise aujourd'hui reste acquise : un échec rejoué ensuite ne l'efface pas, seule la
+  // ligne du personnage sur CETTE partie (missionResultShow, juste en dessous) reflète le résultat réel du jour
+  if (!dejaReussie) store.set('missionResult', { date: t.date, typeId: t.typeId, target: t.target, characterId: t.characterId, success });
+  if (success && !dejaReussie){ store.set('missionTotal', (store.get('missionTotal', 0) || 0) + 1); missionSubmitOnline(t, score); }
+  missionResultShow(t, success);
+  if (UI.cur === 'mission') missionPanelRender();
+  if (UI.cur === 'main') missionMainTagRender();
+}
+// Affichage en fin de partie (écran RÉSULTATS), à côté de resCta : la ligne du personnage, succès ou échec.
+function missionResultShow(t, success){
+  const el = $('resMission'); if (!el) return;
+  const ch = missionChar(t), spec = missionSpec(t);
+  const ligne = success ? MISSION_LINES[ch.id][t.typeId].ok(t.target) : MISSION_LINES[ch.id][t.typeId].ko(t.target);
+  el.hidden = false;
+  el.className = 'nline ' + (success ? 'ok' : 'err');
+  el.innerHTML = `<b>MISSION DU JOUR</b> · ${esc(spec.label(t.target))}<br>${esc(ch.name)} : ${esc(ligne)}`;
+}
+// Panneau MISSION DU JOUR (menu principal, sans compte requis) : objectif, ligne d'intro du personnage,
+// résultat du jour s'il existe déjà, petit total local (voir aussi missionMainTagRender pour le menu principal).
+function missionPanelRender(){
+  const t = missionRefreshToday(), ch = missionChar(t), spec = missionSpec(t);
+  $('missionObj').textContent = spec.label(t.target);
+  $('missionChar').textContent = ch.name + ' : ' + MISSION_LINES[ch.id][t.typeId].intro(t.target);
+  const res = store.get('missionResult', null), done = res && res.date === t.date ? res : null;
+  const st = $('missionState');
+  if (done){ st.className = 'nline ' + (done.success ? 'ok' : 'err'); st.textContent = done.success ? MISSION_LINES[ch.id][t.typeId].ok(t.target) : MISSION_LINES[ch.id][t.typeId].ko(t.target); }
+  else { st.className = 'nline'; st.textContent = "PAS ENCORE TENTÉE AUJOURD'HUI : LANCE UNE PARTIE POUR LA TENTER."; }
+  const total = store.get('missionTotal', 0) || 0;
+  $('missionTotal').textContent = total > 0 ? `${total} MISSION${total > 1 ? 'S' : ''} RÉUSSIE${total > 1 ? 'S' : ''} SUR CET APPAREIL` : '';
+}
+// Petite pastille sur le bouton du menu principal (même moule que onTag) : rien à ouvrir pour savoir où on en est.
+function missionMainTagRender(){
+  const t = missionRefreshToday(), res = store.get('missionResult', null), done = res && res.date === t.date ? res : null;
+  $('missionTag').textContent = done ? (done.success ? ' · RÉUSSIE' : ' · À RETENTER') : '';
+}
+
 function pauseGame(){
   if (NET.match){ netPause(); return; }
   if (game.state !== 'playing' && game.state !== 'countdown') return;
@@ -3918,6 +4583,7 @@ function update(dt){
     if (game.time > 0 && game.time <= 10){ const s = Math.ceil(game.time); if (s !== game.lastBeep){ game.lastBeep = s; audio.beep(880, 0.08, 0.08); } }
     updateChaseCam(dt, pl.dead ? 2 : 8);
     wallScan(dt);
+    missionTick();
   }
   if (game.msgT > 0){ game.msgT -= dt; if (game.msgT <= 0){ H.big.classList.remove('show'); H.sub.classList.remove('show'); } }
   if ((st === 'playing' || st === 'countdown') && H.hint && game.time < MATCH_TIME - 12) H.hint.style.opacity = 0;
@@ -3930,13 +4596,15 @@ function update(dt){
   traffic.update(dt, fz);
   peds.update(dt, fz);
   for (const c of world.chunks.values()) for (const b of c.beams){ b.rotation.y = b.userData.ph + t * b.userData.sp; b.rotation.x = b.userData.tilt; }
-  // éclairs
+  // ambiance NUIT/JOUR : transition douce à chaque image (ciel, brouillard, lumières, néons, pluie/orage)
+  tickAmbiance(dt);
+  // éclairs (coupés en douceur en JOUR par AMB.wx, sans toucher au minuteur ni au reste de l'orage)
   lightning.t -= dt;
   if (lightning.t <= 0){ lightning.t = rr(18, 40); const b = t; lightning.pulses = [b, b + 0.11, b + 0.29]; }
   let fl = 0; for (const pt of lightning.pulses){ const d = t - pt; if (d >= 0 && d < 1) fl += Math.exp(-d * 13); }
-  fl = Math.min(1.4, fl);
+  fl = Math.min(1.4, fl) * AMB.wx;
   sky.material.uniforms.uFlash.value = fl;
-  hemi.intensity = 0.95 + fl * 1.6;
+  hemi.intensity = AMB.hemiI + fl * 1.6;
   sky.position.copy(camera.position);
   sky.material.uniforms.uTime.value = t;
   // pluie
@@ -3974,7 +4642,9 @@ function bindEvents(){
   if (window.visualViewport){ window.visualViewport.addEventListener('resize', scheduleLayout); window.visualViewport.addEventListener('scroll', scheduleLayout); }
   try { const mq = matchMedia('(orientation: portrait)'); if (mq.addEventListener) mq.addEventListener('change', scheduleLayout); else if (mq.addListener) mq.addListener(scheduleLayout); } catch (e){}
   try { new ResizeObserver(() => scheduleLayout()).observe($('vp')); } catch (e){}
-  document.addEventListener('visibilitychange', () => { if (document.hidden){ pauseGame(); audio.sleep(); } else { audio.wake(); scheduleLayout(); } netVisibility(); });
+  // mise en arrière plan : rien ne garantit qu'un doigt resté sur la manette envoie sa fin de toucher (geste système,
+  // veille) ; on relâche nous mêmes la manette pour qu'un futur pointerdown reprenne la main sans rester bloqué
+  document.addEventListener('visibilitychange', () => { if (document.hidden){ pauseGame(); audio.sleep(); endStick({ pointerId: touch.id }); voicePttUp(); } else { audio.wake(); scheduleLayout(); } netVisibility(); });
   // son : déblocage dans un toucher terminé, un clic ou une touche (jamais au simple contact, refusé par iOS)
   const unlockAudio = () => audio.unlock();
   document.addEventListener('touchend', unlockAudio, { passive: true });
@@ -3989,7 +4659,21 @@ function bindEvents(){
   $('fatalDiag').addEventListener('click', openDiag);
   $('ver').addEventListener('click', diagTap);
   const logo = document.querySelector('#pMain .eyebrow svg'); if (logo) logo.addEventListener('click', diagTap);
-  addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.down = false; });
+  // boutique : catalogue coupé par un seul drapeau, mécanique légale de test réservée à ?debug
+  $('stPickPass').addEventListener('click', () => stPickItem('pass'));
+  $('stPickFounder').addEventListener('click', () => stPickItem('founder'));
+  $('stAgeBtn').addEventListener('click', stAskAge);
+  $('stParent').addEventListener('change', stValidate);
+  $('stWaiver').addEventListener('change', stValidate);
+  $('stTerms').addEventListener('change', stValidate);
+  $('stCancel').addEventListener('click', () => stShow('pick'));
+  $('stConfirm').addEventListener('click', stConfirm);
+  $('stDoneOk').addEventListener('click', () => stShow('pick'));
+  $('stListBtn').addEventListener('click', () => { stListRender(); stShow('list'); });
+  $('stListBack').addEventListener('click', () => stShow('pick'));
+  $('stRows').addEventListener('click', (e) => { const b = e.target.closest('[data-retract]'); if (b) stRetract(+b.dataset.retract); });
+  $('shopTestClose').addEventListener('click', shopTestClose);
+  addEventListener('blur', () => { for (const k in keys) keys[k] = false; mouse.down = false; voicePttUp(); });
   addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; mouse.x = e.clientX; mouse.y = e.clientY; mouse.seen = true; });
   document.addEventListener('mouseleave', () => { mouse.x = innerWidth / 2; mouse.y = innerHeight / 2; });
   addEventListener('pointerdown', (e) => {
@@ -4012,6 +4696,12 @@ function bindEvents(){
     if (!$('diag').hidden || !$('guide').hidden){ if (c === 'Escape' || c === 'Enter' || c === 'NumpadEnter'){ e.preventDefault(); closeDiag(); closeGuide(); } return; }
     if (!$('netbox').hidden){ if (c === 'Escape' || c === 'Enter' || c === 'NumpadEnter'){ e.preventDefault(); netboxClose(); } return; }
     if (!$('invite').hidden){ if (c === 'Escape'){ e.preventDefault(); inviteAnswer(false); } else if (c === 'Enter' || c === 'NumpadEnter'){ e.preventDefault(); inviteAnswer(true); } return; }
+    // fenêtre de test de la boutique : Échap ferme, les autres touches vont normalement aux champs et boutons
+    if (!$('shopTest').hidden){ if (c === 'Escape'){ e.preventDefault(); shopTestClose(); } return; }
+    // vocal, à la main : marche depuis le menu (salle, réglages) comme en plein vol, jamais pendant une saisie
+    // (déjà passée plus haut) ; voicePttDown lui même vérifie l'éligibilité et la salle avant de faire quoi que
+    // ce soit, cette touche ne fait donc rien de plus qu'un appui sans effet si le vocal n'est pas utilisable
+    if (c === 'KeyV'){ e.preventDefault(); if (!e.repeat) voicePttDown(); return; }
     if (!intro.done){ if (c === 'Enter' || c === 'NumpadEnter' || c === 'Space'){ e.preventDefault(); enterGame(); } return; }
     if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(c)) e.preventDefault();
     if (!$('menu').hidden){
@@ -4035,7 +4725,7 @@ function bindEvents(){
     if (c === 'KeyD') dodgeEdge = 1;
     if (c === 'Escape' || c === 'KeyP') pauseGame();
   });
-  addEventListener('keyup', (e) => { keys[keyCode(e)] = false; });
+  addEventListener('keyup', (e) => { const c = keyCode(e); keys[c] = false; if (c === 'KeyV') voicePttUp(); });
   // souris ou doigt : l'anneau de sélection du clavier s'efface
   addEventListener('pointerdown', () => { if (document.body.classList.contains('kbnav')) document.body.classList.remove('kbnav'); }, true);
   addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse' && document.body.classList.contains('kbnav') && (Math.abs(e.movementX) + Math.abs(e.movementY)) > 3) document.body.classList.remove('kbnav'); });
@@ -4048,6 +4738,12 @@ function bindEvents(){
     if (game.state === 'playing' || game.state === 'countdown') pauseGame();
     if (UI.cur === 'controls' && !$('menu').hidden) renderControls();
   });
+  // connexion : l'état sert à EN LIGNE (CONNEXION NÉCESSAIRE hors ligne), jamais au solo ni à la boutique
+  addEventListener('online', () => { mainOnline(); if (UI.cur === 'online' && !$('menu').hidden) onlineRender(); });
+  addEventListener('offline', () => { mainOnline(); if (UI.cur === 'online' && !$('menu').hidden) onlineRender(); });
+  // installation : capturée tôt, utilisée seulement quand INSTALLER LE JEU est touché
+  addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); INSTALL.evt = e; updateInstallUi(); });
+  addEventListener('appinstalled', () => { INSTALL.evt = null; updateInstallUi(); toast('SENTINELLE INSTALLÉ', 2.5); });
   const menu = $('menu');
   menu.addEventListener('click', (e) => {
     const el = e.target.closest('.mi'); if (!el) return;
@@ -4062,7 +4758,7 @@ function bindEvents(){
     audio.init();
     if (touch.id !== null) return;
     const g0 = toGame(e.clientX, e.clientY);
-    touch.id = e.pointerId; touch.ox = g0[0]; touch.oy = g0[1]; touch.x = 0; touch.y = 0;
+    touch.id = e.pointerId; touch.ox = g0[0]; touch.oy = g0[1]; touch.x = 0; touch.y = 0; touch.t = game.t;
     try { zone.setPointerCapture(e.pointerId); } catch (er){}
     stick.style.left = touch.ox + 'px'; stick.style.top = touch.oy + 'px'; stick.classList.add('on');
     knob.style.transform = 'translate(0px, 0px)';
@@ -4072,10 +4768,14 @@ function bindEvents(){
     const g = toGame(e.clientX, e.clientY);
     const dx = g[0] - touch.ox, dy = g[1] - touch.oy, Rr = 56, l = Math.hypot(dx, dy), k = l > Rr ? Rr / l : 1;
     knob.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
-    touch.x = clamp(dx / Rr, -1, 1); touch.y = clamp(dy / Rr, -1, 1);
+    touch.x = clamp(dx / Rr, -1, 1); touch.y = clamp(dy / Rr, -1, 1); touch.t = game.t;
   });
   const endStick = (e) => { if (e.pointerId !== touch.id) return; touch.id = null; touch.x = 0; touch.y = 0; stick.classList.remove('on'); };
-  zone.addEventListener('pointerup', endStick); zone.addEventListener('pointercancel', endStick);
+  // lostpointercapture : peut survenir seul sur iOS/WebKit (capture reprise ou perdue par la plateforme, geste
+  // système, second doigt) sans pointercancel avant ; sans cette écoute, touch.id restait bloqué pour toujours et
+  // pointerdown le refusait (if (touch.id !== null) return), la manette ne répondant plus jamais. Comme les boutons
+  // (plus bas) et maintenant swipeZone, endStick tourne aussi sur ce troisième évènement, les trois cas se valent.
+  zone.addEventListener('pointerup', endStick); zone.addEventListener('pointercancel', endStick); zone.addEventListener('lostpointercapture', endStick);
   // esquive au doigt : un coup de doigt latéral rapide ; jamais depuis un toucher né au bord de l'écran (nearEdge)
   const flick = (minPx) => {
     const st = { id: null, x: 0, y: 0, t: 0, done: true };
@@ -4096,7 +4796,7 @@ function bindEvents(){
   const swipe = $('swipeZone'), sf = flick(36);
   swipe.addEventListener('pointerdown', (e) => { e.preventDefault(); audio.init(); try { swipe.setPointerCapture(e.pointerId); } catch (er){} sf.down(e); }, { passive: false });
   swipe.addEventListener('pointermove', (e) => sf.move(e));
-  swipe.addEventListener('pointerup', (e) => sf.up(e)); swipe.addEventListener('pointercancel', (e) => sf.up(e));
+  swipe.addEventListener('pointerup', (e) => sf.up(e)); swipe.addEventListener('pointercancel', (e) => sf.up(e)); swipe.addEventListener('lostpointercapture', (e) => sf.up(e));
   document.querySelectorAll('.tb').forEach((b) => {
     const t = b.dataset.t, fl = t === 'fire' ? flick(44) : null;   // sur TIR, le coup de doigt esquive sans couper le tir
     b.addEventListener('pointerdown', (e) => {
@@ -4125,7 +4825,7 @@ function bindEvents(){
 // vaisseau, envoie son état 20 fois par seconde et signale lui même les touches qu'il subit ; l'hôte les valide.
 // Sans compte, rien n'est gardé sur un serveur : pseudo, code ami et liste d'amis restent dans l'appareil. Les comptes,
 // facultatifs (comptes.js), gardent pseudo, amis et invitations chez l'hébergeur des comptes ; le jeu reste sur PeerJS.
-const NET_BUILD = '79a2158408';   // remplacé à la construction du site par une empreinte du code : deux versions différentes ne jouent pas ensemble
+const NET_BUILD = '56ebb3f2eb';   // remplacé à la construction du site par une empreinte du code : deux versions différentes ne jouent pas ensemble
 const NET_PROTO = 1;
 const PEERJS_URL = 'https://cdn.jsdelivr.net/npm/peerjs@1.5.5/dist/peerjs.min.js';
 const PEERJS_SRI = 'sha384-x0YgkOr/3UOZP2CRDxGW9e0Q+2Qjyr3uJrm4xU32Y7ZCNAo7Cc7bjhrZMi/dwczu';
@@ -4192,6 +4892,12 @@ function shareOrCopy(title, text, url, done){
   }
   copy();
 }
+// bouton PARTAGER du menu principal : partage le lien du jeu (pas une invitation de salle)
+function shareGame(){
+  const url = location.origin + location.pathname;
+  const text = 'Pluie sur le canyon néon. Trois intrus sur le réseau : le plus de touches gagne.';
+  shareOrCopy('Sentinelle', text, url, (r) => { if (r === 'copie') toast('LIEN COPIÉ', 2.5); else if (r === 'echec') toast('COPIE IMPOSSIBLE', 2.5); });
+}
 
 /* ---------- identité : pseudo filtré, code ami tiré une fois ---------- */
 const NAME_BAD = ['CONNARD', 'CONNASSE', 'SALOPE', 'SALAUD', 'ENCULE', 'BATARD', 'HITLER', 'FUCK', 'BITCH', 'NIGGER', 'NIGGA', 'FAGGOT', 'WHORE', 'PORNO', 'PUTAIN', 'COUILLE', 'MERDE'];
@@ -4245,6 +4951,7 @@ function netFramed(){ try { return window.top !== window.self; } catch (e){ retu
 function netWhyOff(){
   if (netFramed()) return 'frame';
   if (!window.RTCPeerConnection || !window.WebSocket) return 'browser';
+  if (!navigator.onLine) return 'offline';
   return '';
 }
 
@@ -4331,6 +5038,9 @@ function presenceStart(){
         res(p);
       });
       p.on('connection', (c) => { if (NET.me === p) onPresenceConn(c); else try { c.close(); } catch (e){} });
+      // vocal (voir le bloc VOCAL) : appel média PeerJS sur ce même objet Peer, jamais un second transport ;
+      // même garde que ci dessus (l'objet Peer encore courant seulement, jamais un ancien resté en mémoire)
+      p.on('call', (call) => { if (NET.me === p) voiceIncomingCall(call); else try { call.close(); } catch (e){} });
       p.on('error', (e) => {
         const type = e && e.type;
         if (type === 'peer-unavailable'){ netUnavailable(e); return; }
@@ -4562,10 +5272,13 @@ function hostBegin(room, code){
   NET.room = room;
   room.on('connection', hostIncoming);
   room.on('disconnected', () => { if (NET.room === room) peerRejoin(room); });
-  NET.pilots.set('h', { pid: 'h', tok: '', name: ID.name, fc: ID.fc, u: acctUid(), camp: 0, host: true, conn: true, order: NET.order++, link: null, ship: -1, leftK: 0 });
+  NET.pilots.set('h', { pid: 'h', tok: '', name: ID.name, fc: ID.fc, u: acctUid(), camp: 0, host: true, conn: true, order: NET.order++, link: null, ship: -1, leftK: 0, zone: monZoneLocale() || '', billet: '' });
   netStatus('');
   UI.stack = [];
   openPanel('room', false);
+  // billet-zone.sql : mon propre billet pour cette salle, jamais bloquant (voir le module BILLET) ;
+  // billetTick (netWatch) le rafraîchit ensuite tant que la salle reste ouverte.
+  billetMien(code).then((b) => { const P = NET.pilots.get('h'); if (P && NET.code === code){ P.billet = b ? b.valeur : ''; lobbySend(); } });
 }
 // INVITER DES AMIS : un seul geste ouvre la salle et partage le lien (le code est tiré avant, le partage part dans le geste)
 function netInviteNew(){
@@ -4664,6 +5377,11 @@ async function netJoin(code, ms){
 }
 // une tentative d'entrée : liaison, bonjour, puis bienvenue ou refus
 function guestConnect(code, rejoin, ms, quick){
+  // Billet pour cette salle (module BILLET, billet-zone.sql), demandé en parallèle de la connexion
+  // WebRTC elle même pour ne pas ajouter son délai à celui, déjà réel, de l'établissement de la liaison ;
+  // jamais bloquant (billetP rend null si indisponible, voir billetMien), lu seulement une fois la
+  // liaison ouverte (L.onopen ci dessous), donc déjà résolu ou presque dans l'immense majorité des cas.
+  const billetP = billetMien(code).catch(() => null);
   return new Promise((res, rej) => {
     const id = roomPeer(code);
     let conn = null;
@@ -4674,7 +5392,7 @@ function guestConnect(code, rejoin, ms, quick){
     const fin = (err, val) => { if (done) return; done = true; clearTimeout(to); NET.pend.delete(id); if (err){ L.onclose = null; L.close(); rej(err); } else res(val); };
     const to = setTimeout(() => fin(Object.assign(new Error('délai'), { type: L.open ? 'noanswer' : 'webrtc' })), ms || 16000);
     NET.pend.set(id, () => fin(Object.assign(new Error('introuvable'), { type: 'peer-unavailable' })));
-    L.onopen = () => L.send({ t: 'hello', v: NET_BUILD, p: NET_PROTO, n: ID.name, fc: ID.fc, u: acctUid(), rj: rejoin || '', q: quick ? 1 : 0 });
+    L.onopen = () => { billetP.then((b) => { if (!done) L.send({ t: 'hello', v: NET_BUILD, p: NET_PROTO, n: ID.name, fc: ID.fc, u: acctUid(), rj: rejoin || '', q: quick ? 1 : 0, z: monZoneLocale() || '', zb: b ? b.valeur : '' }); }); };
     L.onmsg = (m) => {
       if (m.t === 'welcome' && typeof m.pid === 'string' && typeof m.tok === 'string'){ L.hold(); fin(null, { link: L, pid: m.pid, tok: m.tok, h: +m.h }); }
       else if (m.t === 'no') fin(Object.assign(new Error('refus'), { type: 'refused', why: m.why }));
@@ -4759,6 +5477,8 @@ function netSessionEnd(){
   const links = [...NET.links], hc = NET.hc, room = NET.room;
   // le message d'adieu part d'abord, les liaisons ferment ensuite
   setTimeout(() => { links.forEach((L) => L.close()); if (hc) hc.close(); if (room){ try { room.destroy(); } catch (e){} } }, 400);
+  voiceLeaveAll(); voiceStreamStop();   // on quitte la salle : plus aucun appel vocal, micro relâché (voir le bloc VOCAL)
+  PEER_ZONE.clear(); PEER_CHECK.clear();   // billet-zone.sql : plus aucun pilote de cette salle à garder en cache (module BILLET)
   NET.links = new Set(); NET.hc = null; NET.room = null; NET.reco = null;
   clearInterval(NET.timer); NET.timer = 0;
   NET.on = false; NET.host = false; NET.running = false; NET.code = ''; NET.pid = ''; NET.tok = ''; NET.pilots = new Map(); NET.lobby = []; NET.roomNote = '';
@@ -4785,11 +5505,12 @@ function hostHello(L, m){
     for (const P of NET.pilots.values()){
       if (P.host || P.tok !== m.rj) continue;
       if (P.link && P.link !== L){ const old = P.link; old.onclose = null; old.close(); NET.links.delete(old); }
-      P.link = L; P.conn = true; P.leftK = 0; L.pid = P.pid; NET.links.add(L);
+      P.link = L; P.conn = true; P.leftK = 0; P.zone = zoneClean(m.z); P.billet = typeof m.zb === 'string' ? m.zb.slice(0, 2000) : ''; L.pid = P.pid; NET.links.add(L);
       L.send({ t: 'welcome', pid: P.pid, tok: P.tok, h: Math.round(netNowMs()) });
       if (NET.match && !NET.ended) hostRejoin(P);
       else if (NET.running) L.send({ t: 'wait' });
       lobbySend(); toast(P.name + ' EST DE RETOUR', 2.5);
+      billetVerifyAndBroadcast(P.pid, P.billet);   // billet-zone.sql : jamais bloquant, voir le module BILLET
       return;
     }
   }
@@ -4799,13 +5520,14 @@ function hostHello(L, m){
   if (cnt[0] + cnt[1] >= NET_MAX){ L.send({ t: 'no', why: 'full' }); setTimeout(() => L.close(), 800); return; }
   let camp = cnt[0] <= cnt[1] ? 0 : 1;
   if (cnt[camp] >= CAMP_MAX) camp = 1 - camp;
-  const P = { pid: 'p' + randCode(FRIEND_ABC, 6), tok: randCode(FRIEND_ABC, 12), name: uniqueName(safeName(m.n, 'PILOTE')), fc: friendOk(m.fc) ? m.fc : '', u: uuidOk(m.u) ? m.u : '', camp, host: false, conn: true, order: NET.order++, link: L, ship: -1, leftK: 0 };
+  const P = { pid: 'p' + randCode(FRIEND_ABC, 6), tok: randCode(FRIEND_ABC, 12), name: uniqueName(safeName(m.n, 'PILOTE')), fc: friendOk(m.fc) ? m.fc : '', u: uuidOk(m.u) ? m.u : '', camp, host: false, conn: true, order: NET.order++, link: L, ship: -1, leftK: 0, zone: zoneClean(m.z), billet: typeof m.zb === 'string' ? m.zb.slice(0, 2000) : '' };
   NET.pilots.set(P.pid, P);
   L.pid = P.pid; NET.links.add(L);
   L.send({ t: 'welcome', pid: P.pid, tok: P.tok, h: Math.round(netNowMs()) });
   if (NET.running) L.send({ t: 'wait' });   // partie en cours : il jouera la suivante
   lobbySend();
   toast(P.name + ' REJOINT LA SALLE', 2.5);
+  billetVerifyAndBroadcast(P.pid, P.billet);   // billet-zone.sql : jamais bloquant, voir le module BILLET
 }
 function hostMsg(L, m, raw){
   if (!L.pid){ if (m.t === 'hello') hostHello(L, m); return; }
@@ -4816,6 +5538,9 @@ function hostMsg(L, m, raw){
     case 'k': break;
     case 'camp': if (!NET.running && (m.c === 0 || m.c === 1)) campSet(P, m.c); break;
     case 'bye': hostDrop(L); break;
+    case 'chat': hostChat(L, P, m); break;
+    case 'vptt': hostVoicePtt(P, m); break;
+    case 'zb': if (typeof m.zb === 'string'){ P.billet = m.zb.slice(0, 2000); billetVerifyAndBroadcast(P.pid, P.billet); } break;
     default: if (NET.match && P.ship >= 0) hostGame(L, P, m, raw);
   }
 }
@@ -4841,7 +5566,10 @@ function hostDrop(L){
   lobbySend();
 }
 function lobbyList(){
-  return [...NET.pilots.values()].filter((P) => P.conn || P.leftK).sort((a, b) => a.order - b.order).map((P) => ({ p: P.pid, n: P.name, c: P.camp, h: P.host ? 1 : 0, o: P.conn ? 1 : 0, f: P.fc || '', u: P.u || '' }));
+  // z : zone annoncée en clair (informative seulement, plus jamais utilisée pour une décision de tchat
+  // ou de vocal, voir chatPeerZone). zb : billet signé de ce pilote (billet-zone.sql), la seule chose que
+  // chaque appareil vérifie réellement lui même avant de faire confiance à sa zone (module BILLET).
+  return [...NET.pilots.values()].filter((P) => P.conn || P.leftK).sort((a, b) => a.order - b.order).map((P) => ({ p: P.pid, n: P.name, c: P.camp, h: P.host ? 1 : 0, o: P.conn ? 1 : 0, f: P.fc || '', u: P.u || '', z: P.zone || '', zb: P.billet || '' }));
 }
 function lobbySend(){
   if (!NET.host) return;
@@ -4849,6 +5577,7 @@ function lobbySend(){
   for (const L of NET.links) if (L.pid) L.send(s);
   NET.lobby = l;
   if (UI.cur === 'room' && !$('menu').hidden) roomRender();
+  voiceSync();   // pilotes ou zones changés : rouvre ou ferme les appels vocaux concernés (voir le bloc VOCAL)
 }
 function campSet(P, c){
   if (P.camp === c) return;
@@ -4879,9 +5608,11 @@ function guestMsg(m, raw){
   switch (m.t){
     case 'lobby':
       if (Array.isArray(m.l)){
-        NET.lobby = m.l.filter((p) => p && typeof p.p === 'string').slice(0, 12).map((p) => ({ p: p.p, n: safeName(p.n, 'PILOTE'), c: p.c ? 1 : 0, h: p.h ? 1 : 0, o: p.o ? 1 : 0, f: friendOk(p.f) ? p.f : '', u: uuidOk(p.u) ? p.u : '' }));
+        NET.lobby = m.l.filter((p) => p && typeof p.p === 'string').slice(0, 12).map((p) => ({ p: p.p, n: safeName(p.n, 'PILOTE'), c: p.c ? 1 : 0, h: p.h ? 1 : 0, o: p.o ? 1 : 0, f: friendOk(p.f) ? p.f : '', u: uuidOk(p.u) ? p.u : '', z: zoneClean(p.z), zb: typeof p.zb === 'string' ? p.zb.slice(0, 2000) : '' }));
         NET.running = !!m.run; NET.autoK = +m.ak > 0 ? +m.ak : 0;
         if (UI.cur === 'room' && !$('menu').hidden) roomRender();
+        zonePairsRefresh();   // billet-zone.sql : revérifie les billets des pilotes listés (module BILLET)
+        voiceSync();   // pilotes ou zones changés : rouvre ou ferme les appels vocaux concernés (voir le bloc VOCAL)
       }
       break;
     case 'pong': clockSample(m); break;
@@ -4892,6 +5623,8 @@ function guestMsg(m, raw){
     case 'start': netBeginMatch(m); break;
     case 'roster': if (NET.loaded) rosterApply(m); break;
     case 'end': if (NET.loaded) netEndMatch(m); break;
+    case 'chat': chatReceive(m); break;
+    case 'vptt': voiceReceivePtt(m); break;
     default: if (NET.match) netGameMsg(m, raw);
   }
 }
@@ -4963,6 +5696,16 @@ function netWatch(){
   }
   if (NET.autoK && UI.cur === 'room' && !$('menu').hidden) roomRender();   // compte à rebours de la partie rapide
   netWarnUpdate();
+  // vocal : filet de rattrapage périodique (voir le bloc VOCAL), au cas où un premier essai d'appel aurait
+  // échoué (pair pas encore inscrit auprès du serveur de mise en relation, par exemple) ; les autres appels de
+  // voiceSync (lobby reçu, zone changée, réglage changé) couvrent déjà le cas courant, ceci n'est qu'un filet
+  if (now > (VOICE.nextSync || 0)){ VOICE.nextSync = now + 4000; voiceSync(); }
+  // billet-zone.sql : rafraîchit mon propre billet et revérifie ceux des autres pilotes toutes les 20 s
+  // environ (module BILLET) : assez souvent pour repérer un billet bientôt expiré (durée de vie 3 minutes)
+  // bien avant l'échéance, assez rare pour rester un appel serveur léger, comparable à la présence déjà en
+  // service. Un billet neuf redemandé n'est envoyé/rediffusé QUE s'il a changé (voir billetTick), donc sans
+  // effet réseau les fois où le précédent est encore frais.
+  if (now > (BILLET.nextTick || 0)){ BILLET.nextTick = now + 20000; billetTick(); }
 }
 // partie rapide : dès que deux pilotes sont là, départ automatique après un court compte à rebours
 function hallTick(){
@@ -5319,10 +6062,17 @@ function netSample(s, a, o){
   smp.sp = +a[o + 10] || 0; smp.f = a[o + 11] | 0; smp.dd = clamp(+a[o + 12] || 0, -1, 1);
   // réapparition ou mort : pas d'interpolation à travers le saut
   smp.snap = !last || Math.hypot(x - last.x, y - last.y, z - last.z) > 30 || (last.f & 1) !== (smp.f & 1);
+  // protection de 3 s vue par le réseau (retour de touche : hors ligne qui cesse, ou résurrection : saut avec
+  // invulnérabilité) : même geste que protectShip en local, pour que les IA de l'hôte lâchent ce vaisseau distant
+  if (last){
+    const wasOff = !!(last.f & 2), wasInv = !!(last.f & 16), nowOff = !!(smp.f & 2), nowInv = !!(smp.f & 16);
+    if (nowInv && !wasInv && ((wasOff && !nowOff) || smp.snap)) protectShip(s);
+  }
   b.push(smp);
 }
 function netInterp(s, now, dt){
   const b = s.buf;
+  s.retargetLock = Math.max(0, s.retargetLock - dt);
   if (!b.length){ s.m.root.visible = false; return; }
   const T = now - NET_DELAY;
   let i = b.length - 1;
@@ -5760,7 +6510,7 @@ function netBuildMarkers(){
 const ACCT = {
   modP: null, p: null, bootP: null, C: null, fail: false, loading: false, gen: 0, busy: false, fbusy: false,
   id: '', mail: '', prof: null, amis: [], on: new Map(), recents: [], res: null, q: '',
-  stopInv: null, stopAuth: null, invQ: [], sent: '', delArm: '',
+  stopInv: null, stopAuth: null, invQ: [], sent: '', sentMode: '', delArm: '',
   msg: '', cls: '', amisMsg: '', amisCls: '', urlCb: '', urlErr: '', mode: '', pseudoT: 0, pseudoK: 0,
 };
 const ACCT_KEY = 'nifoweb.sentinelle.compte';   // clé où la bibliothèque des comptes garde la session sur l'appareil
@@ -5830,6 +6580,7 @@ async function acctSession(s, ev){
   if (!id){ acctNameSync(); acctRefreshUi(); return; }
   try { ACCT.prof = await ACCT.C.monProfil(); } catch (e){ if (g === ACCT.gen) acctMsg(acctErr(e), 'err'); }
   if (g !== ACCT.gen) return;
+  if (ACCT.prof){ acctColorCache(); acctMergeRecord(); }
   acctNameSync(); acctRefreshUi();
   await Promise.all([acctFriendsLoad(), acctRecentsLoad()]);
   if (g !== ACCT.gen) return;
@@ -5852,6 +6603,25 @@ async function acctStopLive(){
 function acctNameSync(){
   const local = safeName(store.get('netName', ''), '') || ID.name;
   ID.name = ACCT.prof ? safeName(ACCT.prof.pseudo, local) : local;
+}
+// teinte de compte (offerte à l'inscription, cosmétique) : mise en cache pour le prochain lancement.
+// Le vaisseau du joueur est déjà construit à cet instant (voir la mise en cache au tout début du fichier,
+// avant la construction) : un vrai changement visuel en direct attendra le lancement suivant.
+function acctColorCache(){
+  const c = ACCT.prof && ACCT.prof.avatar_color;
+  if (/^#[0-9a-fA-F]{6}$/.test(c || '') && store.get('acctColor', '') !== c) store.set('acctColor', c);
+}
+// record : fusionne le meilleur score local (best, gardé sur cet appareil) et celui du compte (gardé chez
+// l'hébergeur, sur tous les appareils) ; ne fait rien tant que classement.sql n'a pas été lancé par le
+// propriétaire (monRecord rend alors dispo:false, jamais d'erreur).
+async function acctMergeRecord(){
+  if (!ACCT.C) return;
+  try {
+    const r = await ACCT.C.monRecord();
+    if (!r.dispo) return;
+    if (r.meilleur > best){ best = r.meilleur; store.set('best', best); if (UI.cur === 'main' && !$('menu').hidden) recordLblRender(); }
+    else if (best > r.meilleur) await ACCT.C.enregistrerScore(best, MATCH_TIME * 1000);
+  } catch (e){}
 }
 async function acctFriendsLoad(){
   if (!ACCT.C || !ACCT.id) return;
@@ -6049,6 +6819,40 @@ function amisRender(){
   setLine('amisMsg', ACCT.amisMsg, ACCT.amisCls);
 }
 
+/* ---------- classement hebdomadaire (classement.sql, écrit à part : peut ne pas encore avoir été lancé) ----------
+   Ouvert à tous (sans compte y compris) : classementSemaine() rend { dispo:false } tant que classement.sql
+   n'a pas été lancé par le propriétaire, jamais une erreur ; le panneau affiche alors BIENTÔT DISPONIBLE. */
+const CLS = { dispo: null, lignes: [], rang: null, score: 0, loading: false };
+function classementOpen(){
+  if (CLS.dispo !== null) classementRender();   // ce qui est déjà connu s'affiche tout de suite, puis actualisation
+  classementLoad();
+}
+function classementLoad(){
+  if (CLS.loading) return;
+  CLS.loading = true; classementRender();
+  comptes().then((C) => Promise.all([
+    C.classementSemaine(20),
+    ACCT.id ? C.monRangSemaine() : Promise.resolve({ dispo: false, rang: null, score: 0 }),
+  ])).then(([sem, rang]) => {
+    CLS.loading = false;
+    CLS.dispo = !!(sem && sem.dispo); CLS.lignes = (sem && sem.lignes) || [];
+    CLS.rang = (rang && rang.dispo && rang.rang) ? rang.rang : null; CLS.score = (rang && rang.score) || 0;
+    classementRender();
+  }).catch(() => { CLS.loading = false; CLS.dispo = false; CLS.lignes = []; CLS.rang = null; classementRender(); });
+}
+function classementRender(){
+  if (UI.cur !== 'classement' || $('menu').hidden) return;
+  if (CLS.loading && CLS.dispo === null){ setLine('clsState', 'CHARGEMENT DU CLASSEMENT…'); $('clsRows').innerHTML = ''; $('clsMe').hidden = true; return; }
+  if (!CLS.dispo){ setLine('clsState', 'CLASSEMENT BIENTÔT DISPONIBLE'); $('clsRows').innerHTML = ''; $('clsMe').hidden = true; return; }
+  setLine('clsState', CLS.lignes.length ? '' : 'PERSONNE CETTE SEMAINE : SOIS LE PREMIER', CLS.lignes.length ? '' : 'err');
+  const moi = ACCT.prof && ACCT.prof.pseudo;
+  $('clsRows').innerHTML = CLS.lignes.map((l) => acRow('#' + l.rang + '  ' + l.pseudo, l.score + ' TOUCHE' + (l.score > 1 ? 'S' : ''), moi && l.pseudo === moi, '')).join('');
+  const horsTop = CLS.rang && !CLS.lignes.some((l) => l.rang === CLS.rang);
+  $('clsMe').hidden = !horsTop;
+  if (horsTop) setLine('clsMe', 'TON RANG : #' + CLS.rang + ' · ' + CLS.score + ' TOUCHE' + (CLS.score > 1 ? 'S' : ''));
+  highlight();
+}
+
 /* fenêtre des comptes : vrais champs (gestionnaires de mots de passe, pas de loupe de Safari), hors du cadre tourné,
    calée sur la zone visible au dessus du clavier comme la fenêtre de saisie */
 function acctHelp(t, cls){ const h = $('acctMsg'); h.textContent = t || ''; h.className = 'ahelp' + (cls ? ' ' + cls : ''); }
@@ -6066,7 +6870,8 @@ function acctOpen(mode){
   if (mode === 'signup'){
     if (!$('asPseudo').value) $('asPseudo').value = ID.name;
     acctPseudoLive($('asPseudo'), $('asPseudoMsg'), '');
-    first = !$('asPseudo').value ? $('asPseudo') : !$('asMail').value ? $('asMail') : $('asPass');
+    acctAgeToggle($('asYear'), $('asAgeRow'), $('asAge'), $('asParentRow'), $('asParent'));
+    first = !$('asPseudo').value ? $('asPseudo') : !$('asMail').value ? $('asMail') : $('asYear');
   } else if (mode === 'login'){
     if (!$('alMail').value && ACCT.sent) $('alMail').value = ACCT.sent;
     first = $('alMail').value ? $('alPass') : $('alMail');
@@ -6075,9 +6880,11 @@ function acctOpen(mode){
     $('apNew').hidden = !!ACCT.prof;
     $('apInfo').textContent = 'Compte : ' + (ACCT.mail || 'connecté') + (ACCT.prof ? '' : '. Choisis ton pseudo et indique ton année de naissance.');
     acctPseudoLive($('apPseudo'), $('apPseudoMsg'), ACCT.prof ? ACCT.prof.pseudo : '');
+    if (!ACCT.prof) acctAgeToggle($('apYear'), $('apAgeRow'), $('apAge'), $('apParentRow'), $('apParent'));
     first = $('apPseudo');
   } else if (mode === 'sent'){
-    $('afSentTxt').innerHTML = 'Un mail de confirmation part vers <b>' + esc(ACCT.sent) + '</b>. Ouvre le lien qu\'il contient, de préférence sur cet appareil : ton compte sera prêt. Pense à regarder dans les indésirables.';
+    const t = ACCT.sentMode === 'otp' ? 'Un lien part vers <b>' : 'Un mail de confirmation part vers <b>';
+    $('afSentTxt').innerHTML = t + esc(ACCT.sent) + '</b>. Ouvre le lien qu\'il contient, de préférence sur cet appareil : ton compte sera prêt. Pense à regarder dans les indésirables.';
     first = $('afResend');
   }
   $('acct').hidden = false;
@@ -6158,23 +6965,52 @@ function acctPseudoLive(inp, out, current){
       .catch((e) => { if (k === ACCT.pseudoK) set(acctErr(e), 'err'); });
   }, 450);
 }
+// champ asYear/apYear : un vrai sélecteur de date (id gardé tel quel, historique) ; l'année seule en est
+// extraite ici pour les contrôles déjà existants (verifierAge, estMineur), qui continuent de recevoir
+// exactement la même forme qu'avant (mineurs : voir aussi zonePourDate, qui lit lui la date complète).
+function acctBirthYear(dateEl){
+  const v = dateEl.value;
+  return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v.slice(0, 4) : '';
+}
+// bascule le libellé « 15 ans ou plus » / accord parental selon la date tapée ; jamais coché d'avance,
+// et la case qui se cache est toujours décochée (sinon elle resterait cochée sans être vue)
+function acctAgeToggle(yearEl, ageRow, ageBox, parentRow, parentBox){
+  const y = acctBirthYear(yearEl);
+  const mineur = ACCT.C && y.length === 4 ? ACCT.C.estMineur(y) : false;
+  ageRow.hidden = mineur; parentRow.hidden = !mineur;
+  if (mineur) ageBox.checked = false; else parentBox.checked = false;
+}
 async function acctSignup(){
   if (ACCT.busy || !ACCT.C) return;
-  const C = ACCT.C, chk = checkName($('asPseudo').value), mail = $('asMail').value.trim(), pass = $('asPass').value, year = $('asYear').value.trim();
+  const C = ACCT.C, chk = checkName($('asPseudo').value), mail = $('asMail').value.trim(), pass = $('asPass').value;
+  const dateNaiss = $('asYear').value, year = acctBirthYear($('asYear'));
   const fail = (t, el) => { acctHelp(t, 'err'); acctFocus(el); };
   if (!chk.ok) return fail(chk.why, $('asPseudo'));
   let t = C.verifierMail(mail); if (t) return fail(acctUp(t), $('asMail'));
-  t = C.verifierMotDePasse(pass); if (t) return fail(acctUp(t), $('asPass'));
+  if (pass){ t = C.verifierMotDePasse(pass); if (t) return fail(acctUp(t), $('asPass')); }
   t = C.verifierAge(year); if (t) return fail(acctUp(t), $('asYear'));
-  if (!$('asAge').checked) return fail('COCHE LA CASE : J\'AI 15 ANS OU PLUS', $('asAge'));
+  const mineur = C.estMineur(year);
+  if (mineur){ if (!$('asParent').checked) return fail('ACCORD D\'UN PARENT OU TUTEUR REQUIS EN DESSOUS DE 15 ANS', $('asParent')); }
+  else if (!$('asAge').checked) return fail('COCHE LA CASE : J\'AI 15 ANS OU PLUS', $('asAge'));
   if (!$('asTerms').checked) return fail('ACCEPTE LES CONDITIONS D\'UTILISATION ET LA POLITIQUE DE CONFIDENTIALITÉ', $('asTerms'));
-  acctBusy(true); acctHelp('CRÉATION DU COMPTE…');
+  // mineurs : date exacte gardée seulement dans cet appareil, pour calculer la zone d'âge de la discussion
+  // (voir zonePourDate) ; le compte lui reçoit toujours l'année seule (anneeNaissance), comme avant.
+  store.set('birthDate', dateNaiss); chatZoneRefresh();
+  acctBusy(true); acctHelp(pass ? 'CRÉATION DU COMPTE…' : 'ENVOI DU LIEN…');
+  // teinte SIGNAL offerte à l'inscription (cosmétique, jamais un avantage de jeu) : voir OFFER_COLOR_HEX
+  const champs = { pseudo: chk.name, email: mail, anneeNaissance: year, couleur: OFFER_COLOR_HEX, ageCertifie: !mineur, accordParental: mineur, conditionsAcceptees: true };
   try {
-    const r = await C.inscrire({ pseudo: chk.name, email: mail, motDePasse: pass, anneeNaissance: year, ageCertifie: true, conditionsAcceptees: true });
-    $('asPass').value = '';
-    acctBusy(false);
-    if (r && r.confirmationEnvoyee){ ACCT.sent = mail; acctOpen('sent'); }
-    else { acctClose(); acctMsg('COMPTE CRÉÉ : TU ES CONNECTÉ', 'ok'); }
+    if (pass){
+      const r = await C.inscrire({ ...champs, motDePasse: pass });
+      $('asPass').value = '';
+      acctBusy(false);
+      if (r && r.confirmationEnvoyee){ ACCT.sent = mail; ACCT.sentMode = 'signup'; acctOpen('sent'); }
+      else { acctClose(); acctMsg('COMPTE CRÉÉ : TU ES CONNECTÉ · TEINTE ' + OFFER_COLOR_NAME + ' OFFERTE', 'ok'); }
+    } else {
+      await C.inscrireLienMagique(champs);
+      acctBusy(false);
+      ACCT.sent = mail; ACCT.sentMode = 'otp'; acctOpen('sent');
+    }
   } catch (e){ acctBusy(false); acctHelp(acctErr(e), 'err'); }
 }
 async function acctLogin(){
@@ -6199,8 +7035,10 @@ async function acctMagic(){
 async function acctResend(){
   if (ACCT.busy || !ACCT.C || !ACCT.sent) return;
   acctBusy(true); acctHelp('ENVOI…');
-  try { await ACCT.C.renvoyerConfirmation(ACCT.sent); acctHelp('MAIL RENVOYÉ À ' + ACCT.sent, 'ok'); }
-  catch (e){ acctHelp(acctErr(e), 'err'); }
+  try {
+    if (ACCT.sentMode === 'otp') await ACCT.C.lienMagique(ACCT.sent); else await ACCT.C.renvoyerConfirmation(ACCT.sent);
+    acctHelp((ACCT.sentMode === 'otp' ? 'LIEN RENVOYÉ À ' : 'MAIL RENVOYÉ À ') + ACCT.sent, 'ok');
+  } catch (e){ acctHelp(acctErr(e), 'err'); }
   acctBusy(false);
 }
 async function acctProfileSave(){
@@ -6208,17 +7046,22 @@ async function acctProfileSave(){
   const C = ACCT.C, chk = checkName($('apPseudo').value);
   if (!chk.ok){ acctHelp(chk.why, 'err'); acctFocus($('apPseudo')); return; }
   const taken = chk.name + ' EST DÉJÀ PRIS : CHOISIS EN UN AUTRE';
+  let year = '', mineur = false;
   if (!ACCT.prof){
-    const year = $('apYear').value.trim();
+    const dateNaiss = $('apYear').value; year = acctBirthYear($('apYear'));
     let t = C.verifierAge(year);
     if (t){ acctHelp(acctUp(t), 'err'); acctFocus($('apYear')); return; }
-    if (!$('apAge').checked){ acctHelp('COCHE LA CASE : J\'AI 15 ANS OU PLUS', 'err'); acctFocus($('apAge')); return; }
+    mineur = C.estMineur(year);
+    if (mineur){ if (!$('apParent').checked){ acctHelp('ACCORD D\'UN PARENT OU TUTEUR REQUIS EN DESSOUS DE 15 ANS', 'err'); acctFocus($('apParent')); return; } }
+    else if (!$('apAge').checked){ acctHelp('COCHE LA CASE : J\'AI 15 ANS OU PLUS', 'err'); acctFocus($('apAge')); return; }
+    // mineurs : même principe que acctSignup (voir plus haut) : date exacte locale, année seule au serveur.
+    store.set('birthDate', dateNaiss); chatZoneRefresh();
   }
   acctBusy(true); acctHelp('ENREGISTREMENT…');
   try {
     if (!ACCT.prof){
-      ACCT.prof = await C.creerProfil({ pseudo: chk.name, anneeNaissance: $('apYear').value.trim() });
-      acctNameSync(); acctBusy(false); acctClose(); acctMsg('PROFIL CRÉÉ : ' + ACCT.prof.pseudo, 'ok');
+      ACCT.prof = await C.creerProfil({ pseudo: chk.name, anneeNaissance: year, couleur: OFFER_COLOR_HEX, accordParental: mineur });
+      acctNameSync(); acctBusy(false); acctClose(); acctMsg('PROFIL CRÉÉ : ' + ACCT.prof.pseudo + ' · TEINTE ' + OFFER_COLOR_NAME + ' OFFERTE', 'ok');
       acctRecentsLoad(); acctPresence();
       return;
     }
@@ -6235,18 +7078,27 @@ async function acctProfileSave(){
   } catch (e){ acctBusy(false); acctHelp(e && e.code === '23505' ? taken : acctErr(e), 'err'); }
 }
 function acctInit(){
+  // bornes du sélecteur de date (mineurs : voir acctBirthYear) : 1900 au plus tôt, aujourd'hui au plus tard
+  { const min = '1900-01-01', max = new Date().toISOString().slice(0, 10); $('asYear').min = $('apYear').min = min; $('asYear').max = $('apYear').max = max; }
   $('afSignup').addEventListener('submit', (e) => { e.preventDefault(); acctSignup(); });
   $('afLogin').addEventListener('submit', (e) => { e.preventDefault(); acctLogin(); });
   $('afProfile').addEventListener('submit', (e) => { e.preventDefault(); acctProfileSave(); });
   $('alMagic').addEventListener('click', acctMagic);
   $('afResend').addEventListener('click', acctResend);
   $('acctNo').addEventListener('click', acctClose);
+  $('resCtaYes').addEventListener('click', () => acctOpen('signup'));
+  $('resCtaLater').addEventListener('click', () => { $('resCta').hidden = true; });
   // pseudo filtré au fil de la frappe, jamais pendant une composition (clavier prédictif des téléphones)
   [['asPseudo', 'asPseudoMsg', () => ''], ['apPseudo', 'apPseudoMsg', () => (ACCT.prof ? ACCT.prof.pseudo : '')]].forEach(([i, o, cur]) => {
     const f = (e) => { if (e && e.isComposing) return; acctPseudoLive($(i), $(o), cur()); };
     $(i).addEventListener('input', f); $(i).addEventListener('compositionend', () => f(null));
   });
-  ['asYear', 'apYear'].forEach((i) => $(i).addEventListener('input', () => { const el = $(i), v = el.value.replace(/\D/g, '').slice(0, 4); if (v !== el.value) el.value = v; }));
+  // champ de date natif : plus de filtrage de chiffres à la frappe, seulement la bascule 15 ans / accord parental
+  // (input ET change : certains claviers de date sur téléphone ne déclenchent que change à la fermeture)
+  [['asYear', 'asAgeRow', 'asAge', 'asParentRow', 'asParent'], ['apYear', 'apAgeRow', 'apAge', 'apParentRow', 'apParent']].forEach(([i, ar, ab, pr, pb]) => {
+    const upd = () => acctAgeToggle($(i), $(ar), $(ab), $(pr), $(pb));
+    $(i).addEventListener('input', upd); $(i).addEventListener('change', upd);
+  });
   $('acct').addEventListener('focusin', (e) => { setTimeout(() => acctReveal(e.target), 60); setTimeout(() => acctReveal(e.target), 400); });
   if (window.visualViewport){ visualViewport.addEventListener('resize', acctFit); visualViewport.addEventListener('scroll', acctFit); }
   addEventListener('resize', acctFit);
@@ -6260,6 +7112,714 @@ function acctInit(){
       try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e){}
     }
   }
+}
+
+/* ======================================================================================
+   MINEURS : zone d'âge et discussion (phrases toutes faites et emojis), MVP du 27/09/2026,
+   billet de zone signé ajouté le 27/09/2026 au soir (voir sentinelle-comptes/billet-zone.sql)
+   ======================================================================================
+   Voir sentinelle-comptes/TECHNIQUE-MINEURS.md, sentinelle-comptes/mineurs.sql et
+   sentinelle-comptes/billet-zone.sql (texte SQL, jamais exécuté). ÉTAT RÉEL, à lire avant de
+   toucher à ce qui suit : la zone de CHAQUE pilote qui compte pour décider avec qui discuter ou
+   s'appeler (celle lue par chatPeerZone, donc par chatRelayFromHost, chatReceive, voiceRoomMates,
+   voicePttRelayFromHost, voiceReceivePtt, voiceCall, voiceIncomingCall) n'est PLUS une simple
+   déclaration locale : c'est le résultat d'un billet signé par le serveur (billet-zone.sql,
+   fonctions demander_billet_zone/verifier_billet_zone), vérifié par CHAQUE appareil pour CHAQUE
+   autre pilote (module BILLET/zonePilote ci dessous), jamais une confiance dans ce qu'un pilote
+   ou l'hôte qui relaie prétend. Un appareil modifié ne peut plus se faire passer pour une zone
+   qui n'est pas la sienne : il n'a jamais la clé de signature, qui ne quitte jamais le serveur.
+   Chaque pilote continue en plus d'annoncer sa zone en clair (champ z, monZoneLocale) dans hello
+   et lobby, gardée UNIQUEMENT à titre informatif/d'affichage : plus aucune décision de sécurité
+   ne se prend jamais dessus (voir chatPeerZone). Ce que cela NE couvre PAS, dit clairement :
+   le serveur public de signalisation de PeerJS (0.peerjs.com) reste sans authentification et voit
+   passer les billets en clair au moment de la connexion (zone, identifiant pseudonyme, deux
+   horodatages, jamais une date de naissance) ; il voit aussi, comme avant, qu'une activité de jeu
+   relie deux adresses IP. Un billet dure 3 minutes et est revérifié périodiquement (billetTick,
+   toutes les 20 s environ) : une révocation (bannissement) met donc au plus quelques dizaines de
+   secondes à se répercuter sur un billet déjà en cache, jamais plus. Détail complet du mécanisme,
+   du choix HMAC plutôt qu'ECDSA et de cette limite dans billet-zone.sql. */
+
+// ---- zone d'âge, calculée localement (mêmes seuils que sentinelle_interne.zone_pour_date) ----
+const CHAT_ZONES = ['moins_13', '13_15', '16_17', 'adulte'];
+const CHAT_ZONE_LABEL = { moins_13: 'MOINS DE 13 ANS', '13_15': '13 À 15 ANS', '16_17': '16 À 17 ANS', adulte: 'ADULTE' };
+function zoneClean(z){ return typeof z === 'string' && CHAT_ZONES.includes(z) ? z : ''; }
+// Une date de naissance ISO (AAAA-MM-JJ) devient une des quatre zones ; jamais moins protecteur
+// que le pire cas (anniversaire pas encore passé cette année), même logique que mineurs.sql.
+function zonePourDate(iso, ref){
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso || ''))) return null;
+  const d = new Date(iso + 'T00:00:00Z');
+  if (isNaN(d.getTime())) return null;
+  const r = ref instanceof Date ? ref : new Date();
+  const moins = (ans) => new Date(Date.UTC(r.getUTCFullYear() - ans, r.getUTCMonth(), r.getUTCDate()));
+  if (d > moins(13)) return 'moins_13';
+  if (d > moins(16)) return '13_15';
+  if (d > moins(18)) return '16_17';
+  return 'adulte';
+}
+// Zone locale de CE joueur, depuis la date gardée par acctSignup/acctProfileSave (voir plus haut).
+function monZoneLocale(){ return zonePourDate(store.get('birthDate', '')); }
+
+// ---- BILLET DE ZONE (billet-zone.sql, TECHNIQUE-MINEURS.md partie 4) : ticket signé par le serveur,
+// qui remplace la confiance dans le champ z annoncé par chaque appareil pour toute décision de tchat ou
+// de vocal. Un billet est un texte compact { zone, salle, expiration... } signé par une clé que seul le
+// serveur connaît (HMAC, voir billet-zone.sql pour le choix et pourquoi) : aucun appareil, même modifié,
+// ne peut en fabriquer un valide pour une zone qui n'est pas la sienne. Le client ne PEUT PAS vérifier la
+// signature lui même (clé symétrique, jamais envoyée) : la vérification passe donc par un petit appel
+// serveur (verifierBilletZone), aussi léger qu'un appel RPC ordinaire de ce fichier. Tant que
+// billet-zone.sql n'a pas été lancé, billetMien() rend null (indisponible, même dégradé que maZone()) :
+// le tchat et le vocal restent alors fermés avec tout le monde, exactement comme une zone inconnue. ----
+const BILLET = { salle: '', valeur: '', zone: '', expire: 0, pending: null, sallePending: '' };
+const PEER_ZONE = new Map();    // pid -> { billet, zone } : dernière vérification RÉUSSIE d'un pair (voir zonePilote)
+const PEER_CHECK = new Map();   // pid -> billet actuellement en cours de vérification, pour ne jamais lancer deux fois le même appel
+// Mon propre billet le plus frais pour CETTE salle, redemandé si absent, changé de salle, ou à moins de
+// 25 s de son expiration (3 minutes de durée de vie, voir billet-zone.sql : largement le temps d'agir).
+// Ne lève jamais d'exception : rend null si indisponible (pas de compte, hors ligne, billet-zone.sql pas
+// encore lancé), à traiter par l'appelant exactement comme aujourd'hui une zone locale inconnue.
+async function billetMien(salle){
+  const now = Date.now();
+  if (BILLET.salle === salle && BILLET.valeur && BILLET.expire - now > 25000) return BILLET;
+  if (BILLET.pending && BILLET.sallePending === salle) return BILLET.pending;
+  const p = (async () => {
+    if (!ACCT.C || !ACCT.id) return null;
+    try {
+      const r = await ACCT.C.demanderBilletZone(salle);
+      if (r && r.dispo && r.billet && zoneClean(r.zone)){
+        BILLET.salle = salle; BILLET.valeur = r.billet; BILLET.zone = r.zone;
+        BILLET.expire = now + Math.max(0, (+r.expireDansMs || 150000));
+        return BILLET;
+      }
+    } catch (e){}
+    return null;
+  })();
+  BILLET.pending = p; BILLET.sallePending = salle;
+  const res = await p;
+  if (BILLET.pending === p) BILLET.pending = null;
+  return res;
+}
+// Zone VÉRIFIÉE d'un pair (jamais la mienne : voir billetMien ci dessus), avec un petit cache par
+// (pid, texte exact du billet) pour ne jamais revérifier deux fois le même texte : un billet rafraîchi
+// par l'autre appareil a un texte différent (iat/exp changés) et relance donc naturellement une vraie
+// vérification. Ne fait JAMAIS confiance par défaut : un billet absent, invalide, expiré ou d'une autre
+// salle rend '' (jamais la dernière zone connue), exactement le même refus par défaut qu'aujourd'hui.
+async function zonePilote(pid, billet, salle){
+  if (!billet){ PEER_ZONE.delete(pid); return ''; }
+  const cache = PEER_ZONE.get(pid);
+  if (cache && cache.billet === billet) return cache.zone;
+  if (PEER_CHECK.get(pid) === billet) return cache ? cache.zone : '';   // déjà en cours : on rend en attendant ce qui est déjà connu
+  PEER_CHECK.set(pid, billet);
+  try {
+    if (ACCT.C && ACCT.id){
+      const r = await ACCT.C.verifierBilletZone(billet, salle);
+      if (r && r.dispo && r.valide && zoneClean(r.zone)) PEER_ZONE.set(pid, { billet, zone: r.zone });
+      else PEER_ZONE.delete(pid);
+    } else PEER_ZONE.delete(pid);
+  } catch (e){ PEER_ZONE.delete(pid); }
+  finally { if (PEER_CHECK.get(pid) === billet) PEER_CHECK.delete(pid); }
+  return (PEER_ZONE.get(pid) || {}).zone || '';
+}
+// Relance la vérification de tous les billets actuellement connus dans la salle (hôte : le billet brut
+// gardé par pilote, P.billet ; invité : le champ zb relayé par l'hôte dans le dernier lobby reçu), jamais
+// bloquant, jamais synchrone : chatPeerZone lit ensuite le cache PEER_ZONE déjà à jour. Appelée dès
+// qu'un lobby arrive (guestMsg) et périodiquement (billetTick, voir netWatch).
+function zonePairsRefresh(){
+  if (!NET.on) return;
+  const salle = NET.code || '';
+  const paires = NET.host
+    ? [...NET.pilots.values()].filter((P) => P.pid !== 'h').map((P) => [P.pid, P.billet || ''])
+    : (NET.lobby || []).filter((p) => p.p !== NET.pid).map((p) => [p.p, p.zb || '']);
+  for (const [pid, billet] of paires){
+    const avant = (PEER_ZONE.get(pid) || {}).zone || '';
+    zonePilote(pid, billet, salle).then((z) => {
+      if (z === avant || !NET.on) return;
+      if (UI.cur === 'chat' && !$('menu').hidden) chatPanelRender();
+      voiceSync();
+    });
+  }
+}
+// Rafraîchit MON PROPRE billet pour la salle en cours (voir netWatch, appelée toutes les 20 s environ) :
+// côté hôte, mis à jour directement sur mon propre pilote 'h' puis rediffusé (lobbySend) ; côté invité,
+// envoyé à l'hôte par un petit message dédié (case 'zb' de hostMsg), le canal de données déjà ouvert de
+// la salle, jamais un nouveau transport. Relance aussi la vérification des pairs déjà connus.
+function billetTick(){
+  if (!NET.on) return;
+  const salle = NET.code || '';
+  billetMien(salle).then((b) => {
+    if (!NET.on || NET.code !== salle) return;
+    const val = b ? b.valeur : '';
+    if (NET.host){ const P = NET.pilots.get('h'); if (P && P.billet !== val){ P.billet = val; lobbySend(); } }
+    else if (NET.hc) NET.hc.send({ t: 'zb', zb: val });
+  });
+  zonePairsRefresh();
+}
+// Hôte seulement : vérifie le billet d'un pilote qui vient d'arriver ou de revenir (hostHello), jamais
+// bloquant (le pilote entre dans la salle tout de suite, le tchat et le vocal restent fermés avec lui
+// tant que son billet n'est pas encore vérifié, exactement comme un billet absent). Rediffuse la salle
+// une fois connu, pour que l'hôte lui même (et bientôt les autres, au prochain lobby) voient la zone
+// vérifiée sans attendre le prochain changement de salle.
+function billetVerifyAndBroadcast(pid, billet){
+  zonePilote(pid, billet, NET.code || '').then(() => { if (NET.on && NET.host) lobbySend(); });
+}
+
+const CHAT = {
+  zone: null,          // zone de CE joueur (provisoire, locale)
+  unlocked: false,     // discussion activée (toujours vraie pour un adulte, sur accord parental sinon)
+  view: 'gate',        // 'gate' (verrou), 'parental' (déverrouillage), 'chat' (discussion), 'report' (signalement)
+  log: [],             // messages de cette session, en mémoire de l'onglet seulement
+};
+function chatUnlockState(){
+  const u = store.get('chatUnlock', null);
+  return !!(u && u.granted && u.zone === CHAT.zone);
+}
+// Recalcule seulement CHAT.zone/CHAT.unlocked, sans jamais redessiner (chatPanelRender l'appelle déjà
+// lui même à chaque rendu : l'appeler depuis chatZoneRefresh ci dessous provoquerait une boucle infinie).
+function chatZoneCompute(){
+  CHAT.zone = monZoneLocale();
+  CHAT.unlocked = CHAT.zone === 'adulte' || chatUnlockState();
+}
+// Pour les appelants EXTÉRIEURS au panneau (acctSignup, acctProfileSave, après une nouvelle date de
+// naissance) : recalcule la zone et rafraîchit l'écran si la discussion est déjà ouverte. N'appelle
+// jamais le serveur : voir chatZoneServeur ci dessous.
+function chatZoneRefresh(){
+  chatZoneCompute();
+  if (UI.cur === 'chat' && !$('menu').hidden) chatPanelRender();
+  // vocal (voir le bloc VOCAL) : même zone locale, jamais recalculée différemment ; une nouvelle date de
+  // naissance peut rendre le vocal accessible ou, au contraire, le fermer (bouton d'accès et appels en cours)
+  voiceNavSync(); voiceSync();
+  if (UI.cur === 'voice' && !$('menu').hidden) voicePanelRender();
+}
+// Préparation de l'appel serveur (mineurs.sql, ma_zone) : lue une fois à l'ouverture de la
+// discussion, en tâche de fond, jamais bloquant. dispo:false tant que mineurs.sql n'a pas été
+// lancé (comme monRecord() avant classement.sql) : la zone locale ci dessus reste alors seule
+// utilisée. Le jour où mineurs.sql tourne, cet appel se met à rendre une vraie zone sans qu'
+// aucun code du jeu n'ait besoin de changer (même degradé gracieux que le classement).
+async function chatZoneServeur(){
+  if (!ACCT.C || !ACCT.id) return;
+  try {
+    const r = await ACCT.C.maZone();
+    if (r && r.dispo && zoneClean(r.zone)){
+      CHAT.zone = r.zone; CHAT.unlocked = CHAT.zone === 'adulte' || chatUnlockState();
+      if (UI.cur === 'chat' && !$('menu').hidden) chatPanelRender();
+    }
+  } catch (e){}
+}
+
+// Catalogue fermé : aucune saisie libre nulle part dans ce MVP. Clés dans le même style que
+// celles proposées dans TECHNIQUE-MINEURS.md partie 5, pour rester cohérent avec un futur
+// catalogue côté serveur (catalogue_messages), non construit ici (voir mineurs.sql, en tête).
+const CHAT_PHRASES = [
+  ['phrase_salut_pilote', 'SALUT PILOTE'], ['phrase_bienvenue_salle', 'BIENVENUE DANS LA SALLE'],
+  ['phrase_on_commence', 'ON COMMENCE'], ['phrase_une_minute', 'UNE MINUTE'], ['phrase_pret', 'PRÊT'],
+  ['phrase_bon_vol', 'BON VOL'], ['phrase_a_la_prochaine', 'À LA PROCHAINE'],
+  ['phrase_couvre_gauche', 'JE COUVRE LA GAUCHE'], ['phrase_couvre_droite', 'JE COUVRE LA DROITE'],
+  ['phrase_regroupement', 'REGROUPEMENT'], ['phrase_ennemi_repere', 'ENNEMI REPÉRÉ'],
+  ['phrase_besoin_aide', 'BESOIN D\'AIDE ICI'], ['phrase_jarrive', 'J\'ARRIVE'],
+  ['phrase_attention_derriere', 'ATTENTION DERRIÈRE TOI'], ['phrase_on_avance', 'ON AVANCE'],
+  ['phrase_on_recule', 'ON RECULE'], ['phrase_cible_detruite', 'CIBLE DÉTRUITE'],
+  ['phrase_objet_pris', 'OBJET PRIS'], ['phrase_protege_base', 'JE PROTÈGE LA BASE'],
+  ['phrase_bravo', 'BRAVO'], ['phrase_bien_joue', 'BIEN JOUÉ'], ['phrase_trop_fort', 'TROP FORT'],
+  ['phrase_bien_vu', 'BIEN VU'], ['phrase_serre', 'C\'ÉTAIT SERRÉ'], ['phrase_pas_de_chance', 'PAS DE CHANCE'],
+  ['phrase_on_y_retourne', 'ON Y RETOURNE'], ['phrase_merci', 'MERCI'], ['phrase_desole', 'DÉSOLÉ'],
+  ['phrase_dois_partir', 'JE DOIS PARTIR'], ['phrase_a_bientot', 'À BIENTÔT'],
+];
+const CHAT_EMOJIS = [
+  ['emoji_pouce_haut', '👍'], ['emoji_pouce_bas', '👎'], ['emoji_rire', '😂'], ['emoji_surprise', '😮'],
+  ['emoji_triste', '😢'], ['emoji_colere', '😡'], ['emoji_coeur', '❤️'], ['emoji_fete', '🎉'],
+  ['emoji_fusee', '🚀'], ['emoji_bouclier', '🛡️'], ['emoji_etoile', '⭐'], ['emoji_feu', '🔥'],
+  ['emoji_applaudir', '👏'], ['emoji_merci_mains', '🙏'], ['emoji_ok', '✅'], ['emoji_non', '❌'],
+];
+const CHAT_ALL = new Map([...CHAT_PHRASES, ...CHAT_EMOJIS]);
+const CHAT_EMOJI_KEYS = new Set(CHAT_EMOJIS.map((e) => e[0]));
+const CHAT_REPORT_REASONS = [
+  ['comportement', 'Comportement inapproprié'],
+  ['contact', 'Tentative de contact hors du jeu'],
+  ['langage', 'Langage déplacé'],
+  ['triche', 'Triche ou comportement anormal'],
+  ['autre', 'Autre'],
+];
+
+// Zone VÉRIFIÉE d'un pair de la salle (billet-zone.sql, voir le module BILLET plus haut) : jamais plus
+// le champ z annoncé en clair. Moi même : toujours CHAT.zone (jamais besoin de vérifier mon propre
+// billet auprès de moi même). Un autre pilote (hôte ou invité, peu importe le côté) : le cache
+// PEER_ZONE, rempli uniquement par une vérification serveur réussie (zonePilote, zonePairsRefresh) ;
+// '' tant que non encore vérifié, invalide, expiré ou absent, jamais une zone supposée par défaut.
+function chatPeerZone(pid){
+  const moi = NET.host ? 'h' : NET.pid;
+  if (pid === moi) return CHAT.zone;
+  return zoneClean((PEER_ZONE.get(pid) || {}).zone || '');
+}
+function chatPeerInfo(pid){
+  if (NET.host){
+    if (pid === 'h') return { pid: 'h', pseudo: ID.name, uid: acctUid() };
+    const P = NET.pilots.get(pid);
+    return P ? { pid: P.pid, pseudo: P.name, uid: P.u || '' } : null;
+  }
+  const p = (NET.lobby || []).find((x) => x.p === pid);
+  return p ? { pid: p.p, pseudo: p.n, uid: p.u || '' } : null;
+}
+
+// Envoi : seulement si la discussion est déverrouillée et qu'une salle est ouverte (le tchat
+// voyage sur le canal PeerJS déjà utilisé par la salle : aucun autre transport dans ce MVP).
+function chatCanSend(){ return CHAT.unlocked && !!CHAT.zone && NET.on; }
+function chatPush(entry){
+  CHAT.log.push(entry);
+  if (CHAT.log.length > 60) CHAT.log.shift();
+  if (UI.cur === 'chat' && !$('menu').hidden) chatPanelRender();
+}
+function chatSend(key){
+  if (!chatCanSend() || !CHAT_ALL.has(key)) return;
+  const texte = CHAT_ALL.get(key), moi = NET.host ? 'h' : NET.pid;
+  chatPush({ pid: moi, pseudo: ID.name, texte, mine: true, t: Date.now() });
+  if (NET.host) chatRelayFromHost('h', key, texte, ID.name);
+  else if (NET.hc) NET.hc.send({ t: 'chat', k: key });
+}
+// Hôte : reçoit le message d'un invité (hostMsg, case 'chat') et le relaie.
+function hostChat(L, P, m){
+  const key = typeof m.k === 'string' ? m.k : '';
+  if (!CHAT_ALL.has(key)) return;
+  chatRelayFromHost(P.pid, key, CHAT_ALL.get(key), P.name);
+}
+// Relais côté hôte : envoyé SEULEMENT aux pilotes de la MÊME zone VÉRIFIÉE que l'auteur (chatPeerZone,
+// voir le module BILLET plus haut : plus une simple déclaration), jamais aux autres, et affiché
+// localement chez l'hôte si sa propre zone correspond aussi.
+function chatRelayFromHost(fromPid, key, texte, fromName){
+  const zoneAuteur = chatPeerZone(fromPid);
+  if (!zoneAuteur) return;
+  const msg = JSON.stringify({ t: 'chat', k: key, p: fromPid });
+  for (const L of NET.links){
+    if (!L.pid || L.pid === fromPid) continue;
+    if (chatPeerZone(L.pid) === zoneAuteur) L.send(msg);
+  }
+  if (fromPid !== 'h' && CHAT.zone === zoneAuteur) chatPush({ pid: fromPid, pseudo: fromName || 'PILOTE', texte, mine: false, t: Date.now() });
+}
+// Invité : reçoit un message déjà filtré par zone par l'hôte (guestMsg, case 'chat'), et revérifie
+// quand même lui même, avec sa propre vérification indépendante du billet de l'auteur (chatPeerZone,
+// défense en profondeur : jamais une confiance aveugle dans le relais de l'hôte, qui reste un simple
+// pilote parmi d'autres et pourrait tout aussi bien être modifié ; un hôte modifié peut au pire refuser
+// de relayer ou relayer à la mauvaise zone SES PROPRES messages, jamais forger un billet valide pour
+// une zone qui n'est pas la sienne).
+function chatReceive(m){
+  const key = typeof m.k === 'string' ? m.k : '', pid = typeof m.p === 'string' ? m.p : '';
+  const texte = CHAT_ALL.get(key);
+  if (!texte || !pid || !CHAT.zone) return;
+  if (chatPeerZone(pid) !== CHAT.zone) return;   // zones différentes : jamais affiché
+  const info = chatPeerInfo(pid);
+  chatPush({ pid, pseudo: (info && info.pseudo) || 'PILOTE', texte, mine: false, t: Date.now() });
+}
+
+// ---- déverrouillage parental (distinct de la case de création de compte : jamais coché
+// d'avance, geste explicite, gardé localement avec sa date) ----
+function chatParentalConfirm(){
+  const box = $('chatParentBox');
+  if (!box || !box.checked) return;
+  store.set('chatUnlock', { granted: true, when: new Date().toISOString(), zone: CHAT.zone });
+  CHAT.unlocked = true; CHAT.view = 'chat';
+  chatPanelRender();
+  toast('DISCUSSION ACTIVÉE', 2.5);
+}
+
+// ---- signalement : deux touches (SIGNALER, puis un motif), confirmation immédiate quoi
+// qu'il arrive côté serveur ----
+function chatReportSend(reasonKey){
+  const found = CHAT_REPORT_REASONS.find((r) => r[0] === reasonKey);
+  const motif = found ? found[1] : 'Non précisé';
+  const dernier = [...CHAT.log].reverse().find((m) => !m.mine) || null;
+  const cible = dernier ? chatPeerInfo(dernier.pid) : null;
+  const contenu = dernier ? (dernier.pseudo + ' : ' + dernier.texte) : '[aucun message reçu dans cette session]';
+  const payload = { signaleId: cible ? cible.uid : '', signalePseudo: cible ? cible.pseudo : '', salleCode: NET.code || '', zone: CHAT.zone, contenuSignale: contenu, motif };
+  CHAT.view = 'chat'; chatPanelRender();
+  toast('SIGNALEMENT ENVOYÉ', 3);
+  const enregistrerLocal = () => { const q = store.get('signalementsEnAttente', []); q.push({ ...payload, quand: new Date().toISOString() }); store.set('signalementsEnAttente', q.slice(-50)); };
+  // À terme (mineurs.sql lancé) : POST réel dans public.signalements, ci dessous via C.signaler().
+  // Tant que la table n'existe pas encore, l'appel échoue proprement (dispo:false) et le
+  // signalement est gardé en attente localement à la place : jamais d'erreur montrée au joueur.
+  if (ACCT.C && ACCT.id) ACCT.C.signaler(payload).then((r) => { if (!r || !r.dispo) enregistrerLocal(); }).catch(() => enregistrerLocal());
+  else enregistrerLocal();
+}
+
+// ---- panneau ----
+function chatPanelRender(){
+  chatZoneCompute();   // relit la zone locale à chaque ouverture (une date vient peut être d'être saisie)
+  chatZoneServeur();   // préparation non bloquante de la vraie zone serveur, voir plus haut
+  const body = $('chatBody');
+  if (!CHAT.zone){
+    CHAT.view = 'gate';
+    body.innerHTML = '<p class="nline">Indique ta date de naissance dans MON COMPTE pour utiliser la discussion : elle sert seulement à te mettre avec des joueurs du même âge, elle n\'est jamais montrée à personne.</p>'
+      + '<button class="mi" data-cact="openCompte"><b>[01]</b>ALLER À MON COMPTE</button>';
+    $('chatReportBtn').hidden = true;
+    return;
+  }
+  if (CHAT.zone !== 'adulte' && !CHAT.unlocked && CHAT.view !== 'parental') CHAT.view = 'gate';
+  if (CHAT.view === 'gate' && CHAT.zone !== 'adulte' && !CHAT.unlocked){
+    body.innerHTML = '<p class="nline">Zone : <b>' + CHAT_ZONE_LABEL[CHAT.zone] + '</b>. La discussion est fermée par défaut pour un compte mineur. Elle propose seulement des phrases toutes faites et des emojis, jamais de texte libre, avec un bouton de signalement toujours visible, et ne peut s\'ouvrir qu\'avec l\'accord explicite d\'un parent ou tuteur.</p>'
+      + '<button class="mi" data-cact="openParental"><b>[01]</b>DEMANDER LE DÉVERROUILLAGE PARENTAL</button>';
+    $('chatReportBtn').hidden = true;
+    return;
+  }
+  if (CHAT.view === 'parental'){
+    body.innerHTML = '<p class="nline">Un parent ou tuteur doit donner son accord explicite pour ouvrir la discussion de ce compte (zone <b>' + CHAT_ZONE_LABEL[CHAT.zone] + '</b>). Elle reste limitée à des phrases toutes faites et des emojis, jamais de texte libre, jamais de message privé, vocal, image ou lien, avec un signalement toujours possible en deux touches.</p>'
+      + '<label class="ck" id="chatParentRow"><input id="chatParentBox" type="checkbox"><span>Un parent ou tuteur autorise l\'accès à la discussion pour ce compte.</span></label>'
+      + '<button class="mi" data-cact="confirmParental" id="chatParentGo" disabled><b>[01]</b>ACTIVER LA DISCUSSION</button>'
+      + '<button class="mi small" data-cact="cancelParental">ANNULER</button>';
+    $('chatReportBtn').hidden = true;
+    const box = $('chatParentBox');
+    box.checked = false;
+    box.addEventListener('change', () => { $('chatParentGo').disabled = !box.checked; });
+    return;
+  }
+  if (CHAT.view === 'report'){
+    $('chatReportBtn').hidden = false;
+    body.innerHTML = '<p class="nline">Choisis un motif : le signalement part tout de suite.</p>'
+      + '<nav class="mlist wide chatReasons">' + CHAT_REPORT_REASONS.map(([k, txt], i) => '<button class="mi set" data-cact="sendReport" data-reason="' + k + '"><b>[' + String(i + 1).padStart(2, '0') + ']</b><span class="k">' + esc(txt) + '</span></button>').join('') + '</nav>'
+      + '<button class="mi small" data-cact="cancelReport">ANNULER</button>';
+    return;
+  }
+  $('chatReportBtn').hidden = false;
+  const enRoom = NET.on;
+  const zoneNote = '<p class="nnote">Zone : ' + CHAT_ZONE_LABEL[CHAT.zone] + '. Discussion visible seulement entre joueurs de cette même zone, certifiée par notre serveur pour chaque pilote, pas seulement déclarée par son appareil (détail dans la politique de confidentialité). Phrases toutes faites et emojis seulement : jamais de texte libre, jamais de message privé, vocal, image ou lien.</p>';
+  const note = enRoom ? '' : '<p class="nline err">Rejoins une salle ou une partie rapide pour discuter avec les pilotes de ta zone.</p>';
+  const log = CHAT.log.length
+    ? '<div id="chatLog">' + CHAT.log.map((m) => '<p class="chatMsg' + (m.mine ? ' me' : '') + '"><b>' + esc(m.mine ? 'TOI' : m.pseudo) + '</b>' + esc(m.texte) + '</p>').join('') + '</div>'
+    : '<p class="nline">Aucun message pour l\'instant.</p>';
+  const chips = (list) => list.map(([k, txt]) => '<button class="chatChip' + (CHAT_EMOJI_KEYS.has(k) ? ' emoji' : '') + '" data-cact="send" data-k="' + k + '"' + (enRoom ? '' : ' disabled') + '>' + esc(txt) + '</button>').join('');
+  body.innerHTML = zoneNote + note + log
+    + '<div id="chatCatalog"><div class="chatGroup">' + chips(CHAT_PHRASES) + '</div><div class="chatGroup">' + chips(CHAT_EMOJIS) + '</div></div>';
+  const lg = $('chatLog'); if (lg) lg.scrollTop = lg.scrollHeight;
+}
+function chatInit(){
+  $('pChat').addEventListener('click', (e) => {
+    const el = e.target.closest('[data-cact]'); if (!el) return;
+    const act = el.dataset.cact;
+    if (act === 'openCompte'){ acctMsg(''); openPanel('compte'); acctBoot().catch(() => {}); }
+    else if (act === 'openParental'){ CHAT.view = 'parental'; chatPanelRender(); }
+    else if (act === 'cancelParental'){ CHAT.view = 'gate'; chatPanelRender(); }
+    else if (act === 'confirmParental') chatParentalConfirm();
+    else if (act === 'toggleReport'){ CHAT.view = CHAT.view === 'report' ? 'chat' : 'report'; chatPanelRender(); }
+    else if (act === 'cancelReport'){ CHAT.view = 'chat'; chatPanelRender(); }
+    else if (act === 'sendReport') chatReportSend(el.dataset.reason);
+    else if (act === 'send') chatSend(el.dataset.k);
+  });
+}
+
+/* ======================================================================================
+   VOCAL : appel vocal entre pilotes de la MÊME zone, 13 ans et plus seulement, 27/09/2026 soir,
+   billet de zone signé ajouté le 27/09/2026 au soir (voir sentinelle-comptes/billet-zone.sql)
+   ======================================================================================
+   Suite directe du bloc MINEURS ci dessus, MÊME MÉCANISME : le filtrage par zone ci dessous
+   repose désormais sur le même billet signé que la discussion écrite (voir l'entête du bloc
+   MINEURS et le module BILLET qui s'y trouve), jamais recalculé ni revérifié différemment ici :
+   voiceRoomMates (et donc voiceSync, voiceCall, voiceIncomingCall) appelle chatPeerZone tel
+   quel, qui lit désormais le cache PEER_ZONE rempli uniquement par une vérification serveur
+   réussie. Un joueur dont le jeu aurait été modifié ne peut plus se faire passer pour une zone
+   qui n'est pas la sienne, ici pas plus que dans la discussion. Ce que cela NE couvre PAS : voir
+   l'entête du bloc MINEURS (serveur public de signalisation PeerJS sans authentification, durée
+   de vie du billet, revérification périodique) — même limite exacte, pas la peine de la répéter
+   deux fois. AUCUN SON N'EST JAMAIS ENREGISTRÉ NI GARDÉ, nulle part : la voix voyage seulement en direct,
+   de pilote à pilote (WebRTC), jamais écrite sur cet appareil ni sur aucun serveur. Aucun
+   MediaRecorder, aucun fichier, aucun envoi du son lui même à qui que ce soit.
+   Transport : PAS un second système de signalisation. Le jeu a déjà, pour CHAQUE joueur, un
+   objet Peer permanent (NET.me, ouvert par presenceStart, nommé d'après le code ami) et,
+   entre l'hôte et chaque invité, une connexion de données déjà ouverte sur ces mêmes objets
+   (voir guestConnect/hostIncoming). Le vocal ajoute des appels média PeerJS (call/answer, flux
+   audio) SUR CES MÊMES OBJETS, jamais un troisième transport : hôte et invité réutilisent la
+   liaison qui existe déjà entre eux ; deux invités (aucune connexion directe entre eux
+   aujourd'hui, le jeu et le tchat passent toujours par l'hôte) s'appellent directement l'un
+   l'autre avec leur propre NET.me, adressé par le même code ami déjà diffusé à toute la salle
+   dans le message lobby (lobbyList : f: P.fc), exactement la donnée déjà utilisée par
+   « joueurs récents » et « défier un ami » : aucune nouvelle information n'est diffusée pour
+   permettre ceci. C'est la simplification la plus proche de « la même connexion déjà
+   ouverte » quand cette connexion n'existe pas entre deux invités : mêmes objets Peer, même
+   schéma d'adressage, aucun nouveau serveur. */
+
+const VOICE_ZONES = ['13_15', '16_17', 'adulte'];   // jamais moins_13 : aucune interface, pas même un bouton coupé
+function voiceZoneOk(z){ return VOICE_ZONES.includes(z); }
+// Éligibilité de CE joueur : zone connue et autorisée, réglage vocal activé (ne dit rien des autres pilotes).
+function voiceEligible(){ return voiceZoneOk(CHAT.zone) && !!settings.voice; }
+function voicePeerIdFor(fc){ return friendOk(fc) ? NET_PREFIX + 'ami-' + fc : ''; }
+
+const VOICE = {
+  stream: null, streamKind: '', streamErr: '',   // micro local (getUserMedia) ou repli muet (voir voiceLocalStream)
+  peers: new Map(),    // identifiant Peer distant -> { roomPid, name, call, audioEl, muted, talking }
+  pending: new Set(),  // appels sortants en cours d'établissement (évite les doublons pendant l'attente du micro)
+  ptt: false,          // touche ou bouton actuellement tenu
+  lastTalker: '',       // dernier pid (jeu) entendu en train de parler, cible par défaut d'un signalement
+  view: 'main',         // 'main' ou 'report'
+  nextSync: 0,
+};
+// Micro demandé une seule fois, à l'usage (ouverture du panneau ou premier appui sur PARLER), jamais en tâche
+// de fond au chargement de la page : un geste explicite du joueur avant toute demande de permission. Repli en
+// cas de refus, d'absence de matériel ou d'indisponibilité (fréquent dans un panneau de test) : un flux audio
+// silencieux fabriqué localement (Web Audio), qui permet de vérifier la connexion et le filtrage par zone avec
+// de vraies données réseau, sans jamais prétendre transmettre un vrai son.
+function voiceLocalStream(){
+  if (VOICE.stream) return Promise.resolve(VOICE.stream);
+  if (VOICE.streamP) return VOICE.streamP;
+  const silent = () => {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx(); const dst = ctx.createMediaStreamDestination();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
+      gain.gain.value = 0; osc.connect(gain); gain.connect(dst); osc.start();
+      try { ctx.resume(); } catch (e){}
+      dst.stream.getAudioTracks().forEach((t) => { t.enabled = VOICE.ptt; });
+      VOICE.stream = dst.stream; VOICE.streamKind = 'silent';
+    } catch (e){ VOICE.stream = null; VOICE.streamKind = ''; }
+    return VOICE.stream;
+  };
+  const p = (navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+    ? navigator.mediaDevices.getUserMedia({ audio: true, video: false }) : Promise.reject(new Error('absent')))
+    .then((s) => { s.getAudioTracks().forEach((t) => { t.enabled = VOICE.ptt; }); VOICE.stream = s; VOICE.streamKind = 'mic'; VOICE.streamErr = ''; return s; })
+    .catch((e) => { VOICE.streamErr = (e && e.name) || 'indisponible'; return silent(); })
+    .then((s) => { VOICE.streamP = null; return s; });
+  VOICE.streamP = p;
+  return p;
+}
+function voiceStreamStop(){
+  if (VOICE.stream){ try { VOICE.stream.getTracks().forEach((t) => t.stop()); } catch (e){} }
+  VOICE.stream = null; VOICE.streamP = null; VOICE.streamKind = ''; VOICE.streamErr = '';
+}
+
+// Pilotes ELIGIBLES de MA salle actuelle, dans MA MÊME zone (réutilise chatPeerZone/CHAT.zone tels quels,
+// aucune zone recalculée différemment). Réservé à un joueur lui même éligible (voir les appelants).
+function voiceRoomMates(){
+  if (!NET.on) return [];
+  if (NET.host){
+    const out = [];
+    for (const P of NET.pilots.values()){
+      if (P.pid === 'h' || !P.conn) continue;
+      if (chatPeerZone(P.pid) === CHAT.zone && friendOk(P.fc)) out.push({ pid: P.pid, name: P.name, fc: P.fc });
+    }
+    return out;
+  }
+  return (NET.lobby || []).filter((p) => p.p !== NET.pid && p.o && chatPeerZone(p.p) === CHAT.zone && friendOk(p.f)).map((p) => ({ pid: p.p, name: p.n, fc: p.f }));
+}
+
+// ---- établissement des appels : ordre déterministe (comparaison des identifiants Peer en texte) pour que les
+// deux côtés ne s'appellent jamais en même temps ; l'autre côté répond à l'appel reçu (voir voiceIncomingCall) ----
+function voiceSync(){
+  chatZoneCompute();   // au cas où la zone locale vient de changer, même fonction que le tchat
+  const eligible = voiceEligible() && NET.on;
+  const mates = eligible ? voiceRoomMates() : [];
+  const wanted = new Set(mates.map((m) => voicePeerIdFor(m.fc)).filter(Boolean));
+  for (const pid of [...VOICE.peers.keys()]) if (!wanted.has(pid)) voiceHangup(pid);
+  voicePanelRenderMaybe();
+  if (!eligible || typeof window.Peer === 'undefined' || !NET.me) return;
+  presenceStart().then((me) => {
+    if (!voiceEligible() || !NET.on) return;   // a pu changer pendant l'attente
+    for (const m of mates){
+      const rpid = voicePeerIdFor(m.fc);
+      if (!rpid || rpid === me.id || VOICE.peers.has(rpid) || VOICE.pending.has(rpid)) continue;
+      if (me.id < rpid){ VOICE.pending.add(rpid); voiceCall(me, rpid, m); }
+    }
+  }).catch(() => {});
+}
+async function voiceCall(me, rpid, mate){
+  try {
+    const stream = await voiceLocalStream();
+    VOICE.pending.delete(rpid);
+    if (!stream || VOICE.peers.has(rpid) || !voiceEligible() || !NET.on) return;
+    // le pair voulu au moment de la demande du micro peut être reparti ou avoir changé de zone entre temps
+    if (!voiceRoomMates().some((m2) => voicePeerIdFor(m2.fc) === rpid)) return;
+    let call; try { call = me.call(rpid, stream); } catch (e){ return; }
+    if (call) voiceAttach(rpid, call, mate.name, mate.pid, true);
+  } catch (e){ VOICE.pending.delete(rpid); }
+}
+// Appel entrant : jamais une confiance dans l'appelant. N'accepte QUE si l'identifiant Peer réel
+// (call.peer, fourni par PeerJS/WebRTC, jamais par un champ écrit par l'appelant) est un pilote de MA
+// salle et de MA MÊME zone VÉRIFIÉE actuelles (voiceRoomMates, qui appelle chatPeerZone, lui même lu
+// désormais depuis un billet signé vérifié par le serveur, voir le module BILLET du bloc MINEURS et
+// billet-zone.sql) : un joueur moins_13 (voiceEligible faux) ferme systématiquement, sur les deux côtés
+// de la paire, et un appelant qui présenterait un billet absent, invalide ou d'une autre zone n'apparaît
+// jamais dans voiceRoomMates, donc n'est jamais accepté ici, quel que soit ce qu'il prétend par ailleurs.
+function voiceIncomingCall(call){
+  if (!voiceEligible() || !NET.on){ try { call.close(); } catch (e){} return; }
+  const mate = voiceRoomMates().find((m) => voicePeerIdFor(m.fc) === call.peer);
+  if (!mate || VOICE.peers.has(call.peer)){ try { call.close(); } catch (e){} return; }
+  voiceLocalStream().then((stream) => {
+    if (!stream || !voiceEligible() || !NET.on || VOICE.peers.has(call.peer)){ try { call.close(); } catch (e){} return; }
+    // revérifie juste avant de répondre : le micro a pu prendre un instant, la salle ou la zone ont pu changer
+    if (!voiceRoomMates().some((m2) => voicePeerIdFor(m2.fc) === call.peer)){ try { call.close(); } catch (e){} return; }
+    try { call.answer(stream); } catch (e){ return; }
+    voiceAttach(call.peer, call, mate.name, mate.pid);
+  });
+}
+function voiceAttach(rpid, call, name, roomPid, outgoing){
+  const rec = { rpid, roomPid: roomPid || '', name: name || 'PILOTE', call, audioEl: null, muted: false, talking: false };
+  VOICE.peers.set(rpid, rec);
+  call.on('stream', (remote) => {
+    const el = document.createElement('audio');
+    el.autoplay = true; el.dataset.voicePeer = rpid;
+    try { el.srcObject = remote; } catch (e){}   // lu en direct seulement : jamais de MediaRecorder, jamais écrit
+    el.muted = rec.muted;
+    document.body.appendChild(el);
+    rec.audioEl = el;
+    voicePanelRenderMaybe();
+  });
+  call.on('close', () => voiceDrop(rpid));
+  call.on('error', () => voiceDrop(rpid));
+  // filet de sécurité, appel SORTANT seulement : un appel refusé sans réponse (zone différente sur un jeu
+  // modifié, vocal coupé côté destinataire) ne déclenche pas toujours un évènement close chez l'appelant côté
+  // PeerJS (vérifié en test : connectionState reste "new" indéfiniment) ; sans ce filet la ligne resterait
+  // affichée pour toujours, silencieuse, jamais "en train de parler". Même principe que le délai de
+  // hostIncoming (15 s, pas de bonjour : on ferme) ou de guestConnect (ms, pas de réponse : on abandonne).
+  if (outgoing) setTimeout(() => { if (VOICE.peers.get(rpid) === rec && !call.open) voiceHangup(rpid); }, 8000);
+  voicePanelRenderMaybe();
+}
+function voiceDrop(rpid){
+  const rec = VOICE.peers.get(rpid); if (!rec) return;
+  if (rec.audioEl){ try { rec.audioEl.srcObject = null; rec.audioEl.remove(); } catch (e){} }
+  VOICE.peers.delete(rpid);
+  voicePanelRenderMaybe();
+}
+function voiceHangup(rpid){
+  const rec = VOICE.peers.get(rpid);
+  if (rec && rec.call){ try { rec.call.close(); } catch (e){} }
+  voiceDrop(rpid);
+}
+function voiceLeaveAll(){ for (const rpid of [...VOICE.peers.keys()]) voiceHangup(rpid); }
+function voiceSettingChanged(){ voiceSync(); if (!settings.voice){ voiceStreamStop(); VOICE.ptt = false; } }
+
+// ---- signal « je parle / je me tais » (maintien de la touche), relayé par zone comme le tchat : réutilise
+// chatPeerZone tel quel (même donnée, même règle), un petit relais dédié plutôt que de toucher au relais du
+// tchat lui même (chatRelayFromHost reste inchangé, jamais touché) ----
+function voicePttRelayFromHost(fromPid, on){
+  const zoneAuteur = fromPid === 'h' ? CHAT.zone : chatPeerZone(fromPid);
+  if (!zoneAuteur) return;
+  const msg = JSON.stringify({ t: 'vptt', p: fromPid, on: on ? 1 : 0 });
+  for (const L of NET.links){
+    if (!L.pid || L.pid === fromPid) continue;
+    if (chatPeerZone(L.pid) === zoneAuteur) L.send(msg);
+  }
+  // vue locale de l'hôte lui même quand l'auteur est un invité, même principe que le chatPush local de
+  // chatRelayFromHost (l'hôte ne reçoit jamais son propre message par le réseau, personne d'autre ne le lui
+  // montre) ; voiceReceivePtt revérifie de toute façon la zone lui même, aucune duplication de cette règle ici
+  if (fromPid !== 'h') voiceReceivePtt({ p: fromPid, on });
+}
+function hostVoicePtt(P, m){ voicePttRelayFromHost(P.pid, !!m.on); }
+function voiceSendPtt(on){
+  // condition du vocal lui même (zone autorisée, réglage activé, salle ouverte), jamais celle du déverrouillage
+  // parental de la discussion écrite (CHAT.unlocked) : les deux fonctionnalités sont indépendantes, voir le
+  // rapport de session ; chatCanSend() n'est donc pas réutilisée ici bien qu'elle porte un nom proche
+  if (!voiceEligible() || !NET.on) return;
+  if (NET.host) voicePttRelayFromHost('h', on);
+  else if (NET.hc) NET.hc.send({ t: 'vptt', on: on ? 1 : 0 });
+}
+function voiceReceivePtt(m){
+  const pid = typeof m.p === 'string' ? m.p : '';
+  if (!pid || chatPeerZone(pid) !== CHAT.zone) return;   // même défense en profondeur que chatReceive
+  let found = false;
+  for (const rec of VOICE.peers.values()) if (rec.roomPid === pid){ rec.talking = !!m.on; found = true; }
+  if (found && m.on) VOICE.lastTalker = pid;
+  voicePanelRenderMaybe();
+}
+
+// ---- à la main (pousser pour parler) : jamais un micro ouvert en permanence ----
+async function voicePttDown(){
+  if (!voiceEligible() || !NET.on || VOICE.ptt) return;
+  VOICE.ptt = true; voicePanelRenderMaybe();
+  const s = await voiceLocalStream();
+  if (!VOICE.ptt) return;   // relâché pendant l'attente du micro
+  if (s) s.getAudioTracks().forEach((t) => { t.enabled = true; });
+  VOICE.lastTalker = NET.host ? 'h' : NET.pid;
+  voiceSendPtt(true);
+  voicePanelRenderMaybe();
+}
+function voicePttUp(){
+  if (!VOICE.ptt) return;
+  VOICE.ptt = false;
+  if (VOICE.stream) VOICE.stream.getAudioTracks().forEach((t) => { t.enabled = false; });
+  voiceSendPtt(false);
+  voicePanelRenderMaybe();
+}
+
+// ---- muet par pilote : local, côté client, toujours disponible, aucune confirmation demandée ----
+function voiceToggleMute(rpid){
+  const rec = VOICE.peers.get(rpid); if (!rec) return;
+  rec.muted = !rec.muted;
+  if (rec.audioEl) rec.audioEl.muted = rec.muted;
+  voicePanelRenderMaybe();
+}
+
+// ---- signalement : réutilise EXACTEMENT le système du tchat (mêmes motifs, même fonction serveur, même file
+// locale en attente, même confirmation immédiate quoi qu'il arrive) ----
+function voiceReportSend(reasonKey){
+  const found = CHAT_REPORT_REASONS.find((r) => r[0] === reasonKey);
+  const motif = found ? found[1] : 'Non précisé';
+  const rec = VOICE.lastTalker ? [...VOICE.peers.values()].find((r) => r.roomPid === VOICE.lastTalker) : null;
+  const cible = rec ? chatPeerInfo(rec.roomPid) : null;
+  const contenu = '[appel vocal, aucun enregistrement, jamais de transcription] ' + (cible ? cible.pseudo : 'aucun pilote précis identifié dans cette session');
+  const payload = { signaleId: cible ? cible.uid : '', signalePseudo: cible ? cible.pseudo : '', salleCode: NET.code || '', zone: CHAT.zone, contenuSignale: contenu, motif };
+  VOICE.view = 'main'; voicePanelRender();
+  toast('SIGNALEMENT ENVOYÉ', 3);
+  const enregistrerLocal = () => { const q = store.get('signalementsEnAttente', []); q.push({ ...payload, quand: new Date().toISOString() }); store.set('signalementsEnAttente', q.slice(-50)); };
+  if (ACCT.C && ACCT.id) ACCT.C.signaler(payload).then((r) => { if (!r || !r.dispo) enregistrerLocal(); }).catch(() => enregistrerLocal());
+  else enregistrerLocal();
+}
+
+// ---- bouton d'accès (onNav/roomNav/pFriends) : absent, jamais désactivé, en dessous de 13 ans ou zone
+// inconnue (mêmes seuils que monZoneLocale, aucun autre calcul) ----
+function voiceNavSync(){
+  // pas de data-need ici (déjà utilisé par onlineRender pour la disponibilité réseau, un second contrôleur du
+  // même hidden se serait écrasé l'un l'autre) : cette fonction tient donc compte des deux conditions elle même
+  const ok = voiceZoneOk(monZoneLocale()) && !netWhyOff();
+  document.querySelectorAll('[data-voice-nav]').forEach((el) => { el.hidden = !ok; });
+}
+
+// ---- panneau ----
+function voicePanelRenderMaybe(){ if (UI.cur === 'voice' && !$('menu').hidden) voicePanelRender(); }
+function voicePanelRender(){
+  chatZoneCompute();
+  const body = $('voiceBody');
+  if (!voiceZoneOk(CHAT.zone)){
+    // ne devrait jamais s'afficher (le bouton d'accès est déjà caché, voir voiceNavSync) : repli si atteint autrement
+    body.innerHTML = '<p class="nline">Indique ta date de naissance dans MON COMPTE pour utiliser le vocal.</p>';
+    $('voiceReportBtn').hidden = true; $('vPtt').hidden = true;
+    return;
+  }
+  voiceLocalStream();   // demande le micro une seule fois à l'ouverture (repli muet si refusé ou absent)
+  if (VOICE.view === 'report'){
+    $('voiceReportBtn').hidden = false;
+    body.innerHTML = '<p class="nline">Choisis un motif : le signalement part tout de suite.</p>'
+      + '<nav class="mlist wide chatReasons">' + CHAT_REPORT_REASONS.map(([k, txt], i) => '<button class="mi set" data-vact="sendReport" data-reason="' + k + '"><b>[' + String(i + 1).padStart(2, '0') + ']</b><span class="k">' + esc(txt) + '</span></button>').join('') + '</nav>'
+      + '<button class="mi small" data-vact="cancelReport">ANNULER</button>';
+    $('vPtt').hidden = true;
+    return;
+  }
+  $('voiceReportBtn').hidden = false;
+  const on = !!settings.voice, inRoom = NET.on;
+  const zoneNote = '<p class="nnote">Zone : ' + CHAT_ZONE_LABEL[CHAT.zone] + '. Vocal en direct, pilote à pilote, seulement entre joueurs de cette même zone, certifiée par notre serveur pour chaque pilote, pas seulement déclarée par son appareil (détail dans la politique de confidentialité). Rien n\'est jamais enregistré ni gardé, ni sur cet appareil ni sur un serveur : le son n\'existe qu\'en direct, le temps de l\'appel. Maintiens le bouton pour parler, relâche pour te taire.</p>';
+  let note = '';
+  if (!on) note = '<p class="nline err">Vocal coupé dans RÉGLAGES. Réactive le pour parler et entendre les autres.</p>';
+  else if (!inRoom) note = '<p class="nline err">Rejoins une salle ou une partie rapide pour parler avec les pilotes de ta zone.</p>';
+  else if (VOICE.streamKind === 'silent') note = '<p class="nline err">Micro indisponible sur cet appareil ou ce navigateur. La connexion peut quand même s\'établir, mais elle ne transmettra aucun son réel ici.</p>';
+  const mates = on && inRoom ? [...VOICE.peers.values()] : [];
+  const rows = mates.length
+    ? '<div id="voiceRows">' + mates.map((r) => '<div class="voicePeer' + (r.talking ? ' talking' : '') + '"><i class="vDot"></i><span class="vName">' + esc(r.name) + '</span><button type="button" class="vMute' + (r.muted ? ' on' : '') + '" data-vact="mute" data-peer="' + esc(r.rpid) + '">' + (r.muted ? 'RÉTABLIR LE SON' : 'COUPER LE SON') + '</button></div>').join('') + '</div>'
+    : (on && inRoom ? '<p class="nline">Aucun autre pilote de ta zone dans cette salle pour l\'instant.</p>' : '');
+  body.innerHTML = zoneNote + note + rows;
+  // #vPtt est un élément statique du panneau (jamais recréé par innerHTML) : capture de pointeur et écouteurs
+  // posés une fois par voiceInit restent valables d'un rendu à l'autre, comme demandé pour la manette tactile
+  const ptt = $('vPtt');
+  ptt.hidden = false; ptt.disabled = !(on && inRoom); ptt.className = VOICE.ptt ? 'on' : '';
+  ptt.textContent = VOICE.ptt ? 'TU PARLES, RELÂCHE POUR TE TAIRE' : 'MAINTIENS POUR PARLER';
+}
+function voiceInit(){
+  $('pVoice').addEventListener('click', (e) => {
+    const el = e.target.closest('[data-vact]'); if (!el) return;
+    const act = el.dataset.vact;
+    if (act === 'toggleReport'){ VOICE.view = VOICE.view === 'report' ? 'main' : 'report'; voicePanelRender(); }
+    else if (act === 'cancelReport'){ VOICE.view = 'main'; voicePanelRender(); }
+    else if (act === 'sendReport') voiceReportSend(el.dataset.reason);
+    else if (act === 'mute') voiceToggleMute(el.dataset.peer);
+  });
+  // à la main, comme la manette tactile (voir le correctif du 27/09 15:37) : les trois événements de fin
+  // (pointerup, pointercancel, lostpointercapture) relâchent tous la parole, jamais un seul qui suffirait
+  $('pVoice').addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('#vPtt'); if (!b || b.disabled) return;
+    e.preventDefault(); audio.init();
+    try { b.setPointerCapture(e.pointerId); } catch (er){}
+    voicePttDown();
+  });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((ev) => $('pVoice').addEventListener(ev, () => voicePttUp()));
 }
 
 /* ---------- panneaux EN LIGNE ---------- */
@@ -6287,13 +7847,18 @@ function netPanel(name){
   else if (name === 'friends'){ friendsHtml = ''; friendsRender(); }
   else if (name === 'compte') acctRender();
   else if (name === 'amis'){ amisHtml = ''; amisRender(); }
+  else if (name === 'shop') shopRenderMain();
+  else if (name === 'classement') classementOpen();
+  else if (name === 'chat') chatPanelRender();
+  else if (name === 'voice'){ VOICE.view = 'main'; voicePanelRender(); }
+  voiceNavSync();   // bouton VOCAL de ce panneau (onNav/roomNav/pFriends) : à jour à chaque ouverture
   renumber(panel);
   if (NET.invite && $('invite').hidden) inviteShow();
 }
 function mainOnline(){
   const why = netWhyOff();
   $('onItem').classList.toggle('off', !!why);
-  $('onTag').textContent = why ? ' · INDISPONIBLE ICI' : NET.on ? (NET.hall ? ' · PARTIE RAPIDE' : ' · SALLE PRIVÉE') : '';
+  $('onTag').textContent = why === 'offline' ? ' · HORS LIGNE' : why ? ' · INDISPONIBLE ICI' : NET.on ? (NET.hall ? ' · PARTIE RAPIDE' : ' · SALLE PRIVÉE') : '';
 }
 function onlineRender(){
   const why = netWhyOff();
@@ -6302,6 +7867,7 @@ function onlineRender(){
   $('onRetry').hidden = !!why || !NET.libFail;
   if (why === 'frame') setLine('onState', 'LE JEU EN LIGNE MARCHE SUR LA PAGE PUBLIQUE DU JEU. DANS CET APERÇU, LES CONNEXIONS VERS L\'EXTÉRIEUR SONT BLOQUÉES.', 'err');
   else if (why === 'browser') setLine('onState', 'CE NAVIGATEUR NE PERMET PAS LE JEU EN LIGNE : ESSAIE UN NAVIGATEUR RÉCENT.', 'err');
+  else if (why === 'offline') setLine('onState', 'CONNEXION NÉCESSAIRE : LE JEU EN LIGNE A BESOIN D\'INTERNET. LE SOLO RESTE JOUABLE HORS LIGNE.', 'err');
   else setLine('onState', NET.status, NET.statusCls);
   $('onName').textContent = ID.name;
   const req = ACCT.amis.filter((a) => a.statut === 'recue').length;
@@ -6347,6 +7913,130 @@ function roomRender(){
   setLine('roomMsg', msg, cls);
   renumber($('pRoom'));
   highlight();
+}
+
+/* ---------- boutique : catalogue toujours visible, mécanique légale en ?debug seulement ---------- */
+// catalogue affiché : jamais d'avantage de jeu, seulement des apparences, un pass, un pack et des panneaux publicitaires
+const SHOP_ITEMS = {
+  pass: { nom: 'PASS DE SAISON', prix: 4.99, duree: "Jusqu'à la fin de la saison en cours." },
+  founder: { nom: 'PACK FONDATEUR', prix: 9.99, duree: 'Définitive : teinte et insigne acquis une fois pour toutes.' },
+};
+const SHOPT = { id: '', year: 0 };
+function shopReceipts(){ return store.get('shopTestReceipts', []); }
+function shopSaveReceipts(list){ store.set('shopTestReceipts', list); }
+function shopListTag(){ const n = shopReceipts().filter((r) => !r.retracte).length; $('stListTag').textContent = n ? ' · ' + n : ''; }
+// un seul drapeau commande tout : bouton grisé et BIENTÔT DISPONIBLE tant que BOUTIQUE_ACTIVE est à false
+function shopRenderMain(){
+  document.querySelectorAll('#pShop .shopbuy').forEach((b) => {
+    b.disabled = !BOUTIQUE_ACTIVE;
+    b.textContent = BOUTIQUE_ACTIVE ? 'ACHETER' : 'BIENTÔT DISPONIBLE';
+    b.title = BOUTIQUE_ACTIVE ? '' : "La boutique n'est pas encore ouverte";
+  });
+  $('shopDebugBtn').hidden = !QS.has('debug');
+  const eu = ACCT.prof && ACCT.prof.avatar_color && ACCT.prof.avatar_color.toLowerCase() === OFFER_COLOR_HEX;
+  $('shopOfferTxt').textContent = eu ? `Teinte ${OFFER_COLOR_NAME} déjà débloquée avec ton compte.` : `Teinte ${OFFER_COLOR_NAME} offerte avec ton compte gratuit.`;
+}
+function shopTestOpen(){
+  if (!QS.has('debug')) return;
+  SHOPT.id = ''; SHOPT.year = 0;
+  shopListTag();
+  stShow('pick');
+  $('shopTest').hidden = false;
+}
+function shopTestClose(){ $('shopTest').hidden = true; }
+function stShow(view){
+  $('stPick').hidden = view !== 'pick';
+  $('stOrder').hidden = view !== 'order';
+  $('stDone').hidden = view !== 'done';
+  $('stList').hidden = view !== 'list';
+}
+function stMoney(v){ return v.toFixed(2).replace('.', ',') + ' € TTC'; }
+function stPickItem(id){
+  SHOPT.id = id; SHOPT.year = 0;
+  const it = SHOP_ITEMS[id];
+  $('stName').textContent = it.nom;
+  $('stPrice').textContent = stMoney(it.prix);
+  $('stDuree').textContent = it.duree;
+  $('stTva').textContent = "Non applicable pour l'instant : régime de TVA de Nifo Web pas encore choisi (prix quand même toutes taxes comprises).";
+  $('stAgeVal').textContent = 'NON RENSEIGNÉE';
+  setLine('stAgeMsg', '');
+  $('stParentRow').hidden = true; $('stParent').checked = false;
+  $('stWaiver').checked = false; $('stTerms').checked = false;
+  setLine('stMsg', '');
+  stShow('order');
+  stValidate();
+}
+function stAskAge(){
+  entryOpen({
+    title: 'ANNÉE DE NAISSANCE', ey: 'BOUTIQUE · TEST', value: SHOPT.year ? String(SHOPT.year) : '', ph: 'AAAA',
+    help: "POUR TESTER LE PLAFOND DE 30 € PAR MOIS ET L'ACCORD PARENTAL DE 15 À 17 ANS.",
+    live: (v) => v.replace(/[^0-9]/g, '').slice(0, 4),
+    filter: (v) => v.replace(/[^0-9]/g, '').slice(0, 4),
+    check: (v) => { const y = +v, now = new Date().getFullYear(); return (v.length !== 4 || y < now - 110 || y > now) ? 'ANNÉE À 4 CHIFFRES, VALIDE' : ''; },
+    ok: (v) => { SHOPT.year = +v; stAgeApplied(); },
+  });
+}
+function stAge(){ return SHOPT.year ? new Date().getFullYear() - SHOPT.year : 0; }
+function stAgeApplied(){
+  const age = stAge(), minor = age >= 15 && age <= 17;
+  $('stAgeVal').textContent = SHOPT.year ? (age + ' ANS (' + SHOPT.year + ')') : 'NON RENSEIGNÉE';
+  $('stParentRow').hidden = !minor;
+  if (!minor) $('stParent').checked = false;
+  if (age > 0 && age < 15) setLine('stAgeMsg', 'ACHAT IMPOSSIBLE AVANT 15 ANS.', 'err');
+  else if (minor) setLine('stAgeMsg', "DE 15 À 17 ANS : ACCORD D'UN PARENT ET PLAFOND DE 30 € PAR MOIS CIVIL.", 'err');
+  else setLine('stAgeMsg', '');
+  stValidate();
+}
+function stMonthTotal(){
+  const now = new Date(), ym = now.getFullYear() + '-' + (now.getMonth() + 1);
+  return shopReceipts().filter((r) => !r.retracte && r.mineur && r.ym === ym).reduce((s, r) => s + r.prix, 0);
+}
+function stValidate(){
+  const it = SHOP_ITEMS[SHOPT.id]; if (!it) return;
+  const age = stAge(), minor = age >= 15 && age <= 17;
+  let bad = '';
+  if (!SHOPT.year) bad = 'INDIQUE UNE ANNÉE DE NAISSANCE.';
+  else if (age < 15) bad = 'ACHAT IMPOSSIBLE AVANT 15 ANS.';
+  else if (minor && !$('stParent').checked) bad = "ACCORD D'UN PARENT REQUIS DE 15 À 17 ANS.";
+  else if (minor && stMonthTotal() + it.prix > 30) bad = 'PLAFOND DE 30 € PAR MOIS ATTEINT POUR UN COMPTE MINEUR (TEST).';
+  else if (!$('stWaiver').checked) bad = 'COCHE LA RENONCIATION AU DÉLAI DE RÉTRACTATION.';
+  else if (!$('stTerms').checked) bad = 'ACCEPTE LES CONDITIONS DE VENTE.';
+  $('stConfirm').disabled = !!bad;
+  setLine('stMsg', bad, bad ? 'err' : '');
+}
+function stConfirm(){
+  const it = SHOP_ITEMS[SHOPT.id]; if (!it || $('stConfirm').disabled) return;
+  const age = stAge(), minor = age >= 15 && age <= 17, now = new Date();
+  const list = shopReceipts(), n = store.get('shopTestNo', 0) + 1;
+  store.set('shopTestNo', n);
+  list.push({
+    n, id: SHOPT.id, nom: it.nom, prix: it.prix, date: now.toISOString(), ym: now.getFullYear() + '-' + (now.getMonth() + 1),
+    age, mineur: minor, accordParent: minor ? $('stParent').checked : false, renonciation: true, retracte: false,
+  });
+  shopSaveReceipts(list);
+  $('stDoneTxt').textContent = 'Reçu de test n° ' + n + ' enregistré sur cet appareil : aucun paiement réel, rien envoyé. ' + it.nom + ', ' + stMoney(it.prix) + ', le ' + now.toLocaleString('fr-FR') + '.';
+  stShow('done');
+  shopListTag();
+}
+function stListRender(){
+  const list = shopReceipts();
+  if (!list.length){ $('stRows').innerHTML = '<p class="ahelp">AUCUN REÇU DE TEST POUR L\'INSTANT.</p>'; return; }
+  $('stRows').innerHTML = list.slice().reverse().map((r) => {
+    const d = new Date(r.date);
+    const statut = r.retracte
+      ? 'RÉTRACTATION ENREGISTRÉE LE ' + new Date(r.retracteDate).toLocaleString('fr-FR') + '. CE CONTENU A ÉTÉ FOURNI IMMÉDIATEMENT AVEC RENONCIATION ACCEPTÉE : LE DÉLAI DE RÉTRACTATION AVAIT DÉJÀ PRIS FIN (ARTICLE L221-28 13°).'
+      : 'EN COURS. RÉTRACTATION POSSIBLE ICI (ARTICLES L221-21 ET D221-5).';
+    const btn = r.retracte ? '' : '<button type="button" class="mbtn alt" data-retract="' + r.n + '">SE RÉTRACTER</button>';
+    return '<div class="stRow"><b>N° ' + r.n + ' · ' + esc(r.nom) + '</b><br>' + stMoney(r.prix) + ' · ' + d.toLocaleString('fr-FR') + (r.mineur ? ' · COMPTE MINEUR (TEST)' : '') + '<br>' + statut + (btn ? '<br>' + btn : '') + '</div>';
+  }).join('');
+}
+function stRetract(n){
+  const list = shopReceipts(), r = list.find((x) => x.n === n);
+  if (!r || r.retracte) return;
+  r.retracte = true; r.retracteDate = new Date().toISOString();
+  shopSaveReceipts(list);
+  toast('RÉTRACTATION ENREGISTRÉE (TEST)', 3);
+  stListRender(); shopListTag();
 }
 
 /* ---------- fenêtre de saisie : hors du cadre tourné, au dessus du clavier ---------- */
@@ -6419,6 +8109,10 @@ function netAct(act, el){
     case 'netFriends': openPanel('friends'); friendsRefresh(); break;
     case 'netName': if (ACCT.id) acctOpen('profile'); else askName(null); break;
     case 'netAccount': acctMsg(''); openPanel('compte'); acctBoot().catch(() => {}); break;
+    case 'netClassement': openPanel('classement'); break;
+    case 'netChat': openPanel('chat'); break;
+    case 'netVoice': openPanel('voice'); break;
+    case 'netClassementRefresh': classementLoad(); break;
     case 'netRetry': NET.libFail = false; netWarmup(); break;
     case 'netCodeEdit': codeEntry(false); break;
     case 'netJoinGo': joinGo(); break;
@@ -6438,7 +8132,7 @@ function netAct(act, el){
 }
 function netInit(){
   idLoad();
-  Object.assign(UI.panels, { online: $('pOnline'), join: $('pJoin'), room: $('pRoom'), friends: $('pFriends'), compte: $('pCompte'), amis: $('pAmis') });
+  Object.assign(UI.panels, { online: $('pOnline'), join: $('pJoin'), room: $('pRoom'), friends: $('pFriends'), compte: $('pCompte'), amis: $('pAmis'), shop: $('pShop'), classement: $('pClassement'), chat: $('pChat'), voice: $('pVoice') });
   NET.solo = game.ships; NET.soloPlayer = game.player;
   const lc = cleanRoom(QS.get('salle'));
   NET.linkCode = roomOk(lc) ? lc : '';
@@ -6459,6 +8153,9 @@ function netInit(){
   $('netboxOk').addEventListener('click', netboxClose);
   addEventListener('pagehide', netBye);
   acctInit();
+  chatInit();
+  voiceInit();
+  voiceNavSync();
   mainOnline();
 }
 // après l'écran d'entrée : un lien d'invitation mène droit au panneau REJOINDRE
@@ -6542,6 +8239,7 @@ async function boot(data){
     buildSky();
     buildRoad();
     buildRain();
+    tickAmbiance(0, true);   // ambiance persistée appliquée d'un coup, avant le tout premier rendu visible
     P = new Particles(3200);
     traffic = new Traffic();
     peds = new Pedestrians();
@@ -6551,7 +8249,7 @@ async function boot(data){
     game.ships = PILOTS.map((p) => new Ship(p));
     game.player = game.ships[0];
     cacheHud();
-    UI.panels = { main: $('pMain'), controls: $('pControls'), settings: $('pSettings'), pause: $('pPause'), results: $('pResults') };
+    UI.panels = { main: $('pMain'), controls: $('pControls'), settings: $('pSettings'), pause: $('pPause'), results: $('pResults'), mission: $('pMission') };
     buildMarkers();
     buildComposer();
     layout(true);
@@ -6598,6 +8296,15 @@ function enterGame(){
 $('loader').addEventListener('click', () => enterGame());
 document.addEventListener('fullscreenchange', fsLabel);
 document.addEventListener('webkitfullscreenchange', fsLabel);
+// solo hors ligne : le fichier sw.js est généré par build_site.py (nom de cache avec l'empreinte de version) ;
+// jamais dans un cadre ; updateViaCache 'none' pour que le navigateur ne garde jamais une vieille version de sw.js
+if ('serviceWorker' in navigator && window.top === window.self){
+  addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((reg) => {
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
+    }).catch(() => {});
+  });
+}
 boot({});
 </script>
 
